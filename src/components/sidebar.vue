@@ -69,11 +69,16 @@ const items = [
         permiss: '2',
         subs: [
             {
-                index: '/table',
-                title: '常用表格',
+                index: '/collection_add',
+                title: '新增藏品',
                 permiss: '2',
             },
             {
+                index: '/collection_search',
+                title: '查询藏品',
+                permiss: '2',
+            },
+            /*{
                 index: '/import',
                 title: '导入Excel',
                 permiss: '2',
@@ -82,7 +87,7 @@ const items = [
                 index: '/export',
                 title: '导出Excel',
                 permiss: '2',
-            },
+            },*/
         ],
     },
     {

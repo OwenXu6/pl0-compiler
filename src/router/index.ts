@@ -22,13 +22,22 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
             },
             {
-                path: '/table',
+                path: '/collection_add',
                 name: 'basetable',
                 meta: {
                     title: '表格',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "table" */ '../views/table.vue'),
+                component: () => import(/* webpackChunkName: "table" */ '../views/collection_add.vue'),
+            },
+            {
+                path: '/collection_search',
+                name: 'basetable1',
+                meta: {
+                    title: '表格',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/collection_search.vue'),
             },
             {
                 path: '/charts',
