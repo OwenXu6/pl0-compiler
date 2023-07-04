@@ -4,7 +4,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 require('../../../utils/index.js');
 var root = require('./root.js');
-var trigger = require('./trigger2.js');
+var trigger = require('./trigger.js');
 var arrow = require('./arrow.js');
 var content = require('./content.js');
 var runtime = require('../../../utils/vue/props/runtime.js');

@@ -65,7 +65,7 @@ const items = [
     {
         icon: 'Calendar',
         index: '1',
-        title: '表格相关',
+        title: '藏品管理',
         permiss: '2',
         subs: [
             {

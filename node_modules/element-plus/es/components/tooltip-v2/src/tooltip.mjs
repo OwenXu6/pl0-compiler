@@ -1,6 +1,6 @@
 import '../../../utils/index.mjs';
 import { tooltipV2RootProps } from './root.mjs';
-import { tooltipV2TriggerProps } from './trigger2.mjs';
+import { tooltipV2TriggerProps } from './trigger.mjs';
 import { tooltipV2ArrowProps } from './arrow.mjs';
 import { tooltipV2ContentProps } from './content.mjs';
 import { buildProps, definePropType } from '../../../utils/vue/props/runtime.mjs';
