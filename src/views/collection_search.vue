@@ -13,6 +13,7 @@
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column prop="name" label="文物名称"></el-table-column>
+				<el-table-column prop="name" label="文物图片"></el-table-column>
 				<el-table-column label="文物种类">
 					<template #default="scope">￥{{ scope.row.money }}</template>
 				</el-table-column>
@@ -40,13 +41,16 @@
 				</el-table-column>
 
 				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
-				<el-table-column label="操作" width="220" align="center">
+				<el-table-column label="操作" width="350" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
+						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="14">
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="15">
 							删除
+						</el-button>
+						<el-button text :icon="Edit" @click="handleDelete(scope.$index)" v-permiss="16">
+							查看
 						</el-button>
 					</template>
 				</el-table-column>
