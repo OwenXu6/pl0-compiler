@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
                 path: '/collection_add',
                 name: 'basetable',
                 meta: {
-                    title: '表格',
+                    title: '新增藏品',
                     permiss: '2',
                 },
                 component: () => import(/* webpackChunkName: "table" */ '../views/collection_add.vue'),
@@ -34,10 +34,28 @@ const routes: RouteRecordRaw[] = [
                 path: '/collection_search',
                 name: 'basetable1',
                 meta: {
-                    title: '表格',
+                    title: '查询藏品',
                     permiss: '2',
                 },
                 component: () => import(/* webpackChunkName: "table" */ '../views/collection_search.vue'),
+            },
+            {
+                path: '/collection_repair',
+                name: 'basetable2',
+                meta: {
+                    title: '修缮藏品',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/collection_repair.vue'),
+            },
+            {
+                path: '/collection_research4unknown',
+                name: 'basetable3',
+                meta: {
+                    title: '未知文物研究鉴定',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/collection_research4unknown.vue'),
             },
             {
                 path: '/charts',

@@ -78,6 +78,16 @@ const items = [
                 title: '查询藏品',
                 permiss: '2',
             },
+            {
+                index: '/collection_repair',
+                title: '修缮藏品',
+                permiss: '2',
+            },
+            {
+                index: '/collection_research4unknown',
+                title: '未知文物研究鉴定',
+                permiss: '2',
+            },
             /*{
                 index: '/import',
                 title: '导入Excel',
