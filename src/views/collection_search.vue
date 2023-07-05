@@ -2,23 +2,50 @@
 	<div>
 		<div class="container">
 			<div class="handle-box">
-				<!--<el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
-					<el-option key="1" label="广东省" value="广东省"></el-option>
-					<el-option key="2" label="湖南省" value="湖南省"></el-option>
-				</el-select>-->
-				<el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
+				
+				<el-input v-model="query.name" placeholder="文物名称" class="handle-input mr10"></el-input>
+				<!--显示一个输入框，用户可以输入名称进行搜索。v-model="query.name"将输入的值绑定到query.name变量上。-->
+
+				<el-input v-model="query.id" placeholder="文物ID" class="handle-input mr10"></el-input>
+
+				<br><br>
+
+				<el-select v-model="query.type" placeholder="文物种类" class="handle-select mr10">
+				<el-option key="1" label="瓷器" value="瓷器"></el-option>
+				<el-option key="2" label="青铜器" value="青铜器"></el-option>
+				</el-select>
+
+				<el-select v-model="query.era" placeholder="文物年代" class="handle-select mr10">
+				<el-option key="1" label="唐代" value="唐代"></el-option>
+				<el-option key="2" label="清代" value="清代"></el-option>
+				</el-select>
+
+				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10">
+				<el-option key="1" label="在库" value="在库"></el-option>
+				<el-option key="2" label="在展" value="在展"></el-option>
+				</el-select>
+
+				<el-select v-model="query.excavation_site" placeholder="出土地" class="handle-select mr10">
+				<el-option key="1" label="三星堆" value="三星堆"></el-option>
+				<el-option key="2" label="北首岭遗址" value="北首岭遗址"></el-option>
+				</el-select>
+
+				<el-input v-model="query.excavation_date" placeholder="出土日期" class="handle-input mr11"></el-input>
+
+				
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus">新增</el-button>
+				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
+
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
+				<el-table-column prop="id" label="ID" width="110" align="center"></el-table-column>
 				<el-table-column prop="name" label="文物名称"></el-table-column>
-				<el-table-column prop="name" label="文物图片"></el-table-column>
-				<el-table-column label="文物种类">
-					<template #default="scope">￥{{ scope.row.money }}</template>
+				<!--<el-table-column prop="name" label="文物图片"></el-table-column>-->
+				<el-table-column prop="type" label="文物种类">
+					<!--<template #default="scope">￥{{ scope.row.money }}</template>-->
 				</el-table-column>
-				<el-table-column label="文物年代" align="center">
-					<template #default="scope">
+				<el-table-column prop="era" label="文物年代" align="center">
+					<!--<template #default="scope">
 						<el-image
 							class="table-td-thumb"
 							:src="scope.row.thumb"
@@ -27,17 +54,17 @@
 							preview-teleported
 						>
 						</el-image>
-					</template>
+					</template>-->
 				</el-table-column>
 				<!--<el-table-column prop="address" label="地址"></el-table-column>-->
-				<el-table-column label="藏品状态" align="center">
-					<template #default="scope">
+				<el-table-column prop="status" label="藏品状态" align="center">
+					<!--<template #default="scope">
 						<el-tag
 							:type="scope.row.state === '成功' ? 'success' : scope.row.state === '失败' ? 'danger' : ''"
 						>
 							{{ scope.row.state }}
 						</el-tag>
-					</template>
+					</template>-->
 				</el-table-column>
 
 				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
@@ -105,6 +132,12 @@ interface TableItem {
 const query = reactive({
 	address: '',
 	name: '',
+	id: '',
+	type: ' ',
+	era: ' ',
+	status: ' ',
+	excavation_site: ' ',
+	excavation_date: ' ',
 	pageIndex: 1,
 	pageSize: 10
 });
@@ -184,6 +217,10 @@ const saveEdit = () => {
 	color: #F56C6C;
 }
 .mr10 {
+	margin-right: 10px;
+}
+.mr11 {
+	width: 150px;
 	margin-right: 10px;
 }
 .table-td-thumb {
