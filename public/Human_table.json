@@ -1,0 +1,15 @@
+
+{
+    "list": [{
+            "Staff_id": 2050780,
+            "Staff_Name": "焦驁",
+            "Staff_Age": "20",
+            "Staff_Gender": "男",
+            "Staff_Post_Rank": "超級經理",
+            "Staff_Salary": 10000000,
+            "Work_Type": "全能神",
+            "Job": "乜都做"
+        }
+    ],
+    "pageTotal": 1
+}
