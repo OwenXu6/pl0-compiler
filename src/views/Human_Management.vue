@@ -42,8 +42,8 @@
 			</div>
 		</div>
 
-		<!-- 新增/编辑弹出框 -->
-		<el-dialog title="信息填写" v-model="editVisible" width="30%">
+		<!-- 编辑弹出框 -->
+		<el-dialog title="编辑信息" v-model="editVisible" width="30%">
 			<el-form label-width="70px">
 				<el-form-item label="姓名">
 					<el-input v-model="form.name"></el-input>
@@ -74,6 +74,42 @@
 				</span>
 			</template>
 		</el-dialog>
+
+		<!-- 新增弹出框 -->
+		<el-dialog title="新增人员信息" v-model="newVisible" width="30%">
+			<el-form label-width="70px">
+				<el-form-item label="ID">
+					<el-input v-model="form.id" ></el-input>
+				</el-form-item>
+				<el-form-item label="姓名">
+					<el-input v-model="form.name"></el-input>
+				</el-form-item>
+				<el-form-item label="年龄">
+					<el-input v-model="form.age"></el-input>
+				</el-form-item>
+				<el-form-item label="性别">
+					<el-input v-model="form.gender"></el-input>
+				</el-form-item>
+				<el-form-item label="职级">
+					<el-input v-model="form.post_rank"></el-input>
+				</el-form-item>
+				<el-form-item label="薪资">
+					<el-input v-model="form.salary"></el-input>
+				</el-form-item>
+				<el-form-item label="工作方向">
+					<el-input v-model="form.work_type"></el-input>
+				</el-form-item>
+				<el-form-item label="工作内容">
+					<el-input v-model="form.job"></el-input>
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="newVisible = false">取 消</el-button>
+					<el-button type="primary" @click="savenew">确 定</el-button>
+				</span>
+			</template>
+		</el-dialog>
 	</div>
 </template>
 
@@ -84,14 +120,14 @@ import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import { Human_fetchData } from '../api/index';
 
 interface TableItem {
-	id: number;
-	name: string;
-	age: string;
-	gender: string;
-	post_rank: string;
-	salary: number;
-	work_type: string;
-	job: string;
+	Staff_id: number;
+	Staff_Name: string;
+	Staff_Age: string;
+	Staff_Gender: string;
+	Staff_Post_Rank: string;
+	Staff_Salary: number;
+	Work_Type: string;
+	Job: string;
 
 }
 
@@ -132,20 +168,33 @@ const handleDelete = (index: number) => {
 		.then(() => {
 			ElMessage.success('删除成功');
 			tableData.value.splice(index, 1);
+			pageTotal.value--;
 		})
 		.catch(() => {});
 };
 
+
+
 //新增操作
 const handlenew = () => {
 	idx = pageTotal.value;
-	editVisible.value = true;
+	form.id = 0;
+	form.name = '';           
+	form.age = '',
+	form.gender = '',
+	form.post_rank = '',
+	form.salary = 0,
+	form.work_type = '',
+	form.job = '',
+	newVisible.value = true;
 };
 
 
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
+const newVisible = ref(false);
 let form = reactive({
+	id: 0,
 	name: '',
 	age: '',
 	gender: '',
@@ -158,7 +207,7 @@ let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
 	idx = index;
 
-	form.name = row.Staff_Name;
+	form.name = row.Staff_Name;           //命名不同
 	form.age = row.Staff_Age,
 	form.gender = row.Staff_Gender,
 	form.post_rank = row.Staff_Post_Rank,
@@ -171,14 +220,43 @@ const handleEdit = (index: number, row: any) => {
 const saveEdit = () => {
 	editVisible.value = false;
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);
-	tableData.value[idx].name = form.name;
-	tableData.value[idx].age = form.age;
-	tableData.value[idx].gender = form.gender;
-	tableData.value[idx].post_rank = form.post_rank;
-	tableData.value[idx].salary = form.salary;
-	tableData.value[idx].work_type = form.work_type;
-	tableData.value[idx].job = form.job; //应该要至后端修改之
-	getData();
+	console.log(idx,tableData);
+	tableData.value[idx].Staff_id = form.id;
+	tableData.value[idx].Staff_Name = form.name;
+	tableData.value[idx].Staff_Age = form.age;
+	tableData.value[idx].Staff_Gender = form.gender;
+	tableData.value[idx].Staff_Post_Rank = form.post_rank;
+	tableData.value[idx].Staff_Salary = form.salary;
+	tableData.value[idx].Work_Type = form.work_type;
+	tableData.value[idx].Job = form.job; //应该要至后端修改之
+	
+};
+
+const savenew = () => {
+	newVisible.value = false;
+	let newEmployee: TableItem = {
+	Staff_id: 0,
+	Staff_Name: '',
+	Staff_Age: '',
+	Staff_Gender: '',
+	Staff_Post_Rank: '',
+	Staff_Salary: 0,
+	Work_Type: '',
+	Job: ''
+	};
+	tableData.value.push(newEmployee);
+	ElMessage.success(`添加成功`);
+	console.log(idx,tableData);
+	tableData.value[idx].Staff_id = form.id;
+	tableData.value[idx].Staff_Name = form.name;
+	tableData.value[idx].Staff_Age = form.age;
+	tableData.value[idx].Staff_Gender = form.gender;
+	tableData.value[idx].Staff_Post_Rank = form.post_rank;
+	tableData.value[idx].Staff_Salary = form.salary;
+	tableData.value[idx].Work_Type = form.work_type;
+	tableData.value[idx].Job = form.job; //应该要至后端修改之
+	pageTotal.value++;
+
 };
 </script>
 

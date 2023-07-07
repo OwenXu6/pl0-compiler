@@ -9,7 +9,17 @@
             "Staff_Salary": 10000000,
             "Work_Type": "全能神",
             "Job": "乜都做"
+        },
+        {
+            "Staff_id": 2051498,
+            "Staff_Name": "儲岱澤",
+            "Staff_Age": "22",
+            "Staff_Gender": "女",
+            "Staff_Post_Rank": "設計總監",
+            "Staff_Salary": 1000000,
+            "Work_Type": "設計部門",
+            "Job": "管理整體設計"
         }
     ],
-    "pageTotal": 1
+    "pageTotal": 2
 }
