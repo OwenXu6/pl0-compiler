@@ -88,16 +88,6 @@ const items = [
                 title: '未知文物研究鉴定',
                 permiss: '2',
             },
-            /*{
-                index: '/import',
-                title: '导入Excel',
-                permiss: '2',
-            },
-            {
-                index: '/export',
-                title: '导出Excel',
-                permiss: '2',
-            },*/
         ],
     },
     {
@@ -106,6 +96,41 @@ const items = [
         title: '人事管理',
         permiss: '3',
     },
+    {
+        icon: 'Calendar',
+        index: '1',
+        title: '展厅',
+        permiss: '2',
+        subs: [
+            {
+                index: '/table',
+                title: '展厅信息',
+                permiss: '2',
+            },
+            {
+                index: '/collections',
+                title: '展品详情',
+                permiss: '2',
+            },
+            {
+                index: '/activity',
+                title: '活动',
+                permiss: '2',
+            },
+        ],
+    },
+    {
+        icon:'Calendar',
+        index:'/statistics',
+        title:'统计信息',
+        permiss:'3',
+    },
+    {
+        icon:'Calendar',
+        index:'/charts',
+        title:'人流信息',
+        permiss:'3',
+    }
 ];
 
 const route = useRoute();

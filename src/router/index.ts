@@ -67,6 +67,43 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "table" */ '../views/Human_Management.vue'),
             },
             {
+                path: '/statistics',
+                name: 'basetable3',
+                meta: {
+                    title: '统计信息',
+                    permiss: '3',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/statistics.vue'),
+            },
+            {
+                path: '/table',
+                name: 'basetable',
+                meta: {
+                    title: '展厅',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "table" */ '../views/table.vue'),
+            },
+            {
+                path: '/collections',
+                name: 'collections',
+                meta: {
+                    title: '展品详情',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "collections" */ '../views/collections.vue'),
+            },
+            {
+                path: '/activity',
+                name: 'activity',
+                meta: {
+                    title: '活动',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "activity" */ '../views/activity.vue'),
+            },
+
+            {
                 path: '/charts',
                 name: 'basecharts',
                 meta: {
@@ -155,24 +192,7 @@ const routes: RouteRecordRaw[] = [
                 },
                 component: () => import(/* webpackChunkName: "markdown" */ '../views/markdown.vue'),
             },
-            {
-                path: '/export',
-                name: 'export',
-                meta: {
-                    title: '导出Excel',
-                    permiss: '2',
-                },
-                component: () => import(/* webpackChunkName: "export" */ '../views/export.vue'),
-            },
-            {
-                path: '/import',
-                name: 'import',
-                meta: {
-                    title: '导入Excel',
-                    permiss: '2',
-                },
-                component: () => import(/* webpackChunkName: "import" */ '../views/import.vue'),
-            },
+            
         ],
     },
     {
