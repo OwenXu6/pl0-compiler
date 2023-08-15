@@ -104,7 +104,7 @@ import axios from 'axios'
 
 const fetchData = async () => {
 	try {
-		const response = await axios.get('http://101.43.177.24:2333/api/Product');
+		const response = await axios.get('http://42.192.39.198:5000/api/Product');
 		console.log(response.data); 
 		return response.data;
 	} catch (error) {
@@ -160,7 +160,7 @@ const handlePageChange = (val: number) => {
 
 const uploadData = async () => {
     try {
-        const response = await axios.put('http://101.43.177.24:2333/api/Product/'+tableData.value[idx].productId, tableData.value[idx]);
+        const response = await axios.put('http://42.192.39.198:5000/api/Product/'+tableData.value[idx].productId, tableData.value[idx]);
         ElMessage.success('数据上传成功');
     } catch (error) {
         ElMessage.error('数据上传失败');
@@ -169,7 +169,7 @@ const uploadData = async () => {
 
 const uploadData1 = async () => {
     try {
-        const response = await axios.post('http://101.43.177.24:2333/api/Product/', tableData.value[tableData.value.length-1]);
+        const response = await axios.post('http://42.192.39.198:5000/api/Product/', tableData.value[tableData.value.length-1]);
 		console.log(tableData.value[tableData.value.length-1]);
         ElMessage.success('数据上传成功');
     } catch (error) {
