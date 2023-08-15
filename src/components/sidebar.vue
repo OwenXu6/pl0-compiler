@@ -130,6 +130,35 @@ const items = [
         index:'/charts',
         title:'人流信息',
         permiss:'3',
+    },
+    {
+        icon:'Calendar',
+        index:'/charts',
+        title:'系统设置',
+        permiss:'3',
+    },
+    {
+        icon:"DocumentCopy",
+        index:"2",
+        title:"运营与合作",
+        permiss:"3",
+        subs:[
+        {
+                index: '/feedbacks',
+                title: '反馈信息管理',
+                permiss: '3',
+            },
+            {
+                index: '/products',
+                title: '文创产品信息管理',
+                permiss: '3',
+            },
+            {
+                index: '/cooperations',
+                title: '合作联名项目',
+                permiss: '3',
+            },
+        ]
     }
 ];
 

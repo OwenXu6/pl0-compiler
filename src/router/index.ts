@@ -112,6 +112,34 @@ const routes: RouteRecordRaw[] = [
                 },
                 component: () => import(/* webpackChunkName: "charts" */ '../views/charts.vue'),
             },
+
+            {
+                path: '/feedbacks',
+                name: 'feedback',
+                meta: {
+                    title: '反馈列表',
+                    permiss: '12',
+            },
+            component: () => import(/* webpackChunkName: "feedback" */ '../views/feedbacks.vue'),
+            },
+            {
+                path: '/products',
+                name: 'product',
+                meta: {
+                    title: '文创产品',
+                    permiss: '12',
+                },
+                component: () => import(/* webpackChunkName: "product" */ '../views/products.vue'),
+            },
+            {
+                path: '/cooperations',
+                name: 'cooperation',
+                meta: {
+                    title: '合作联名项目',
+                    permiss: '12',},
+                component: () => import(/* webpackChunkName: "cooperation" */ '../views/cooperations.vue'),
+
+            },
             {
                 path: '/form',
                 name: 'baseform',
