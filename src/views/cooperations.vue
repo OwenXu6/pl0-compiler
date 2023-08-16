@@ -12,7 +12,7 @@
 
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
+				<el-table-column prop="id" label="ID" width="100" align="center"></el-table-column>
 				<el-table-column prop="name" label="联名名称"></el-table-column>
 				<el-table-column label="联名金额（单位：万元）">
 					<template #default="scope">￥{{ scope.row.price }}</template>
@@ -98,7 +98,17 @@
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-import { fetchData } from '../api/index';
+import axios from 'axios'
+
+const fetchData = async () => {
+	try {
+		const response = await axios.get('http://42.192.39.198:5000/api/Cooperations');
+		console.log(response.data); 
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
 
 interface TableItem {
 	id: number;
@@ -118,6 +128,9 @@ const query = reactive({
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 const addedData = ref<TableItem[]>([]); // 保存新增的数据
+const compare = (a:TableItem,b:TableItem)=>{
+	return a.id < b.id ? -1:1;
+}
 // 获取表格数据
 const getData = () => {
 	fetchData().then(res => {
@@ -155,6 +168,27 @@ const handleDelete = (index: number) => {
 		.catch(() => { });
 };
 
+const uploadData = async () => {
+    try {
+        const response = await axios.put('http://42.192.39.198:5000/api/Cooperations/'+tableData.value[idx].id, tableData.value[idx]);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+};
+
+const uploadData1 = async () => {
+    try {
+        const response = await axios.post('http://42.192.39.198:5000/api/Cooperations/', tableData.value[tableData.value.length-1]);
+		console.log(tableData.value[tableData.value.length-1]);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+};
+
+
+
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
 let form = reactive({
@@ -182,6 +216,7 @@ const saveEdit = () => {
 	tableData.value[idx].partner = form.partner;
 	tableData.value[idx].timeStamp_start = form.timeStamp_start;
 	tableData.value[idx].timeStamp_end = form.timeStamp_end;
+	uploadData();
 };
 
 // 新增弹窗和保存
@@ -209,6 +244,7 @@ const saveAdd = () => {
 	addedData.value.push(newItem); // 将新增的数据保存到addedData数组中
 	tableData.value.push(newItem);
 	ElMessage.success('新增成功');
+	uploadData1();
 };
 </script>
 
