@@ -16,16 +16,19 @@
 							<el-button size="small" @click="handleRead(scope.$index)">标为已解决</el-button>
 						</template>
 					</el-table-column>
+					<el-table-column width="60">
+						<template #default="scope">
+							<el-button size="small" @click="handleView(scope.$index)">查看</el-button>
+						</template>
+					</el-table-column>
 
-					<el-table-column width="120">
+					<el-table-column width="60">
 						<template #default="scope">
 							<el-button size="small" @click="handleReply(scope.$index)">回复</el-button>
 							<el-input v-if="showReplyBox && currentReplyIndex === scope.$index" v-model="currentReply"
 								:style="{ width: '300px', height: '100px' }"></el-input>
 						</template>
 					</el-table-column>
-
-
 
 				</el-table>
 				<div class="handle-row">
@@ -82,30 +85,26 @@
 
 		<el-dialog feedbackTitle="回复反馈" v-model="editVisible" width="30%">
 			<el-form label-width="70px">
+
 				<el-form-item label="回复内容">
 					<el-input type="textarea" v-model="currentReply"
 						:style="{ width: '300px', height: '100px' }"></el-input>
 				</el-form-item>
-				
 			</el-form>
 			<el-button @click="saveReply">保存</el-button>
 		</el-dialog>
-
-
-
 	</div>
 </template>
 
 <script setup lang="ts" name="tabs">
 import { ref, reactive } from 'vue';
 import axios from 'axios';
-
+import { ElMessageBox ,ElMessage} from 'element-plus';
 interface Message {
-	feedbackId: number;
+	feedbackID: number;
 	feedbackTitle: string;
 	feedbackType: string;
 	feedbackContent: string;
-	edit?: boolean;
 	replyContent?: string;
 	feedbackSendTime: string;
 	replyTime: string;
@@ -123,7 +122,7 @@ const state = reactive({
 axios.get('http://42.192.39.198:5000/api/Feedback')
 	.then(response => {
 		state.unread = response.data.map(item => ({
-			feedbackId: item.feedbackID,
+			feedbackID: item.feedbackID,
 			feedbackTitle: item.feedbackTitle,
 			feedbackType: item.type,
 			feedbackContent: item.feedbackContent,
@@ -138,10 +137,9 @@ axios.get('http://42.192.39.198:5000/api/Feedback')
 
 let currentReplyIndex = -1;
 const handleRead = (index: number) => {
-	const item = state.unread.splice(index, 1);
-	state.read = item.concat(state.read);
+  const item = state.unread.splice(index, 1);
+  state.read = item.concat(state.read);
 };
-
 
 const handleReply = (index: number) => {
 	if (!editVisible.value) {
@@ -153,9 +151,10 @@ const handleReply = (index: number) => {
 	}
 }
 
-const handleSearch = () => {
-	query.pageIndex = 1;
-};
+
+const handleView = (index: number) => {
+    ElMessageBox.alert(state.unread[index].feedbackContent, '反馈内容');
+}
 
 const handleDel = (index: number) => {
 	const item = state.read.splice(index, 1);
@@ -173,9 +172,26 @@ const saveReply = () => {
 		state.unread[currentReplyIndex].replyContent = currentReply.value;
 		editVisible.value = false;
 		currentReply.value = '';
+		
+		// 更新服务器上的数据
+		const feedbackID = state.unread[currentReplyIndex].feedbackID;
+		const replyContent = state.unread[currentReplyIndex].replyContent;
+		axios.put(`http://42.192.39.198:5000/api/Feedback/${feedbackID}`, {
+			replyContent: replyContent
+		})
+		.then(response => {
+			console.log(response.data);
+			ElMessage.success('回复已保存');
+		})
+		.catch(error => {
+			console.log(error);
+			ElMessage.error('保存失败');
+		});
+		
 		currentReplyIndex = -1;
 	}
 }
+
 
 const query = reactive({
 	designIdea: '',
