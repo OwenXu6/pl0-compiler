@@ -108,6 +108,8 @@ interface Message {
 	replyContent?: string;
 	feedbackSendTime: string;
 	replyTime: string;
+	userId:string;
+	isReply:number;
 }
 
 const editVisible = ref(false);
@@ -176,8 +178,11 @@ const saveReply = () => {
 		// 更新服务器上的数据
 		const feedbackID = state.unread[currentReplyIndex].feedbackID;
 		const replyContent = state.unread[currentReplyIndex].replyContent;
+		const userId = state.unread[currentReplyIndex].userId;
 		axios.put(`http://42.192.39.198:5000/api/Feedback/${feedbackID}`, {
-			replyContent: replyContent
+			replyContent: replyContent,
+			isReply: 1,
+			userId:userId
 		})
 		.then(response => {
 			console.log(response.data);
