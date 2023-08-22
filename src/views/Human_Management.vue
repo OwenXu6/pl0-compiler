@@ -163,7 +163,7 @@ const fetchData = async () => {
 };
 
 interface TableItem {
-	staffId: number;
+	staffId: string;
 	staffName: string;
 	staffAge: string;
 	staffGender: string;
@@ -330,7 +330,7 @@ const saveEdit = () => {
 	editVisible.value = false;
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);
 	console.log(idx,HumantableData);
-	HumantableData.value[idx].staffId = Number(form.staffId);
+	HumantableData.value[idx].staffId = form.staffId;
 	HumantableData.value[idx].staffName = form.staffName;
 	HumantableData.value[idx].staffAge = form.staffAge;
 	HumantableData.value[idx].staffGender = form.staffGender;
@@ -345,7 +345,7 @@ const saveEdit = () => {
 const savenew = () => {         //保存新增人员
 	newVisible.value = false;
 	let newEmployee: TableItem = {
-	staffId: 0,
+	staffId: '',
 	staffName: '',
 	staffAge: '',
 	staffGender: '',
@@ -357,7 +357,7 @@ const savenew = () => {         //保存新增人员
 	HumantableData.value.push(newEmployee);
 	ElMessage.success(`添加成功`);
 	console.log(idx,HumantableData);
-	HumantableData.value[idx].staffId = Number(form.staffId);
+	HumantableData.value[idx].staffId = form.staffId;
 	HumantableData.value[idx].staffName = form.staffName;
 	HumantableData.value[idx].staffAge = form.staffAge;
 	HumantableData.value[idx].staffGender = form.staffGender;
