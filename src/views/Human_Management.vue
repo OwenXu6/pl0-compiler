@@ -2,16 +2,6 @@
 	<div>
 		<div class="container">
 			<div class="handle-box">
-				<el-select v-model="query.pageIndex" placeholder="属性" class="handle-select mr10">
-					<el-option key="1" label="ID" value="ID"></el-option>
-					<el-option key="2" label="姓名" value="姓名"></el-option>
-					<el-option key="3" label="年龄" value="年龄"></el-option>
-					<el-option key="4" label="性别" value="性别"></el-option>
-					<el-option key="5" label="职级" value="职级"></el-option>
-					<el-option key="6" label="薪资" value="薪资"></el-option>
-					<el-option key="7" label="工作方向" value="工作方向"></el-option>
-					<el-option key="8" label="工作内容" value="工作内容"></el-option>
-				</el-select>
 				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<el-button type="primary" :icon="Plus" @click="handlenew">新增</el-button>
@@ -27,11 +17,14 @@
 				<el-table-column prop="job" label="工作内容" align="center"></el-table-column>
 				<el-table-column label="操作" width="220" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
+						<el-button text :icon="Edit"  @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
 							编辑
 						</el-button>
 						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
 							删除
+						</el-button>
+						<el-button text :icon="More"  @click="" v-permiss="16">
+							详细信息
 						</el-button>
 					</template>
 				</el-table-column>
@@ -153,7 +146,7 @@
 <script setup lang="ts" name="basetable">
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus , More } from '@element-plus/icons-vue';
 import axios from 'axios'; 
 import { ta } from 'element-plus/es/locale';
 import { ITEM_RENDER_EVT } from 'element-plus/es/components/virtual-list/src/defaults';
@@ -207,16 +200,17 @@ const getData = async () => {
 	//if (query.designIdea !== '') {
 		//filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
 	//}
-	if (query.staffName !== '') {
-		filteredData = filteredData.filter((item: TableItem) => 
-    		item.staffName.includes(query.value) || 
-    		item.staffGender.includes(query.value) || 
-    		item.staffPostRank.includes(query.value) ||
-			item.job.includes(query.value) ||
-			item.workType.includes(query.value)
-		);
+	console.log(query.value);
+	filteredData = filteredData.filter((item: TableItem) => 
+    	item.staffName.includes(query.value) || 
+    	item.staffGender.includes(query.value) || 
+    	item.staffPostRank.includes(query.value) ||
+		item.job.includes(query.value) ||
+		item.workType.includes(query.value) ||
+		String(item.staffId).includes(query.value)||
+		String(item.staffSalary).includes(query.value)
+	);
 
-	}
 	HumantableData.value = filteredData.sort(compare);
 	console.log(HumantableData.value); 
 };
@@ -283,12 +277,12 @@ const handleDelete = (index: number) => {
 //新增操作
 const handlenew = () => {
 	idx = HumantableData.value.length;
-	form.staffId = 0;
+	form.staffId = '';
 	form.staffName = '';           
 	form.staffAge = '',
 	form.staffGender = '',
 	form.staffPostRank = '',
-	form.staffSalary = 0,
+	form.staffSalary = '',
 	form.workType = '',
 	form.job = '',
 	newVisible.value = true;
@@ -299,12 +293,12 @@ const handlenew = () => {
 const editVisible = ref(false);
 const newVisible = ref(false);
 let form = reactive({
-	staffId: 0,
+	staffId: '',
 	staffName: '',
 	staffAge: '',
 	staffGender: '',
 	staffPostRank: '',
-	staffSalary: 0,
+	staffSalary: '',
 	workType: '',
 	job: '',
 });
@@ -324,18 +318,28 @@ const handleEdit = (index: number, row: any) => {
 };
 
 const saveEdit = () => {
+	const isAllDigits =/^[0-9]+$/.test(form.staffSalary);
+
+	if (!isAllDigits) {
+  		console.error("staffSalary 包含非数字字符");
+		  ElMessage.error('薪資要是數字！！');
+  		return; // 或者抛出错误
+	}
+
+
 	editVisible.value = false;
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);
 	console.log(idx,HumantableData);
-	HumantableData.value[idx].staffId = form.staffId;
+	HumantableData.value[idx].staffId = Number(form.staffId);
 	HumantableData.value[idx].staffName = form.staffName;
 	HumantableData.value[idx].staffAge = form.staffAge;
 	HumantableData.value[idx].staffGender = form.staffGender;
 	HumantableData.value[idx].staffPostRank = form.staffPostRank;
-	HumantableData.value[idx].staffSalary = form.staffSalary;
+	HumantableData.value[idx].staffSalary = Number(form.staffSalary);
 	HumantableData.value[idx].workType = form.workType;
 	HumantableData.value[idx].job = form.job; //应该要至后端修改之
-	editData();
+		editData();
+	
 };
 
 const savenew = () => {         //保存新增人员
@@ -353,12 +357,12 @@ const savenew = () => {         //保存新增人员
 	HumantableData.value.push(newEmployee);
 	ElMessage.success(`添加成功`);
 	console.log(idx,HumantableData);
-	HumantableData.value[idx].staffId = form.staffId;
+	HumantableData.value[idx].staffId = Number(form.staffId);
 	HumantableData.value[idx].staffName = form.staffName;
 	HumantableData.value[idx].staffAge = form.staffAge;
 	HumantableData.value[idx].staffGender = form.staffGender;
 	HumantableData.value[idx].staffPostRank = form.staffPostRank;
-	HumantableData.value[idx].staffSalary = form.staffSalary;
+	HumantableData.value[idx].staffSalary = Number(form.staffSalary);
 	HumantableData.value[idx].workType = form.workType;
 	HumantableData.value[idx].job = form.job; 
 	uploadData();             //上传
