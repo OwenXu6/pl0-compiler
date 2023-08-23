@@ -2,18 +2,20 @@
 	<div>
 		<div class="container">
 			<div class="handle-box">
-				<el-select v-model="query.isRelated" placeholder="产品类别" class="handle-select mr10">
-					<el-option key="0" label="全部产品" value=""></el-option>
-					<el-option key="1" label="文创产品" value="1"></el-option>
-					<el-option key="2" label="非文创产品" value="0"></el-option>
-				</el-select>
+				<el-select v-model="selectedCategory" placeholder="产品类别" class="handle-select mr10">
+    <el-option label="全部产品" value="all"></el-option>
+    <el-option label="文创产品" value="文创"></el-option>
+    <el-option label="非文创产品" value="非文创"></el-option>
+</el-select>
+
+
 
 				<el-input v-model="query.productName" placeholder="商品名称" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
 
 			</div>
-			<el-table :data="tableData" border class="tab	le" ref="multipleTable"
+			<el-table :data="tableData" border class="table" ref="multipleTable"
 				header-cell-class-productName="table-header">
 				<el-table-column prop="productId" label="ID			" width="55" align="center"></el-table-column>
 				<el-table-column prop="productName" label="商品名称"></el-table-column>
@@ -111,10 +113,10 @@
 						<el-option key="2" label="非文创产品" value="0"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="相关文物Id" v-if="addForm.isRelated !== 0">
+				<el-form-item label="相关文物Id" v-if="addForm.isRelated === 1">
 					<el-input v-model="addForm.relatedCollectionId"></el-input>
 				</el-form-item>
-				<el-form-item label="设计理念" v-if="addForm.isRelated !== 0">
+				<el-form-item label="设计理念" v-if="addForm.isRelated === 1">
 					<el-input v-model="addForm.designIdea"></el-input>
 				</el-form-item>
 			</el-form>
@@ -135,16 +137,6 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 
 import axios from 'axios'
-
-const fetchData = async () => {
-	try {
-		const response = await axios.get('http://42.192.39.198:5000/api/Products');
-		console.log(response.data);
-		return response.data;
-	} catch (error) {
-		console.error(error);
-	}
-};
 
 
 interface TableItem {
@@ -170,31 +162,35 @@ const addedData = ref<TableItem[]>([]); // 保存新增的数据
 const compare = (a: TableItem, b: TableItem) => {
 	return a.productId < b.productId ? -1 : 1;
 }
+
+const selectedCategory = ref('all');
 // 获取表格数据
 const getData = async () => {
-	try {
-		const response = await axios.get('http://42.192.39.198:5000/api/Products');
-		const data = response.data;
+    try {
+        const response = await axios.get('http://42.192.39.198:5000/api/Products');
+        const data = response.data;
 
-		let filteredData = data.concat(addedData.value);
+        let filteredData = [...data];
 
-		if (query.designIdea !== '') {
-			filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
-		}
+        if (query.designIdea !== '') {
+            filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
+        }
 
-		if (query.productName !== '') {
-			filteredData = filteredData.filter((item: TableItem) => item.productName.includes(query.productName));
-		}
+        if (query.productName !== '') {
+            filteredData = filteredData.filter((item: TableItem) => item.productName.includes(query.productName));
+        }
 
-		if (query.isRelated !== 0) {
-			filteredData = filteredData.filter((item: TableItem) => item.isRelated === Number(query.isRelated));
-		}
+        if (selectedCategory.value !== 'all') {
+            const isRelatedValue = selectedCategory.value === '文创' ? 1 : 0;
+            filteredData = filteredData.filter((item: TableItem) => item.isRelated === isRelatedValue);
+        }
 
-		tableData.value = filteredData.sort(compare);
-	} catch (error) {
-		console.error(error);
-	}
+        tableData.value = filteredData.sort(compare);
+    } catch (error) {
+        console.error(error);
+    }
 };
+
 
 getData();
 
@@ -244,27 +240,27 @@ const viewCreativeProduct = (index: number, row: any) => {
 
 // 删除操作
 const handleDelete = (index: number) => {
-  // 二次确认删除
-  ElMessageBox.confirm('确定要删除吗？', '提示', {
-    type: 'warning'
-  })
-    .then(() => {
-      ElMessage.success('删除成功');
-      // 在这里调用 saveDelete 并传递要删除的数据索引
-      saveDelete(index);
-      tableData.value.splice(index, 1);
-    })
-    .catch(() => { });
+	// 二次确认删除
+	ElMessageBox.confirm('确定要删除吗？', '提示', {
+		type: 'warning'
+	})
+		.then(() => {
+			ElMessage.success('删除成功');
+			// 在这里调用 saveDelete 并传递要删除的数据索引
+			saveDelete(index);
+			tableData.value.splice(index, 1);
+		})
+		.catch(() => { });
 };
 
 const saveDelete = async (index: number) => {
-  try {
-    const deletedItemId = tableData.value[index].productId;
-    await axios.delete(`http://42.192.39.198:5000/api/Products/${deletedItemId}`);
-    ElMessage.success('数据删除成功');
-  } catch (error) {
-    ElMessage.error('数据删除失败');
-  }
+	try {
+		const deletedItemId = tableData.value[index].productId;
+		await axios.delete(`http://42.192.39.198:5000/api/Products/${deletedItemId}`);
+		ElMessage.success('数据删除成功');
+	} catch (error) {
+		ElMessage.error('数据删除失败');
+	}
 };
 
 
@@ -304,14 +300,14 @@ const saveEdit = () => {
 // 新增弹窗和保存
 const addVisible = ref(false);
 let addForm = reactive({
-	productName: '',
-	price: 0,
-	monthlySale: 0,
-	designIdea: '',
-	isRelated: 0,
-	relatedCollectionId: 0
-
+    productName: '',
+    price: 0,
+    monthlySale: 0,
+    designIdea: '',
+    isRelated: 0, // 默认选择非文创产品
+    relatedCollectionId: 0
 });
+
 const handleAdd = () => {
 	addVisible.value = true;
 };
