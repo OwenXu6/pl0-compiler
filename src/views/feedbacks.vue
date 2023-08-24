@@ -31,9 +31,6 @@
 					</el-table-column>
 
 				</el-table>
-				<div class="handle-row">
-					<el-button type="primary">全部标为已解决</el-button>
-				</div>
 			</el-tab-pane>
 			<el-tab-pane :label="`已解决反馈(${state.read.length})`" name="second">
 				<template v-if="message === 'second'">
@@ -43,7 +40,7 @@
 								<span class="message-feedbackTitle">{{ scope.row.feedbackTitle }}</span>
 							</template>
 						</el-table-column>
-						<el-table-column prop="feedbackSendTime" width="150"></el-table-column>
+						<el-table-column prop="feedbackSendTime" width="180"></el-table-column>
 						<el-table-column label="回复内容">
 							<template #default="scope">
 								{{ scope.row.replyContent }}
@@ -69,21 +66,21 @@
 								<span class="message-feedbackTitle">{{ scope.row.feedbackTitle }}</span>
 							</template>
 						</el-table-column>
-						<el-table-column prop="feedbackSendTime" width="150"></el-table-column>
-						<el-table-column width="120">
+						<el-table-column prop="feedbackSendTime" width="180"></el-table-column>
+						<el-table-column width="160">
 							<template #default="scope">
-								<el-button @click="handleRestore(scope.$index)">还原</el-button>
+								<div class="button-group">
+									<el-button @click="handleRestore(scope.$index)">还原</el-button>
+									<el-button type="danger" @click="handleRecycleDelete(scope.$index)">删除</el-button>
+								</div>
 							</template>
 						</el-table-column>
 					</el-table>
-					<div class="handle-row">
-						<el-button type="danger">清空回收站</el-button>
-					</div>
 				</template>
 			</el-tab-pane>
 		</el-tabs>
 
-		<el-dialog feedbackTitle="回复反馈" v-model="editVisible" width="30%">
+		<el-dialog title="回复反馈" v-model="editVisible" width="30%">
 			<el-form label-width="70px">
 
 				<el-form-item label="回复内容">
@@ -99,7 +96,7 @@
 <script setup lang="ts" name="tabs">
 import { ref, reactive } from 'vue';
 import axios from 'axios';
-import { ElMessageBox ,ElMessage} from 'element-plus';
+import { ElMessageBox, ElMessage } from 'element-plus';
 interface Message {
 	feedbackID: number;
 	feedbackTitle: string;
@@ -108,8 +105,8 @@ interface Message {
 	replyContent?: string;
 	feedbackSendTime: string;
 	replyTime: string;
-	userId:string;
-	isReply:number;
+	userId: string;
+	isReply: number;
 }
 
 const editVisible = ref(false);
@@ -123,24 +120,40 @@ const state = reactive({
 // 获取数据
 axios.get('http://42.192.39.198:5000/api/Feedback')
 	.then(response => {
-		state.unread = response.data.map(item => ({
-			feedbackID: item.feedbackID,
-			feedbackTitle: item.feedbackTitle,
-			feedbackType: item.type,
-			feedbackContent: item.feedbackContent,
-			replyContent: item.replyContent,
-			feedbackSendTime: item.feedbackSendTime
-		}));
-		// 对 state.read 和 state.recycle 数组进行类似处理
+		state.unread = [];
+		state.read = [];
+
+		response.data.forEach(item => {
+			const feedbackData = {
+				feedbackID: item.feedbackID,
+				feedbackTitle: item.feedbackTitle,
+				feedbackType: item.type,
+				feedbackContent: item.feedbackContent,
+				replyContent: item.replyContent,
+				feedbackSendTime: item.feedbackSendTime,
+				replyTime: item.replyTime,
+				userId: item.userId,
+				isReply: item.isReply
+			};
+
+			if (item.isReply === 0) {
+				state.unread.push(feedbackData);
+			} else {
+				state.read.push(feedbackData);
+			}
+		});
 	})
 	.catch(error => {
 		console.log(error);
 	});
 
+
 let currentReplyIndex = -1;
 const handleRead = (index: number) => {
-  const item = state.unread.splice(index, 1);
-  state.read = item.concat(state.read);
+
+	const item = state.unread.splice(index, 1);
+	state.read = item.concat(state.read);
+	saveReply();
 };
 
 const handleReply = (index: number) => {
@@ -155,8 +168,15 @@ const handleReply = (index: number) => {
 
 
 const handleView = (index: number) => {
-    ElMessageBox.alert(state.unread[index].feedbackContent, '反馈内容');
+	const feedback = state.unread[index];
+	ElMessageBox.alert(
+		`<div>用户ID: ${feedback.userId}</div><div>反馈内容: ${feedback.feedbackContent}</div>`,
+		'反馈详情',
+		{ dangerouslyUseHTMLString: true } // This is important to allow HTML
+	);
 }
+
+
 
 const handleDel = (index: number) => {
 	const item = state.read.splice(index, 1);
@@ -169,33 +189,46 @@ const handleRestore = (index: number) => {
 
 const showReplyBox = ref(false);
 const currentReply = ref('');
-const saveReply = () => {
-	if (currentReplyIndex >= 0) {
-		state.unread[currentReplyIndex].replyContent = currentReply.value;
-		editVisible.value = false;
-		currentReply.value = '';
-		
-		// 更新服务器上的数据
-		const feedbackID = state.unread[currentReplyIndex].feedbackID;
-		const replyContent = state.unread[currentReplyIndex].replyContent;
-		const userId = state.unread[currentReplyIndex].userId;
-		axios.put(`http://42.192.39.198:5000/api/Feedback/${feedbackID}`, {
-			replyContent: replyContent,
-			isReply: 1,
-			userId:userId
-		})
-		.then(response => {
-			console.log(response.data);
-			ElMessage.success('回复已保存');
-		})
-		.catch(error => {
-			console.log(error);
-			ElMessage.error('保存失败');
-		});
-		
-		currentReplyIndex = -1;
+const saveReply = async () => {
+	try {
+		for (let index = 0; index < state.unread.length; index++) {
+			const item = state.unread[index];
+			if (item.replyContent) {
+				const data = {
+					feedbackID: item.feedbackID,
+					replyContent: item.replyContent,
+					isReply: item.isReply,
+					userId: item.userId,
+					feedbackTitle: item.feedbackTitle,
+					feedbackType: item.feedbackType,
+					feedbackContent: item.feedbackContent,
+					feedbackSendTime: item.feedbackSendTime,
+					replyTime: item.replyTime,
+				};
+
+				// Update the replyContent of the corresponding item in state.unread
+				state.unread[index].replyContent = currentReply.value; // Update the replyContent with the edited content
+
+				const response = await axios.put(`http://42.192.39.198:5000/api/Feedback/${item.feedbackID}`, data);
+			}
+		}
+		ElMessage.success('数据上传成功');
+	} catch (error) {
+		ElMessage.error('数据上传失败');
 	}
-}
+};
+
+
+const handleRecycleDelete = async (index: number) => {
+	try {
+		const item = state.recycle[index];
+		await axios.delete(`http://42.192.39.198:5000/api/Feedback/${item.feedbackID}`);
+		state.recycle.splice(index, 1);
+		ElMessage.success('删除成功');
+	} catch (error) {
+		ElMessage.error('删除失败');
+	}
+};
 
 
 const query = reactive({
@@ -214,5 +247,10 @@ const query = reactive({
 
 .handle-row {
 	margin-top: 30px;
+}
+
+.button-group {
+	display: flex;
+	gap: 8px;
 }
 </style>
