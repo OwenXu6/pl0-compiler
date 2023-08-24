@@ -19,20 +19,9 @@
 						<span>东莞</span>
 					</div>
 				</el-card>
-				<el-card shadow="hover" style="height: 252px">
-					<template #header>
-						<div class="clearfix">
-							<span>语言详情</span>
-						</div>
-					</template>
-					Vue
-					<el-progress :percentage="79.4" color="#42b983"></el-progress>
-					TypeScript
-					<el-progress :percentage="14" color="#f1e05a"></el-progress>
-					CSS
-					<el-progress :percentage="5.6"></el-progress>
-					HTML
-					<el-progress :percentage="1" color="#f56c6c"></el-progress>
+				<el-card class="ringbox" shadow="hover" style="height: 330px">
+					<schart class="ringschart" canvasId="ring" :options="options4"></schart>
+					<button class="btn" @click="realTime">实时显示</button>
 				</el-card>
 			</el-col>
 			<el-col :span="16">
@@ -113,17 +102,107 @@
 				</el-card>
 			</el-col>
 		</el-row>
+		
 	</div>
 </template>
 
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart';
-import { reactive } from 'vue';
+import { reactive,ref,watch} from 'vue';
 import imgurl from '../assets/img/img.jpg';
+import { CENTERED_ALIGNMENT } from 'element-plus/es/components/virtual-list/src/defaults';
 
 const name = localStorage.getItem('ms_username');
 const role: string = name === 'admin' ? '超级管理员' : '普通用户';
+const vis= reactive({
+	btn1vis:true,
+	btn2vis:false,
+	startTime:false,
+	endTime:true,
+});
+const timer1 = ref(0); // 创建一个引用变量来存储定时器
+const realTime=()=>{
+	//unWatch();
+	if(vis.endTime===true)
+	{
+		vis.endTime=false;
+		vis.startTime=true;
+		timer1.value = setInterval(myFunction, 1000); // 每隔一秒触发 myFunction 函数
+	}
+	else{
+		vis.endTime=true;
+		vis.startTime=false;
+		clearInterval(timer1.value);
+	}
+	//clearInterval(timer1.value);
+}
+const myFunction = () => {
+      // 在这里编写你要执行的代码
+	  //updateChart();
+	  //options4.datasets[0].data = [inAndOut.inData-inAndOut.outData, inAndOut.totData-(inAndOut.inData-inAndOut.outData)];
+	let num1=18;
+	let num2=15;
+	///var nowData=inAndOut.inData-inAndOut.outData;
+	
+	let nowData = inAndOut.inData -inAndOut.outData;
+	if(nowData<600){
+		inAndOut.inData+=Math.floor(Math.random()*(num1-10)+10);
+		inAndOut.outData+=Math.floor(Math.random()*(num2-10)+10);
+	}
+	else{
+		inAndOut.inData+=Math.floor(Math.random()*(num2-10)+10);
+		inAndOut.outData+=Math.floor(Math.random()*(num1-10)+10);
+	}
+};
+const inAndOut = reactive({
+	inData:1000,
+	outData:500,
+	maxPeople:5000,
+	flag:0,
+	li1:[{date:"7.2",inData1:0},
+	{date:"7.3",inData1:2000},
+	{date:"7.4",inData1:1500},
+	{date:"7.5",inData1:1800},
+	{date:"7.6",inData1:2000},
+	{date:"7.7",inData1:1500},
+	{date:"7.8",inData1:0},
+	{date:"7.9",inData1:2000},
+	{date:"7.10",inData1:1500},
+	{date:"7.11",inData1:1800},
+	{date:"7.12",inData1:2000},
+	{date:"7.13",inData1:1500},
+	{date:"7.14",inData1:2000},
+	{date:"7.15",inData1:1500},]
+	
 
+});
+const options4 = reactive({
+	type: 'ring',
+	title: {
+		text: ''
+	},
+	showValue: true,
+	legend: {
+		position: 'bottom',
+		bottom: 5
+	},
+	bgColor: '#fff',
+	labels: ['在馆人数', '馆内剩余容量'],
+	datasets: [
+		{
+			data:  [inAndOut.inData-inAndOut.outData, inAndOut.maxPeople-(inAndOut.inData-inAndOut.outData)],
+		}
+	],
+});
+
+const unWatch=watch(inAndOut, () => {
+      updateChart();
+   }, { deep: true });
+const updateChart = () => {
+      // 在这里更新图表数据
+      options4.datasets[0].data = [inAndOut.inData-inAndOut.outData, inAndOut.maxPeople-(inAndOut.inData-inAndOut.outData)];
+	  //options1.datasets[0].data = [inAndOut.li1[0].inData1, inAndOut.li1[1].inData1,inAndOut.li1[2].inData1, inAndOut.li1[3].inData1, inAndOut.li1[4].inData1,inAndOut.li1[5].inData1];
+};
 const options = {
 	type: 'bar',
 	title: {
@@ -293,9 +372,28 @@ const todoList = reactive([
 	text-decoration: line-through;
 	color: #999;
 }
+.ringbox{
+}
+.ringschart {
+	left: 22%;
+	width: 250px;
+	height: 250px;
+	position: relative;
+}
 
-.schart {
-	width: 100%;
-	height: 300px;
+.btn{
+	
+	height: 30px;
+	width: 150px;
+	position: relative;
+	top: 15px;
+	left: 32%;
+	background-color:rgb(45, 140, 240);
+	border: none;
+	text-align: center;
+	border-radius: 8px;
+	color: white;
+	font-size: 15px;
+	
 }
 </style>
