@@ -2,22 +2,21 @@
 	<div>
 		<div class="container">
 			<div class="handle-box">
-				<!--<el-select v-model="query.designIdea" placeholder="产品类别" class="handle-select mr10">
-					<el-option key="0" label="全部产品" value=""></el-option>
-					<el-option key="1" label="文创产品" value="文创产品"></el-option>
-					<el-option key="2" label="非文创产品" value="非文创产品"></el-option>
-				</el-select>-->
+				<el-select v-model="selectedCategory" placeholder="产品类别" class="handle-select mr10">
+    <el-option label="全部产品" value="all"></el-option>
+    <el-option label="文创产品" value="文创"></el-option>
+    <el-option label="非文创产品" value="非文创"></el-option>
+</el-select>
+
+
 
 				<el-input v-model="query.productName" placeholder="商品名称" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
 
-				<el-button @click="getData()">获取api数据</el-button>
-				<el-button @click="uploadData">上传数据</el-button>
-
-
 			</div>
-			<el-table :data="tableData" border class="tab	le" ref="multipleTable" header-cell-class-productName="table-header">
+			<el-table :data="tableData" border class="table" ref="multipleTable"
+				header-cell-class-productName="table-header">
 				<el-table-column prop="productId" label="ID			" width="55" align="center"></el-table-column>
 				<el-table-column prop="productName" label="商品名称"></el-table-column>
 				<el-table-column label="商品价格">
@@ -25,7 +24,7 @@
 				</el-table-column>
 
 				<el-table-column prop="monthlySale" label="月销量"></el-table-column>
-				<el-table-column label="操作" width="220" align="center">
+				<el-table-column label="操作" width="300" align="center">
 					<template #default="scope">
 						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
 							编辑
@@ -33,10 +32,10 @@
 						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
 							删除
 						</el-button>
+
+						<el-button @click="viewCreativeProduct(scope.$index, scope.row)">查看</el-button>
 					</template>
 				</el-table-column>
-
-				<el-table-column prop="designIdea" label="状态"></el-table-column>
 
 			</el-table>
 			<div class="pagination">
@@ -46,8 +45,8 @@
 		</div>
 
 		<!-- 编辑弹出框 -->
-		<el-dialog title="编辑" v-model="editVisible" width="30%">
-			<el-form label-width="70px">
+		<el-dialog title="编辑" v-model="editVisible" width="40%">
+			<el-form label-width="90px">
 				<el-form-item label="商品名称">
 					<el-input v-model="form.productName"></el-input>
 				</el-form-item>
@@ -56,6 +55,12 @@
 				</el-form-item>
 				<el-form-item label="月销量">
 					<el-input v-model="form.monthlySale"></el-input>
+				</el-form-item>
+				<el-form-item label="相关文物Id" v-if="form.isRelated !== 0">
+					<el-input v-model="form.relatedCollectionId"></el-input>
+				</el-form-item>
+				<el-form-item label="设计理念" v-if="form.isRelated !== 0">
+					<el-input v-model="form.designIdea"></el-input>
 				</el-form-item>
 			</el-form>
 			<template #footer>
@@ -66,9 +71,33 @@
 			</template>
 		</el-dialog>
 
+		<!-- 查看文创产品弹出框 -->
+		<el-dialog title="查看文创产品" v-model="viewVisible" width="40%">
+			<el-form label-width="90px">
+				<el-form-item label="相关文物Id">
+					<el-input v-model="viewForm.relatedCollectionId" disabled></el-input>
+				</el-form-item>
+				<el-form-item label="设计理念">
+					<el-input v-model="viewForm.designIdea" disabled></el-input>
+				</el-form-item>
+
+				<!-- test -->
+				<el-form-item label="isRelated">
+					<el-input v-model="viewForm.isRelated" disabled></el-input>
+				</el-form-item>
+
+
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="viewVisible = false">关闭</el-button>
+				</span>
+			</template>
+		</el-dialog>
+
 		<!-- 新增弹出框 -->
-		<el-dialog title="新增" v-model="addVisible" width="30%">
-			<el-form label-width="70px">
+		<el-dialog title="新增" v-model="addVisible" width="40%">
+			<el-form label-width="90px">
 				<el-form-item label="商品名称">
 					<el-input v-model="addForm.productName"></el-input>
 				</el-form-item>
@@ -78,12 +107,18 @@
 				<el-form-item label="月销量">
 					<el-input v-model="addForm.monthlySale"></el-input>
 				</el-form-item>
-				<!--<el-form-item label="产品类别">
-					<el-select v-model="addForm.designIdea" placeholder="产品类别">
-						<el-option key="1" label="文创产品" value="文创产品"></el-option>
-						<el-option key="2" label="非文创产品" value="非文创产品"></el-option>
+				<el-form-item label="产品类别">
+					<el-select v-model="addForm.isRelated" placeholder="产品类别">
+						<el-option key="1" label="文创产品" value="1"></el-option>
+						<el-option key="2" label="非文创产品" value="0"></el-option>
 					</el-select>
-				</el-form-item>-->
+				</el-form-item>
+				<el-form-item label="相关文物Id" v-if="addForm.isRelated === 1">
+					<el-input v-model="addForm.relatedCollectionId"></el-input>
+				</el-form-item>
+				<el-form-item label="设计理念" v-if="addForm.isRelated === 1">
+					<el-input v-model="addForm.designIdea"></el-input>
+				</el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
@@ -92,6 +127,7 @@
 				</span>
 			</template>
 		</el-dialog>
+
 	</div>
 </template>
 
@@ -102,27 +138,20 @@ import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 
 import axios from 'axios'
 
-const fetchData = async () => {
-	try {
-		const response = await axios.get('http://42.192.39.198:5000/api/Product');
-		console.log(response.data); 
-		return response.data;
-	} catch (error) {
-		console.error(error);
-	}
-};
-
 
 interface TableItem {
 	productId: number;
 	productName: string;
 	price: number;
-	//designIdea: string;
+	isRelated: number;
+	relatedCollectionId: number;
+	designIdea: string;
 	monthlySale: number;
 }
 
 const query = reactive({
-	//designIdea: '',
+	designIdea: '',
+	isRelated: 0,
 	productName: '',
 	pageIndex: 1,
 	pageSize: 10
@@ -130,21 +159,39 @@ const query = reactive({
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 const addedData = ref<TableItem[]>([]); // 保存新增的数据
-const compare = (a:TableItem,b:TableItem)=>{
-	return a.productId < b.productId ? -1:1;
+const compare = (a: TableItem, b: TableItem) => {
+	return a.productId < b.productId ? -1 : 1;
 }
+
+const selectedCategory = ref('all');
 // 获取表格数据
 const getData = async () => {
-	const res = await fetchData();
-	let filteredData = res.concat(addedData.value);
-	//if (query.designIdea !== '') {
-		//filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
-	//}
-	if (query.productName !== '') {
-		filteredData = filteredData.filter((item: TableItem) => item.productName.includes(query.productName));
-	}
-	tableData.value = filteredData.sort(compare);
+    try {
+        const response = await axios.get('http://42.192.39.198:5000/api/Products');
+        const data = response.data;
+
+        let filteredData = [...data];
+
+        if (query.designIdea !== '') {
+            filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
+        }
+
+        if (query.productName !== '') {
+            filteredData = filteredData.filter((item: TableItem) => item.productName.includes(query.productName));
+        }
+
+        if (selectedCategory.value !== 'all') {
+            const isRelatedValue = selectedCategory.value === '文创' ? 1 : 0;
+            filteredData = filteredData.filter((item: TableItem) => item.isRelated === isRelatedValue);
+        }
+
+        tableData.value = filteredData.sort(compare);
+    } catch (error) {
+        console.error(error);
+    }
 };
+
+
 getData();
 
 // 查询操作
@@ -159,23 +206,37 @@ const handlePageChange = (val: number) => {
 };
 
 const uploadData = async () => {
-    try {
-        const response = await axios.put('http://42.192.39.198:5000/api/Product/'+tableData.value[idx].productId, tableData.value[idx]);
-        ElMessage.success('数据上传成功');
-    } catch (error) {
-        ElMessage.error('数据上传失败');
-    }
+	try {
+		const response = await axios.put('http://42.192.39.198:5000/api/Products/' + tableData.value[idx].productId, tableData.value[idx]);
+		ElMessage.success('数据上传成功');
+	} catch (error) {
+		ElMessage.error('数据上传失败');
+	}
 };
 
 const uploadData1 = async () => {
-    try {
-        const response = await axios.post('http://42.192.39.198:5000/api/Product/', tableData.value[tableData.value.length-1]);
-		console.log(tableData.value[tableData.value.length-1]);
-        ElMessage.success('数据上传成功');
-    } catch (error) {
-        ElMessage.error('数据上传失败');
-    }
+	try {
+		const response = await axios.post('http://42.192.39.198:5000/api/Products/', tableData.value[tableData.value.length - 1]);
+		console.log(tableData.value[tableData.value.length - 1]);
+		ElMessage.success('数据上传成功');
+	} catch (error) {
+		ElMessage.error('数据上传失败');
+	}
 };
+
+const viewVisible = ref(false);
+let viewForm = reactive({
+	relatedCollectionId: 0,
+	designIdea: '',
+	isRelated: 0
+});
+const viewCreativeProduct = (index: number, row: any) => {
+	viewForm.relatedCollectionId = row.relatedCollectionId;
+	viewForm.designIdea = row.designIdea;
+	viewForm.isRelated = row.isRelated;
+	viewVisible.value = true;
+};
+
 
 // 删除操作
 const handleDelete = (index: number) => {
@@ -185,17 +246,33 @@ const handleDelete = (index: number) => {
 	})
 		.then(() => {
 			ElMessage.success('删除成功');
+			// 在这里调用 saveDelete 并传递要删除的数据索引
+			saveDelete(index);
 			tableData.value.splice(index, 1);
 		})
 		.catch(() => { });
 };
+
+const saveDelete = async (index: number) => {
+	try {
+		const deletedItemId = tableData.value[index].productId;
+		await axios.delete(`http://42.192.39.198:5000/api/Products/${deletedItemId}`);
+		ElMessage.success('数据删除成功');
+	} catch (error) {
+		ElMessage.error('数据删除失败');
+	}
+};
+
 
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
 let form = reactive({
 	productName: '',
 	price: 0,
-	monthlySale: 0
+	monthlySale: 0,
+	designIdea: '',
+	isRelated: 0,
+	relatedCollectionId: 0
 });
 let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
@@ -203,25 +280,34 @@ const handleEdit = (index: number, row: any) => {
 	form.productName = row.productName;
 	form.price = row.price;
 	form.monthlySale = row.monthlySale;
+	form.designIdea = row.designIdea;
+	form.isRelated = row.isRelated;
+	form.relatedCollectionId = row.relatedCollectionId;
 	editVisible.value = true;
 };
 const saveEdit = () => {
 	editVisible.value = false;
-	ElMessage.success(`修改第 ${idx + 1} 行成功`);
+	ElMessage.success(`修改成功`);
 	tableData.value[idx].productName = form.productName;
 	tableData.value[idx].price = form.price;
 	tableData.value[idx].monthlySale = form.monthlySale;
+	tableData.value[idx].designIdea = form.designIdea;
+	tableData.value[idx].relatedCollectionId = form.relatedCollectionId;
+	tableData.value[idx].isRelated = form.isRelated;
 	uploadData();
 };
 
 // 新增弹窗和保存
 const addVisible = ref(false);
 let addForm = reactive({
-	productName: '',
-	price: 0,
-	monthlySale: 0,
-	//designIdea: ''
+    productName: '',
+    price: 0,
+    monthlySale: 0,
+    designIdea: '',
+    isRelated: 0, // 默认选择非文创产品
+    relatedCollectionId: 0
 });
+
 const handleAdd = () => {
 	addVisible.value = true;
 };
@@ -232,7 +318,9 @@ const saveAdd = () => {
 		productName: addForm.productName,
 		price: addForm.price,
 		monthlySale: addForm.monthlySale,
-		//designIdea: addForm.designIdea
+		designIdea: addForm.designIdea,
+		isRelated: addForm.isRelated,
+		relatedCollectionId: addForm.relatedCollectionId
 	};
 	addedData.value.push(newItem); // 将新增的数据保存到addedData数组中
 	tableData.value.push(newItem);
