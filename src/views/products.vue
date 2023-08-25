@@ -169,30 +169,40 @@ const compare = (a: TableItem, b: TableItem) => {
 const selectedCategory = ref('all');
 // 获取表格数据
 const getData = async () => {
-	try {
-		const response = await axios.get('http://42.192.39.198:5000/api/Products');
-		const data = response.data;
+  try {
+    const response = await axios.get('http://42.192.39.198:5000/api/Products');
+    const data = response.data;
 
-		let filteredData = [...data];
+    // Apply filters
+    let filteredData = [...data];
 
-		if (query.designIdea !== '') {
-			filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
-		}
+    if (query.designIdea !== '') {
+      filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
+    }
 
-		if (query.productName !== '') {
-			filteredData = filteredData.filter((item: TableItem) => item.productName.includes(query.productName));
-		}
+    if (query.productName !== '') {
+      filteredData = filteredData.filter((item: TableItem) => item.productName.includes(query.productName));
+    }
 
-		if (selectedCategory.value !== 'all') {
-			const isRelatedValue = selectedCategory.value === '文创' ? 1 : 0;
-			filteredData = filteredData.filter((item: TableItem) => item.isRelated === isRelatedValue);
-		}
+    if (selectedCategory.value !== 'all') {
+      const isRelatedValue = selectedCategory.value === '文创' ? 1 : 0;
+      filteredData = filteredData.filter((item: TableItem) => item.isRelated === isRelatedValue);
+    }
 
-		tableData.value = filteredData.sort(compare);
-	} catch (error) {
-		console.error(error);
-	}
+    // Calculate total count and update pageTotal
+    pageTotal.value = filteredData.length;
+
+    // Calculate startIndex and endIndex for pagination
+    const startIndex = (query.pageIndex - 1) * query.pageSize;
+    const endIndex = startIndex + query.pageSize;
+
+    // Update tableData to display only the relevant range of items
+    tableData.value = filteredData.slice(startIndex, endIndex).sort(compare);
+  } catch (error) {
+    console.error(error);
+  }
 };
+
 getData();
 
 // 查询操作
