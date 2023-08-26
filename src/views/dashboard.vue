@@ -31,8 +31,8 @@
 							<div class="grid-content grid-con-1">
 								<el-icon class="grid-con-icon"><User /></el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">1234</div>
-									<div>用户访问量</div>
+									<div class="grid-num">{{ inAndOut.inData-inAndOut.outData }}/ {{inAndOut.maxPeople}}</div>
+									<div>在馆人数</div>
 								</div>
 							</div>
 						</el-card>
@@ -42,8 +42,8 @@
 							<div class="grid-content grid-con-2">
 								<el-icon class="grid-con-icon"><ChatDotRound /></el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">321</div>
-									<div>系统消息</div>
+									<div class="grid-num">{{ inAndOut.inData }}</div>
+									<div>进馆人数</div>
 								</div>
 							</div>
 						</el-card>
@@ -53,8 +53,8 @@
 							<div class="grid-content grid-con-3">
 								<el-icon class="grid-con-icon"><Goods /></el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">5000</div>
-									<div>商品数量</div>
+									<div class="grid-num">{{ inAndOut.outData }}</div>
+									<div>出馆人数</div>
 								</div>
 							</div>
 						</el-card>

@@ -3,10 +3,10 @@
 		<div class="container">
 			<div class="handle-box">
 				<el-select v-model="selectedCategory" placeholder="产品类别" class="handle-select mr10">
-    <el-option label="全部产品" value="all"></el-option>
-    <el-option label="文创产品" value="文创"></el-option>
-    <el-option label="非文创产品" value="非文创"></el-option>
-</el-select>
+					<el-option label="全部产品" value="all"></el-option>
+					<el-option label="文创产品" value="文创"></el-option>
+					<el-option label="非文创产品" value="非文创"></el-option>
+				</el-select>
 
 
 
@@ -97,6 +97,7 @@
 
 		<!-- 新增弹出框 -->
 		<el-dialog title="新增" v-model="addVisible" width="40%">
+			<el-button @click="updateIsRelated">改变产品类别</el-button>
 			<el-form label-width="90px">
 				<el-form-item label="商品名称">
 					<el-input v-model="addForm.productName"></el-input>
@@ -113,12 +114,14 @@
 						<el-option key="2" label="非文创产品" value="0"></el-option>
 					</el-select>
 				</el-form-item>
+				
 				<el-form-item label="相关文物Id" v-if="addForm.isRelated === 1">
 					<el-input v-model="addForm.relatedCollectionId"></el-input>
 				</el-form-item>
 				<el-form-item label="设计理念" v-if="addForm.isRelated === 1">
 					<el-input v-model="addForm.designIdea"></el-input>
 				</el-form-item>
+
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
@@ -166,31 +169,39 @@ const compare = (a: TableItem, b: TableItem) => {
 const selectedCategory = ref('all');
 // 获取表格数据
 const getData = async () => {
-    try {
-        const response = await axios.get('http://42.192.39.198:5000/api/Products');
-        const data = response.data;
+  try {
+    const response = await axios.get('http://42.192.39.198:5000/api/Products');
+    const data = response.data;
 
-        let filteredData = [...data];
+    // Apply filters
+    let filteredData = [...data];
 
-        if (query.designIdea !== '') {
-            filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
-        }
-
-        if (query.productName !== '') {
-            filteredData = filteredData.filter((item: TableItem) => item.productName.includes(query.productName));
-        }
-
-        if (selectedCategory.value !== 'all') {
-            const isRelatedValue = selectedCategory.value === '文创' ? 1 : 0;
-            filteredData = filteredData.filter((item: TableItem) => item.isRelated === isRelatedValue);
-        }
-
-        tableData.value = filteredData.sort(compare);
-    } catch (error) {
-        console.error(error);
+    if (query.designIdea !== '') {
+      filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
     }
-};
 
+    if (query.productName !== '') {
+      filteredData = filteredData.filter((item: TableItem) => item.productName.includes(query.productName));
+    }
+
+    if (selectedCategory.value !== 'all') {
+      const isRelatedValue = selectedCategory.value === '文创' ? 1 : 0;
+      filteredData = filteredData.filter((item: TableItem) => item.isRelated === isRelatedValue);
+    }
+
+    // Calculate total count and update pageTotal
+    pageTotal.value = filteredData.length;
+
+    // Calculate startIndex and endIndex for pagination
+    const startIndex = (query.pageIndex - 1) * query.pageSize;
+    const endIndex = startIndex + query.pageSize;
+
+    // Update tableData to display only the relevant range of items
+    tableData.value = filteredData.slice(startIndex, endIndex).sort(compare);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 getData();
 
@@ -223,6 +234,15 @@ const uploadData1 = async () => {
 		ElMessage.error('数据上传失败');
 	}
 };
+
+const updateIsRelated = () => {
+	if (addForm.isRelated === 1) {
+		addForm.isRelated = 0;
+	} else {
+		addForm.isRelated = 1;
+	}
+};
+
 
 const viewVisible = ref(false);
 let viewForm = reactive({
@@ -300,12 +320,12 @@ const saveEdit = () => {
 // 新增弹窗和保存
 const addVisible = ref(false);
 let addForm = reactive({
-    productName: '',
-    price: 0,
-    monthlySale: 0,
-    designIdea: '',
-    isRelated: 0, // 默认选择非文创产品
-    relatedCollectionId: 0
+	productName: '',
+	price: 0,
+	monthlySale: 0,
+	designIdea: '',
+	isRelated: 0, // 默认选择非文创产品
+	relatedCollectionId: 0
 });
 
 const handleAdd = () => {
