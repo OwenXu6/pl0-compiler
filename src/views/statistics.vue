@@ -2,61 +2,43 @@
 	<div>
 		<div class="container">
 			<div class="handle-box">
-				<el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
+				<!-- <el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
 					<el-option key="1" label="广东省" value="广东省"></el-option>
 					<el-option key="2" label="湖南省" value="湖南省"></el-option>
-				</el-select>
-				<el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
+				</el-select> -->
+				<el-input v-model="query.name" placeholder="日期" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus">新增</el-button>
+				<!-- <el-button type="primary" :icon="Plus">新增</el-button> -->
 			</div>
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<!-- <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column> -->
+			<el-table :data="tableData.slice((query.pageIndex-1)*query.pageSize,query.pageIndex*query.pageSize)" border class="table" ref="multipleTable"  header-cell-class-name="table-header">
 				<el-table-column prop="date" label="日期"></el-table-column>
-				<el-table-column prop="totM" label="总门票"></el-table-column>
-				<el-table-column prop="sale" label="已预约门票"></el-table-column>
-				<el-table-column prop="residue" label="剩余门票"></el-table-column>
-				<!-- <el-table-column label="已预约门票">
-					<template #default="scope">￥{{ scope.row.money }}</template>
-				</el-table-column> -->
-				<!-- <el-table-column label="头像(查看大图)" align="center">
-					<template #default="scope">
-						<el-image
-							class="table-td-thumb"
-							:src="scope.row.thumb"
-							:z-index="10"
-							:preview-src-list="[scope.row.thumb]"
-							preview-teleported
-						>
-						</el-image>
-					</template>
-				</el-table-column> -->
-				<!-- <el-table-column prop="address" label="地址"></el-table-column> -->
-				<!-- <el-table-column label="状态" align="center">
-					<template #default="scope">
-						<el-tag
-							:type="scope.row.state === '成功' ? 'success' : scope.row.state === '失败' ? 'danger' : ''"
-						>
-							{{ scope.row.state }}
-						</el-tag>
-					</template>
-				</el-table-column> -->
+				<el-table-column prop="totalTickets" label="总门票"></el-table-column>
+				<el-table-column prop="soldTickets" label="已预约门票"></el-table-column>
+				<el-table-column rop="resTickets" label="剩余门票"></el-table-column>
 
-				<!-- <el-table-column prop="date" label="注册时间"></el-table-column> -->
+				
 				<el-table-column label="操作" width="300" align="center">
 					<template #default="scope">
-						<el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-permiss="15">
+						<el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
 							<button class="el-icon-lx-add btnSty green" ></button>
 							增加门票
 						</el-button>
-						<el-button  text class="red" @click="handleEdit(scope.$index, scope.row, 0)" v-permiss="16">
+						<el-button text class="gray" @click="handleEdit(scope.$index, scope.row,1)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="15" disabled>
+							<button class="el-icon-lx-add btnSty gray" ></button>
+							增加门票
+						</el-button>
+						<el-button  text class="red" @click="handleEdit(scope.$index, scope.row, 0)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="16">
 							<button class="el-icon-lx-move btnSty red" ></button>
+							减少门票
+						</el-button>
+						<el-button  text class="gray" @click="handleEdit(scope.$index, scope.row, 0)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="16" disabled>
+							<button class="el-icon-lx-move btnSty gray" ></button>
 							减少门票
 						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="pagination">
+			<div class="pagination" v-if="showTable.isFull">
 				<el-pagination
 					background
 					layout="total, prev, pager, next"
@@ -64,8 +46,48 @@
 					:page-size="query.pageSize"
 					:total="pageTotal"
 					@current-change="handlePageChange"
+					
 				></el-pagination>
 			</div>
+			<!-- <el-table :data="tableData.slice((query.pageIndex-1)*query.pageSize,query.pageIndex*query.pageSize)" v-if="!showTable.isFull" border class="table" ref="multipleTable"  header-cell-class-name="table-header">
+				<el-table-column prop="date" label="日期"></el-table-column>
+				<el-table-column prop="totalTickets" label="总门票"></el-table-column>
+				<el-table-column prop="soldTickets" label="已预约门票"></el-table-column>
+				<el-table-column rop="resTickets" label="剩余门票"></el-table-column>
+
+				
+				<el-table-column label="操作" width="300" align="center">
+					<template #default="scope">
+						<el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
+							<button class="el-icon-lx-add btnSty green" ></button>
+							增加门票
+						</el-button>
+						<el-button text class="gray" @click="handleEdit(scope.$index, scope.row,1)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="15" disabled>
+							<button class="el-icon-lx-add btnSty gray" ></button>
+							增加门票
+						</el-button>
+						<el-button  text class="red" @click="handleEdit(scope.$index, scope.row, 0)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="16">
+							<button class="el-icon-lx-move btnSty red" ></button>
+							减少门票
+						</el-button>
+						<el-button  text class="gray" @click="handleEdit(scope.$index, scope.row, 0)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="16" disabled>
+							<button class="el-icon-lx-move btnSty gray" ></button>
+							减少门票
+						</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+			<div v-if="!showTable.isFull" class="pagination">
+				<el-pagination
+					background
+					layout="total, prev, pager, next"
+					:current-page="query.pageIndex"
+					:page-size="query.pageSize"
+					:total="pageTotal"
+					@current-change="handlePageChange"
+					
+				></el-pagination>
+			</div> -->
 		</div>
 
 		<!-- 编辑弹出框 -->
@@ -85,6 +107,7 @@
 				</span>
 			</template>
 		</el-dialog>
+		
 	</div>
 </template>
 
@@ -92,46 +115,142 @@
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-import { fetchData } from '../api/index';
+// import { fetchData } from '../api/index';
+import axios from 'axios';
+//{date: '2023-08-01T06:20:12.255', inMuseumCount: 2481, totalTickets: 3000, soldTickets: 1998}
 
-// id: number;
-	// name: string;
-	// money: string;
-	// state: string;
-	//date: string;
-	//address: string;
-interface TableItem {
+
+const resTicket = ref(0);
+// const showCurrent=()=>{
+
+// 	showTable.isFull=0;
+// }
+const showTable = reactive({
+	isFull:1,
+
+});
+const tableRowClassName=(row:any,rowIndex:number)=>{
+	// let i=0;
+	// for(;i<tableData.value.length;i++)
+	// {
+	// 	if(query.name===tableData.value[i].date){
+	// 		query.pageIndex = Math.trunc(i/10) +1;
+	// 		let a=0;
+	// 		break;
+	// 	}
+	// }
+	console.log("row",row)
+	return 'success-row';
 	
-	date: string;
-	totM:number;
-	sale :number;
-	residue:number;
 	
 }
 
+let visArr= ref<number[]>([]);
+interface TableItem2 {
+	
+	date: string;
+	totM:number;
+	residue :number;
+	sale :number;
+	
+}
+interface TableItem {
+	date: string;
+	inMuseumCount:number;
+	totalTickets :number;
+	soldTickets:number;
+	resTickets:number;
+}
 const query = reactive({
 	address: '',
 	name: '',
 	pageIndex: 1,
 	pageSize: 10
 });
+const fetchData = async () => {
+	try {
+		const response = await axios.get('http://42.192.39.198:5000/api/VisitorStatistics/6');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+fetchData();
 
-const tableData = ref<TableItem[]>([]);
+
 const pageTotal = ref(0);
-// 获取表格数据
-const getData = () => {
-	fetchData().then(res => {
-		tableData.value = res.data.list;
-		pageTotal.value = res.data.pageTotal || 50;
-	});
+const tableData = ref<TableItem[]>([]);
+const getData = async () => {
+	const data = await fetchData();
+	
+	let arr=[{date:"7.10",inMuseumCount:0,resTickets:500,soldTickets:50,totalTickets:550},
+	{date:"7.9",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	{date:"7.8",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	{date:"7.7",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	{date:"7.6",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	{date:"7.5",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	{date:"7.4",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	{date:"7.3",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	{date:"7.2",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	{date:"7.1",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	{date:"6.30",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	{date:"6.29",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	{date:"6.28",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	{date:"6.27",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	{date:"6.26",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	];
+	
+	let visTmp = [];
+	// console.log(data); 
+	// tableData.value = data.statisticsList;
+
+	// for(let i=0;i<tableData.value.length;i++)
+	// {
+	// 	tableData.value[i].date = tableData.value[i].date.substring(0,10);
+	// 	tableData.value[i].resTickets = tableData.value[i].totalTickets-tableData.value[i].soldTickets;
+	// }
+	// console.log("tableData.value:")
+	// console.log(tableData.value); 
+	tableData.value = arr;
+	for(let i=0;i<tableData.value.length;i++)
+	{
+		if(i>=3){
+			visTmp.push(0);
+		}
+		else{
+			visTmp.push(1);
+		}
+		
+	};
+	visArr.value = visTmp;
+	//console.log(visArr.value);
+	pageTotal.value = tableData.value.length;
+
 };
 getData();
 
+
+
 // 查询操作
 const handleSearch = () => {
-	query.pageIndex = 1;
+	for(let i=0;i<tableData.value.length;i++)
+	{
+		if(query.name===tableData.value[i].date){
+			query.pageIndex = Math.trunc(i/10) +1;
+			let a=0;
+			
+			console.log("pageIndex=",query.pageIndex);
+			console.log("a=",a);
+		}
+	};
+	 
 	getData();
 };
+
+const handleCurrentChange = (val: number)=>{
+	query.pageIndex = val;
+	getData();
+}
 // 分页导航
 const handlePageChange = (val: number) => {
 	query.pageIndex = val;
@@ -164,11 +283,18 @@ const handleEdit = (index: number, row: any,flag:number) => {
 	form.residue = row.residue;
 	editVisible.value = true;
 };
-
+const uploadData = async () => {
+    try {
+        const response = await axios.put('http://42.192.39.198:5000/api/VisitorStatistics/6'+tableData.value[idx].date,tableData.value[idx].resTickets);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+};
 const saveEdit = () => {
 	editVisible.value = false;
 	if(flag1===1){
-		if(parseInt(form.residue.toString())<parseInt(tableData.value[idx].residue.toString())){
+		if(parseInt(form.residue.toString())<parseInt((tableData.value[idx].totalTickets-tableData.value[idx].soldTickets).toString())){
 		editVisible.value = false;
 		ElMessageBox.confirm('请大于原来剩余票数', {
       type: 'warning',
@@ -179,7 +305,7 @@ const saveEdit = () => {
 	}
 
 	else{
-		if(parseInt(form.residue.toString())>parseInt(tableData.value[idx].residue.toString())){
+		if(parseInt(form.residue.toString())>parseInt((tableData.value[idx].totalTickets-tableData.value[idx].soldTickets).toString())){
 		editVisible.value = false;
 		ElMessageBox.confirm('请小于原来剩余票数', {
       type: 'warning',
@@ -192,22 +318,41 @@ const saveEdit = () => {
 	
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);
 	let tmp: number = -1;
-	tmp = parseInt(form.residue.toString())+parseInt(tableData.value[idx].sale.toString());
+	tmp = parseInt(form.residue.toString())+parseInt(tableData.value[idx].soldTickets.toString());
 	
-	tableData.value[idx].residue = form.residue;
-	tableData.value[idx].totM = tmp;
+	tableData.value[idx].resTickets = parseInt(form.residue.toString());
+	tableData.value[idx].totalTickets = tmp;
+	uploadData();
 
 };
 
-
+// 获取表格数据
+// const getData = () => {
+// 	fetchData().then(res => {
+// 		tableData.value = res.data.list;
+// 		pageTotal.value = res.data.pageTotal || 50;
+// 	});
+// };
+// getData();
 
 </script>
 
 <style scoped>
+
+.el-table .warning-row {
+    background: rgb(183, 153, 99);
+  }
+.el-table .success-row {
+    background: #96d971;
+	
+  }
 .handle-box {
 	margin-bottom: 20px;
 }
-
+.test22{
+	background-color: #7d7d7d;
+	color: #F56C6C;
+}
 .handle-select {
 	width: 120px;
 }
@@ -224,6 +369,9 @@ const saveEdit = () => {
 }
 .green{
 	color: rgb(6, 195, 100);
+}
+.gray{
+	color: rgb(161, 161, 161);
 }
 .btnSty{
 	
