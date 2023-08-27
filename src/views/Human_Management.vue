@@ -6,7 +6,7 @@
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<el-button type="primary" :icon="Plus" @click="handlenew">新增</el-button>
 			</div>
-			<el-table :data="HumantableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="staffId" label="ID" width="85" align="center"></el-table-column>
 				<el-table-column prop="staffName" label="姓名" align="center"></el-table-column>
 				<el-table-column prop="staffAge" label="年龄" align="center"></el-table-column>
@@ -29,14 +29,23 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="pagination">
+			<div class="pagination" style="display: flex; align-items: center;">
+				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
+				 size="small" style="width: 100px;" >
+				 <el-option label="5" value="5"></el-option>
+				 <el-option label="10" value="10"></el-option>
+				 <el-option label="20" value="20"></el-option>
+				 <el-option label="50" value="50"></el-option>
+				</el-select>
+
 				<el-pagination
 					background
 					layout="total, prev, pager, next"
 					:current-page="query.pageIndex"
 					:page-size="query.pageSize"
-					:total="HumantableData.values.length"
+					:total="HumantableData.length"
 					@current-change="handlePageChange"
+					@update:page-size = "PageSizeChange"
 				></el-pagination>
 			</div>
 		</div>
@@ -73,8 +82,11 @@
 						<el-option label="大领导" value="大领导"></el-option>
 						<el-option label="全能神" value="全能神"></el-option>
 						<el-option label="藏品管理员" value="藏品管理员"></el-option>
+						<el-option label="库房管理员" value="库房管理员"></el-option>
+						<el-option label="系统管理员" value="系统管理员"></el-option>
 						<el-option label="导览人员" value="导览人员"></el-option>
 						<el-option label="考古人员" value="考古人员"></el-option>
+						<el-option label="安保人员" value="安保人员"></el-option>
 						<el-option label="其他工作人员" value="其他工作人员"></el-option>
 					</el-select>
 				</el-form-item>
@@ -123,9 +135,13 @@
 				<el-form-item label="工作方向">
 					<el-select v-model="form.workType" placeholder="请选择工作方向"  class="full-width-select">
 						<el-option label="大领导" value="大领导"></el-option>
+						<el-option label="全能神" value="全能神"></el-option>
 						<el-option label="藏品管理员" value="藏品管理员"></el-option>
+						<el-option label="库房管理员" value="库房管理员"></el-option>
+						<el-option label="系统管理员" value="系统管理员"></el-option>
 						<el-option label="导览人员" value="导览人员"></el-option>
 						<el-option label="考古人员" value="考古人员"></el-option>
+						<el-option label="安保人员" value="安保人员"></el-option>
 						<el-option label="其他工作人员" value="其他工作人员"></el-option>
 					</el-select>
 				</el-form-item>
@@ -184,17 +200,20 @@ const query = reactive({
 	workType: '',
 	job: '',
 	pageIndex: 1,
-	pageSize: 10
+	pageSize: 10,
+	tempPageSize : ''
 });
 const HumantableData = ref<TableItem[]>([]);
+const pageData = ref<TableItem[]>([]);   //
 const addedData = ref<TableItem[]>([]); // 保存新增的数据
 const compare = (a:TableItem,b:TableItem)=>{
 	return a.staffId < b.staffId ? -1:1;
 }
 
-// 获取表格数据
+// 获取表格数据及筛选
 const getData = async () => {
 	const res = await fetchData();
+	HumantableData.value = res;  //記錄全部數據
 	let filteredData = res.concat(addedData.value);
 	
 	//if (query.designIdea !== '') {
@@ -211,8 +230,18 @@ const getData = async () => {
 		String(item.staffSalary).includes(query.value)
 	);
 
-	HumantableData.value = filteredData.sort(compare);
-	console.log(HumantableData.value); 
+	filteredData = filteredData.sort(compare);
+
+	// 分页逻辑
+	const startIndex = (query.pageIndex - 1) * query.pageSize;
+	const endIndex = query.pageIndex * query.pageSize;
+
+	// 截取当前页的数据
+	const pagedData = filteredData.slice(startIndex, endIndex);
+
+	// 将截取的数据赋值给 HumantableData
+	pageData.value = pagedData;
+
 };
 getData();
 
@@ -258,6 +287,19 @@ const handlePageChange = (val: number) => {
 	query.pageIndex = val;
 	getData();
 };
+
+//改变大小
+const applyPageSize = () =>{
+	query.pageSize = Number(query.tempPageSize);
+	console.log(query.pageSize);
+	query.pageIndex = 1;
+	getData();
+}
+
+const PageSizeChange = () =>{
+	query.pageIndex = 1;
+	getData();
+}
 
 // 删除操作
 const handleDelete = (index: number) => {
@@ -323,7 +365,7 @@ const saveEdit = () => {
 	if (!isAllDigits) {
   		console.error("staffSalary 包含非数字字符");
 		  ElMessage.error('薪資要是數字！！');
-  		return; // 或者抛出错误
+  		return; 
 	}
 
 
@@ -343,6 +385,21 @@ const saveEdit = () => {
 };
 
 const savenew = () => {         //保存新增人员
+
+	const isSalaryDigits =/^[0-9]+$/.test(form.staffSalary);
+	const isIdDigits =/^[0-9]+$/.test(form.staffId);
+	if (!isSalaryDigits) {
+  		console.error("staffSalary 包含非数字字符");
+		  ElMessage.error('薪資和ID要是數字！！');
+  		return; 
+	}
+	if (!isIdDigits) {
+  		console.error("staffId 包含非数字字符");
+		  ElMessage.error('薪資和ID要是數字！！');
+  		return; 
+	}
+
+
 	newVisible.value = false;
 	let newEmployee: TableItem = {
 	staffId: '',
