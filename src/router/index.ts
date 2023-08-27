@@ -141,6 +141,15 @@ const routes: RouteRecordRaw[] = [
 
             },
             {
+                path:'/ccard',
+                name:'ccard',
+                meta:{
+                    title:'文创卡片',
+                    permiss:'12',
+                },
+                component:()=>import(/* webpackChunkName: "ccard" */ '../views/ccard.vue'),
+            },
+            {
                 path: '/form',
                 name: 'baseform',
                 meta: {
