@@ -31,7 +31,18 @@
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="collectionId" label="ID" width="110" align="center"></el-table-column>
 				<el-table-column prop="name" label="文物名称"></el-table-column>
-				<!--<el-table-column prop="name" label="文物图片"></el-table-column>-->
+				<el-table-column label="文物图片(查看大图)" align="center">
+					<template #default="scope">
+						<el-image
+							class="table-td-thumb"
+							:src="scope.row.collectionPhoto"
+							:z-index="10"
+							:preview-src-list="[scope.row.thumb]"
+							preview-teleported
+						>
+						</el-image>
+					</template>
+				</el-table-column>
 				<el-table-column prop="collectionType" label="文物种类"></el-table-column>
 				<el-table-column prop="era" label="文物年代" align="center"></el-table-column>
 				<!--<el-table-column prop="address" label="地址"></el-table-column>-->
