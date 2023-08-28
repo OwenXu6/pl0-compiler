@@ -172,7 +172,8 @@ const getData = async () => {
   try {
     const response = await axios.get('http://42.192.39.198:5000/api/Products');
     const data = response.data;
-
+    //检查data的内容
+	console.log(data)
     // Apply filters
     let filteredData = [...data];
 
@@ -217,6 +218,7 @@ const handlePageChange = (val: number) => {
 };
 
 const uploadData = async () => {
+	console.log(tableData.value[idx])
 	try {
 		const response = await axios.put('http://42.192.39.198:5000/api/Products/' + tableData.value[idx].productId, tableData.value[idx]);
 		ElMessage.success('数据上传成功');
