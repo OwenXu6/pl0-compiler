@@ -35,7 +35,7 @@
 				<el-table-column prop="collectionType" label="文物种类"></el-table-column>
 				<el-table-column prop="era" label="文物年代" align="center"></el-table-column>
 				<!--<el-table-column prop="address" label="地址"></el-table-column>-->
-				<el-table-column prop="storageInfo" label="藏品状态" align="center">
+				<el-table-column prop="storageInfo.currentStatus" label="藏品状态" align="center">
 					<!--<template #default="scope">
 						<el-tag
 							:type="scope.row.state === '成功' ? 'success' : scope.row.state === '失败' ? 'danger' : ''"
@@ -74,7 +74,7 @@
 				</el-form-item>
 				<!-- 通过模糊搜索来输入文物的种类 -->
 				<el-form-item label="文物种类">
-					<el-autocomplete v-model="form.type" :fetch-suggestions="typeQuerySearch" clearable
+					<el-autocomplete v-model="form.collectionType" :fetch-suggestions="typeQuerySearch" clearable
 						class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
 				</el-form-item>
 				<el-form-item label="文物年代">
@@ -108,7 +108,7 @@
 		<!-- 查看的弹出框 -->
 		<el-dialog title="查看" v-model="viewVisible" width="30%">
 			<div>文物名称：{{ view.name }}</div>
-			<div>文物种类：{{ view.type }}</div>
+			<div>文物种类：{{ view.collectionType }}</div>
 			<div>文物年代：{{ view.era }}</div>
 			<div>藏品状态：{{ view.status }}</div>
 
@@ -149,7 +149,7 @@ interface TableItem {
 	money: string;
 	state: string;
 	date: string;
-	type: string;
+	collectionType: string;
 	era: string;
 	status: string;
 	hall_name: string;
@@ -159,7 +159,7 @@ interface TableItem {
 const query = reactive({
 	name: '',         //文物姓名
 	id: '',           //文物id
-	type: ' ',        //文物类别
+	collectionType: ' ',        //文物类别
 	era: ' ',         //文物的朝代
 	status: ' ',      //藏品状态
 	excavation_site: ' ',    //出土地
@@ -213,7 +213,7 @@ const viewVisible = ref(false);
 //表单填写的内容
 let form = reactive({
 	name: '',    //文物的姓名
-	type: '',    //文物的种类
+	collectionType: '',    //文物的种类
 	era: ' ',    //文物的年代
 	status: ' ',    //文物的状态
 	hall_name: ' ', //文物的展厅（若在展）
@@ -222,7 +222,7 @@ let form = reactive({
 //查看的内容
 let view = reactive({
 	name: '',    //文物的姓名
-	type: '',    //文物的种类
+	collectionType: '',    //文物的种类
 	era: ' ',    //文物的年代
 	status: ' '    //文物的状态
 });
@@ -235,7 +235,7 @@ const handleEdit = (index: number, row: any) => {
 	//将目前表格中的内容先同步到编辑框内
 	idx = index;
 	form.name = row.name;
-	form.type = row.type;
+	form.collectionType = row.type;
 	form.era = row.era;
 	form.status = row.status;
 	form.hall_name = row.hall_name;
@@ -248,7 +248,7 @@ let i: number = -1;
 const handleDetails = (index: number, row: any) => {
 	i = index;
 	view.name = row.name;
-	view.type = row.type;
+	view.collectionType = row.collectionType;
 	view.era = row.era;
 	view.status = row.status;
 	viewVisible.value = true;
@@ -272,7 +272,7 @@ const saveEdit = async () => {
 	console.log(idx)
 	// ElMessage.success(`修改第 ${idx + 1} 行成功`);
 	tableData.value[idx].name = form.name;        //将修改的文物姓名同步到表格当中
-	tableData.value[idx].type = form.type;        //将修改的文物的种类同步到表格当中
+	tableData.value[idx].collectionType = form.collectionType;        //将修改的文物的种类同步到表格当中
 	tableData.value[idx].era = form.era;          //将修改的文物的朝代同步到表格当中
 	tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
 	tableData.value[idx].hall_name = form.hall_name;      //将修改的文物的展厅名称同步到表格当中
