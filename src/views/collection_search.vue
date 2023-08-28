@@ -30,7 +30,7 @@
 			<!-- 显示文物详细信息的表格界面 -->
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="collectionId" label="ID" width="110" align="center"></el-table-column>
-				<el-table-column prop="name" label="文物名称"></el-table-column>
+				<el-table-column prop="name" label="文物名称" align="center"></el-table-column>
 				<el-table-column label="文物图片(查看大图)" align="center">
 					<template #default="scope">
 						<el-image
@@ -43,7 +43,7 @@
 						</el-image>
 					</template>
 				</el-table-column>
-				<el-table-column prop="collectionType" label="文物种类"></el-table-column>
+				<el-table-column prop="collectionType" label="文物种类" align="center"></el-table-column>
 				<el-table-column prop="era" label="文物年代" align="center"></el-table-column>
 				<!--<el-table-column prop="address" label="地址"></el-table-column>-->
 				<el-table-column prop="storageInfo.currentStatus" label="藏品状态" align="center">
@@ -55,7 +55,7 @@
 						</el-tag>
 					</template>-->
 				</el-table-column>
-
+				<el-table-column prop="collectInfo.collectTime" label="入藏时间" align="center"></el-table-column>
 				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
 				<el-table-column label="操作" width="350" align="center">
 					<template #default="scope">
@@ -161,6 +161,9 @@ interface TableItem {
 	state: string;
 	date: string;
 	collectionType: string;
+	collectInfo:{
+	collectTime:string;	//收藏的时间
+	}
 	era: string;
 	status: string;
 	hall_name: string;
@@ -175,6 +178,7 @@ const query = reactive({
 	status: ' ',      //藏品状态
 	excavation_site: ' ',    //出土地
 	excavation_date: ' ',   //出土日期
+	collectTime:'',	//收藏的时间
 	pageIndex: 1,      //所在页面
 	pageSize: 10       //总页面
 });
@@ -186,6 +190,18 @@ const getData = () => {
 	fetchData().then(res => {
 		console.log(res)
 		tableData.value = res;
+		console.log(tableData.value.length);
+		for(var i=0;i<tableData.value.length;i++){
+			var T=tableData.value[i].collectInfo.collectTime;
+			var dest='';
+			console.log(T)
+			for(var j=0;j<T.length;j++){
+				if(T[j]=='T')
+					break;
+				dest+=T[j];
+			}
+			tableData.value[i].collectInfo.collectTime=dest;
+		}
 		console.log(res[0].collectionId);
 		// pageTotal.value = res.data.pageTotal || 50;
 	});
@@ -246,7 +262,7 @@ const handleEdit = (index: number, row: any) => {
 	//将目前表格中的内容先同步到编辑框内
 	idx = index;
 	form.name = row.name;
-	form.collectionType = row.type;
+	form.collectionType = row.collectionType;
 	form.era = row.era;
 	form.status = row.status;
 	form.hall_name = row.hall_name;
