@@ -112,13 +112,13 @@
 			</template>
 		</el-dialog>
 		<!-- 查看的弹出框 -->
-		<el-dialog title="查看" v-model="viewVisible" width="50%">
+		<el-dialog title="查看" v-model="viewVisible" width="60%">
 			<!-- <div>文物名称：{{ view.name }}</div>
 			<div>文物种类：{{ view.collectionType }}</div>
 			<div>文物年代：{{ view.era }}</div>
 			<div>藏品状态：{{ view.storageInfo.currentStatus }}</div> -->
 
-			<el-descriptions class="margin-top" title="With border" :column="2" :size="size" border>
+			<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
 				<!-- 收藏单位 -->
 				<el-descriptions-item>
 					<template #label>
@@ -286,7 +286,7 @@
 							尺寸
 						</div>
 					</template>
-					{{view.dimensionInfo.dimension }} 
+					{{view.dimensionInfo.dimension+view.dimensionInfo.dimensionUnit }} 
 				</el-descriptions-item>
 				<!-- 质量-->
 				<el-descriptions-item>
@@ -295,82 +295,82 @@
 							<el-icon :style="iconStyle">
 								<tickets />
 							</el-icon>
-							原名
+							质量
 						</div>
 					</template>
-					{{view.originalName }} 
+					{{view.dimensionInfo.weight+view.dimensionInfo.weightUnit}} 
 				</el-descriptions-item>
-				<!-- 文物原名 -->
+				<!-- 传统数量 -->
 				<el-descriptions-item>
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
 								<tickets />
 							</el-icon>
-							原名
+							传统数量
 						</div>
 					</template>
-					{{view.originalName }} 
+					{{view.dimensionInfo.traditionalQuantity+"个"}} 
 				</el-descriptions-item>
-				<!-- 文物原名 -->
+				<!-- 实际数量 -->
 				<el-descriptions-item>
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
 								<tickets />
 							</el-icon>
-							原名
+							实际数量
 						</div>
 					</template>
-					{{view.originalName }} 
+					{{view.dimensionInfo.realQuantity+"个"}} 
 				</el-descriptions-item>
-				<!-- 文物原名 -->
+				<!-- 入藏时间 -->
 				<el-descriptions-item>
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
 								<tickets />
 							</el-icon>
-							原名
+							入藏时间
 						</div>
 					</template>
-					{{view.originalName }} 
+					{{view.collectInfo.collectTime }} 
 				</el-descriptions-item>
-				<!-- 文物原名 -->
+				<!-- 保护等级 -->
 				<el-descriptions-item>
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
 								<tickets />
 							</el-icon>
-							原名
+							保护等级
 						</div>
 					</template>
-					{{view.originalName }} 
+					{{view.storageInfo.protectionLevel }} 
 				</el-descriptions-item>
-				<!-- 文物原名 -->
-				<el-descriptions-item>
+				<!-- 鉴定意见 -->
+				<el-descriptions-item :span="2">
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
 								<tickets />
 							</el-icon>
-							原名
+							鉴定意见
 						</div>
 					</template>
-					{{view.originalName }} 
+					{{view.identificationComments+"\n"+"鉴定人："+view.identificationStaffName+"    "+"鉴定时间："+view.identificationDate}} 
 				</el-descriptions-item>
-				<!-- 文物原名 -->
-				<el-descriptions-item>
+				<!-- 备注 -->
+				<el-descriptions-item :span="2">
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
 								<tickets />
 							</el-icon>
-							原名
+							备注
 						</div>
 					</template>
-					{{view.originalName }} 
+					{{view.remark }} 
 				</el-descriptions-item>
 			</el-descriptions>
 
@@ -536,6 +536,8 @@ let view = reactive({
 		dimensionUnit: '',
 		weight: '',
 		weightUnit: '',
+		realQuantity:'', 
+		traditionalQuantity:''
 	},
 	era: '',
 	identificationComments: '',
@@ -590,7 +592,9 @@ const handleDetails = (index: number, row: any) => {
 		dimension: row.dimensionInfo.dimension,
 		dimensionUnit: row.dimensionInfo.dimensionUnit,
 		weight: row.dimensionInfo.weight,
-		weightUnit: row.dimensionInfo.weightUnit
+		weightUnit: row.dimensionInfo.weightUnit,
+		realQuantity:row.dimensionInfo.realQuantity,
+		traditionalQuantity:row.dimensionInfo.traditionalQuantity
 	};
 	view.era = row.era;
 	view.identificationComments = row.identificationComments;
