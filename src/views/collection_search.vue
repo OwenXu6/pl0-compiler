@@ -33,13 +33,8 @@
 				<el-table-column prop="name" label="文物名称" align="center"></el-table-column>
 				<el-table-column label="文物图片(查看大图)" align="center">
 					<template #default="scope">
-						<el-image
-							class="table-td-thumb"
-							:src="scope.row.collectionPhoto"
-							:z-index="10"
-							:preview-src-list="[scope.row.thumb]"
-							preview-teleported
-						>
+						<el-image class="table-td-thumb" :src="scope.row.collectionPhoto" :z-index="10"
+							:preview-src-list="[scope.row.thumb]" preview-teleported>
 						</el-image>
 					</template>
 				</el-table-column>
@@ -49,8 +44,7 @@
 				<el-table-column prop="storageInfo.currentStatus" label="藏品状态" align="center">
 					<template #default="scope">
 						<el-tag
-							:type="scope.row.storageInfo.currentStatus === '在展' ? 'success' : scope.row.storageInfo.currentStatus === '修缮中' ? 'danger' : ''"
-						>
+							:type="scope.row.storageInfo.currentStatus === '在展' ? 'success' : scope.row.storageInfo.currentStatus === '修缮中' ? 'danger' : ''">
 							{{ scope.row.storageInfo.currentStatus }}
 						</el-tag>
 					</template>
@@ -101,7 +95,8 @@
 				</el-form-item>
 
 				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
-					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.hall_name" class="handle-input mr10"></el-input>
+					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.hall_name"
+						class="handle-input mr10"></el-input>
 				</el-form-item>
 
 				<!-- <el-form-item v-if="form.status === '在库'" label="库房名称">
@@ -117,11 +112,267 @@
 			</template>
 		</el-dialog>
 		<!-- 查看的弹出框 -->
-		<el-dialog title="查看" v-model="viewVisible" width="30%">
-			<div>文物名称：{{ view.name }}</div>
+		<el-dialog title="查看" v-model="viewVisible" width="50%">
+			<!-- <div>文物名称：{{ view.name }}</div>
 			<div>文物种类：{{ view.collectionType }}</div>
 			<div>文物年代：{{ view.era }}</div>
-			<div>藏品状态：{{ view.storageInfo.currentStatus }}</div>
+			<div>藏品状态：{{ view.storageInfo.currentStatus }}</div> -->
+
+			<el-descriptions class="margin-top" title="With border" :column="2" :size="size" border>
+				<!-- 收藏单位 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item"><el-icon :style="iconStyle">
+								<user />
+							</el-icon>
+							收藏单位</div>
+					</template>
+					{{ view.collectInfo.collectMuseum }}
+				</el-descriptions-item>
+				<!-- 现登记号 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<EditPen />
+							</el-icon>
+							现登记号
+						</div>
+					</template>
+					{{ view.collectionId }}
+				</el-descriptions-item>
+				<!-- 藏品图片 -->
+				<el-descriptions-item :span="2">
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<Picture />
+							</el-icon>
+							藏品图片
+						</div>
+					</template>
+					<template #default="scope">
+						<el-image class="table-td-thumb" :src="view.collectionPhoto" :z-index="10" preview-teleported>
+						</el-image>
+					</template>
+				</el-descriptions-item>
+				<!-- 名称 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							名称
+						</div>
+					</template>
+					{{ view.name }}
+				</el-descriptions-item>
+				<!-- 文物原名 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							原名
+						</div>
+					</template>
+					{{view.originalName }} 
+				</el-descriptions-item>
+				<!-- 文物级别 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							文物级别
+						</div>
+					</template>
+					{{view.storageInfo.protectionLevel}} 
+				</el-descriptions-item>
+				<!-- 文物类别 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							文物类别
+						</div>
+					</template>
+					{{view.collectionType }} 
+				</el-descriptions-item>
+				<!-- 质地 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							质地
+						</div>
+					</template>
+					{{view.textureType}} 
+				</el-descriptions-item>
+				<!--年代 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							年代
+						</div>
+					</template>
+					{{view.era }} 
+				</el-descriptions-item>
+				<!-- 地域 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							地域
+						</div>
+					</template>
+					{{view.area}} 
+				</el-descriptions-item>
+				<!-- 来源 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							来源
+						</div>
+					</template>
+					{{view.collectInfo.source }} 
+				</el-descriptions-item>
+				<!-- 保存状况 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							保存状况
+						</div>
+					</template>
+					{{view.storageInfo.currentStatus }} 
+				</el-descriptions-item>
+				<!-- 完残程度 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							完残程度
+						</div>
+					</template>
+					{{view.completeness }} 
+				</el-descriptions-item>
+				<!-- 尺寸 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							尺寸
+						</div>
+					</template>
+					{{view.dimensionInfo.dimension }} 
+				</el-descriptions-item>
+				<!-- 质量-->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							原名
+						</div>
+					</template>
+					{{view.originalName }} 
+				</el-descriptions-item>
+				<!-- 文物原名 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							原名
+						</div>
+					</template>
+					{{view.originalName }} 
+				</el-descriptions-item>
+				<!-- 文物原名 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							原名
+						</div>
+					</template>
+					{{view.originalName }} 
+				</el-descriptions-item>
+				<!-- 文物原名 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							原名
+						</div>
+					</template>
+					{{view.originalName }} 
+				</el-descriptions-item>
+				<!-- 文物原名 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							原名
+						</div>
+					</template>
+					{{view.originalName }} 
+				</el-descriptions-item>
+				<!-- 文物原名 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							原名
+						</div>
+					</template>
+					{{view.originalName }} 
+				</el-descriptions-item>
+				<!-- 文物原名 -->
+				<el-descriptions-item>
+					<template #label>
+						<div class="cell-item">
+							<el-icon :style="iconStyle">
+								<tickets />
+							</el-icon>
+							原名
+						</div>
+					</template>
+					{{view.originalName }} 
+				</el-descriptions-item>
+			</el-descriptions>
 
 			<template #footer>
 				<span class="dialog-footer">
@@ -134,11 +385,18 @@
 </template>
 
 <script setup lang="ts" name="basetable">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, View } from '@element-plus/icons-vue';
 // import { fetchData } from '../api/index';
 import { onMounted } from 'vue'
+import {
+	Iphone,
+	Location,
+	OfficeBuilding,
+	Tickets,
+	User,
+} from '@element-plus/icons-vue'
 import axios from 'axios'
 
 //获取后端数据库的数据
@@ -160,15 +418,15 @@ interface TableItem {
 	money: string;
 	date: string;
 	collectionType: string;
-	collectInfo:{
-		collectTime:string;	//收藏的时间
+	collectInfo: {
+		collectTime: string;	//收藏的时间
 	}
 	era: string;
 	status: string;
 	hall_name: string;
-	storageInfo:{
-		currentStatus:string;
-		protectionLevel:string;
+	storageInfo: {
+		currentStatus: string;
+		protectionLevel: string;
 	}
 }
 //请求数据
@@ -180,12 +438,12 @@ const query = reactive({
 	status: ' ',      //藏品状态
 	excavation_site: ' ',    //出土地
 	excavation_date: ' ',   //出土日期
-	collectTime:'',	//收藏的时间
+	collectTime: '',	//收藏的时间
 	pageIndex: 1,      //所在页面
 	pageSize: 10,       //总页面
-	storageInfo:{
-		currentStatus:'',
-		protectionLevel:''
+	storageInfo: {
+		currentStatus: '',
+		protectionLevel: ''
 	}
 });
 //文物展示表格的数据
@@ -198,16 +456,16 @@ const getData = () => {
 		tableData.value = res;
 		// console.log(tableData.value.length);
 		//截取有效时间显示
-		for(var i=0;i<tableData.value.length;i++){
-			var T=tableData.value[i].collectInfo.collectTime;
-			var dest='';
+		for (var i = 0; i < tableData.value.length; i++) {
+			var T = tableData.value[i].collectInfo.collectTime;
+			var dest = '';
 			console.log(T)
-			for(var j=0;j<T.length;j++){
-				if(T[j]=='T')
+			for (var j = 0; j < T.length; j++) {
+				if (T[j] == 'T')
 					break;
-				dest+=T[j];
+				dest += T[j];
 			}
-			tableData.value[i].collectInfo.collectTime=dest;
+			tableData.value[i].collectInfo.collectTime = dest;
 		}
 		// console.log(res[0].collectionId);
 		// pageTotal.value = res.data.pageTotal || 50;
@@ -251,20 +509,46 @@ let form = reactive({
 	era: ' ',    //文物的年代
 	status: ' ',    //文物的状态
 	hall_name: ' ', //文物的展厅（若在展）
-	storageInfo:{
-		currentStatus:'',  //当前状态：在展，在库，修缮中
-		protectionLevel:'', //保护等级
+	storageInfo: {
+		currentStatus: '',  //当前状态：在展，在库，修缮中
+		protectionLevel: '', //保护等级
 	}
 });
 //查看的内容
 let view = reactive({
-	name: '',    //文物的姓名
-	collectionType: '',    //文物的种类
-	era: ' ',    //文物的年代
-	storageInfo:{
-		currentStatus:'',  //当前状态：在展，在库，修缮中
-		protectionLevel:'', //保护等级
-	}
+	area: '',
+	collectInfo: {
+		collectionId: '',
+		source: '',
+		collectMuseum: '',
+		generalRegistrationId: '',
+		collectTime: '',
+		collectionLevel: ''
+	},
+	collectionId: '',
+	collectionPhoto: '',
+	collectionType: '',
+	completeness: '',
+	completenessType: '',
+	dimensionInfo: {
+		collectionId: '',
+		dimension: '',
+		dimensionUnit: '',
+		weight: '',
+		weightUnit: '',
+	},
+	era: '',
+	identificationComments: '',
+	identificationDate: '',
+	identificationStaffName: '',
+	name: '',
+	remark: '',
+	storageInfo: {
+		currentStatus: '',
+		protectionLevel: ''
+	},
+	originalName: '',
+	textureType:''
 });
 
 //处理编辑操作
@@ -285,15 +569,45 @@ const handleEdit = (index: number, row: any) => {
 
 //处理查看操作
 let i: number = -1;
+// const view = ref<TableItem[]>([]);
 const handleDetails = (index: number, row: any) => {
-	i = index;
-	view.name = row.name;
+	view.area = row.area;
+	view.collectInfo = {
+		collectionId: row.collectInfo.collectionId,
+		source: row.collectInfo.source,
+		collectMuseum: row.collectInfo.collectMuseum,
+		generalRegistrationId: row.collectInfo.generalRegistrationId,
+		collectTime: row.collectInfo.collectTime,
+		collectionLevel: row.collectInfo.collectionLevel
+	};
+	view.collectionId = row.collectionId;
+	view.collectionPhoto = row.collectionPhoto;
 	view.collectionType = row.collectionType;
+	view.completeness = row.completeness;
+	view.completenessType = row.completenessType;
+	view.dimensionInfo = {
+		collectionId: row.dimensionInfo.collectionId,
+		dimension: row.dimensionInfo.dimension,
+		dimensionUnit: row.dimensionInfo.dimensionUnit,
+		weight: row.dimensionInfo.weight,
+		weightUnit: row.dimensionInfo.weightUnit
+	};
 	view.era = row.era;
-	view.storageInfo.currentStatus = row.storageInfo.currentStatus;
-	//显示出编辑框
+	view.identificationComments = row.identificationComments;
+	view.identificationDate = row.identificationDate;
+	view.identificationStaffName = row.identificationStaffName;
+	view.name = row.name;
+	view.remark = row.remark;
+	view.storageInfo = {
+		currentStatus: row.storageInfo.currentStatus,
+		protectionLevel: row.storageInfo.protectionLevel
+	};
+	view.originalName = row.originalName;
+	view.textureType=row.textureType;
 	viewVisible.value = true;
 };
+
+
 const uploadData = async () => {
 	console.log(tableData.value[idx])
 	try {
@@ -449,6 +763,28 @@ onMounted(() => {
 	toSelectEra.value = EraloadAll()
 })
 
+const size = ref('')
+const iconStyle = computed(() => {
+	const marginMap = {
+		large: '8px',
+		default: '6px',
+		small: '4px',
+	}
+	return {
+		marginRight: marginMap[size.value] || marginMap.default,
+	}
+})
+const blockMargin = computed(() => {
+	const marginMap = {
+		large: '32px',
+		default: '28px',
+		small: '24px',
+	}
+	return {
+		marginTop: marginMap[size.value] || marginMap.default,
+	}
+})
+
 </script>
 
 <style scoped>
@@ -487,5 +823,18 @@ onMounted(() => {
 	margin: auto;
 	width: 40px;
 	height: 40px;
+}
+
+.el-descriptions {
+	margin-top: 20px;
+}
+
+.cell-item {
+	display: flex;
+	align-items: center;
+}
+
+.margin-top {
+	margin-top: 20px;
 }
 </style>
