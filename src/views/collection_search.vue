@@ -122,7 +122,7 @@
 				<!-- 收藏单位 -->
 				<el-descriptions-item>
 					<template #label>
-						<div class="cell-item"><el-icon :style="iconStyle">
+						<div class="cell-item" :style="{ minWidth: view.collectInfo.collectMuseum.length * 12 + 'px'}"><el-icon :style="iconStyle">
 								<user />
 							</el-icon>
 							收藏单位</div>
@@ -185,7 +185,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Medal />
 							</el-icon>
 							文物级别
 						</div>
@@ -197,7 +197,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Grid />
 							</el-icon>
 							文物类别
 						</div>
@@ -209,7 +209,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Pointer />
 							</el-icon>
 							质地
 						</div>
@@ -221,7 +221,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Calendar />
 							</el-icon>
 							年代
 						</div>
@@ -233,7 +233,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<LocationInformation />
 							</el-icon>
 							地域
 						</div>
@@ -245,7 +245,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<MapLocation />
 							</el-icon>
 							来源
 						</div>
@@ -257,7 +257,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Collection />
 							</el-icon>
 							保存状况
 						</div>
@@ -269,7 +269,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Box />
 							</el-icon>
 							完残程度
 						</div>
@@ -281,7 +281,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<FullScreen />
 							</el-icon>
 							尺寸
 						</div>
@@ -293,7 +293,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Coin />
 							</el-icon>
 							质量
 						</div>
@@ -305,7 +305,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Histogram />
 							</el-icon>
 							传统数量
 						</div>
@@ -317,7 +317,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Histogram />
 							</el-icon>
 							实际数量
 						</div>
@@ -329,7 +329,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<AlarmClock />
 							</el-icon>
 							入藏时间
 						</div>
@@ -341,7 +341,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Trophy />
 							</el-icon>
 							保护等级
 						</div>
@@ -353,7 +353,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<EditPen />
 							</el-icon>
 							鉴定意见
 						</div>
@@ -365,7 +365,7 @@
 					<template #label>
 						<div class="cell-item">
 							<el-icon :style="iconStyle">
-								<tickets />
+								<Notebook />
 							</el-icon>
 							备注
 						</div>
