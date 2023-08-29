@@ -7,7 +7,7 @@
 				<!--显示一个输入框，用户可以输入名称进行搜索。v-model="query.name"将输入的值绑定到query.name变量上。-->
 				<el-input v-model="query.id" placeholder="文物ID" class="handle-input mr10"></el-input>
 				<br><br>
-				<el-select v-model="query.type" placeholder="文物种类" class="handle-select mr10">
+				<el-select v-model="query.collectionType" placeholder="文物种类" class="handle-select mr10">
 					<el-option key="1" label="瓷器" value="瓷器"></el-option>
 					<el-option key="2" label="青铜器" value="青铜器"></el-option>
 				</el-select>
@@ -47,13 +47,13 @@
 				<el-table-column prop="era" label="文物年代" align="center"></el-table-column>
 				<!--<el-table-column prop="address" label="地址"></el-table-column>-->
 				<el-table-column prop="storageInfo.currentStatus" label="藏品状态" align="center">
-					<!--<template #default="scope">
+					<template #default="scope">
 						<el-tag
-							:type="scope.row.state === '成功' ? 'success' : scope.row.state === '失败' ? 'danger' : ''"
+							:type="scope.row.storageInfo.currentStatus === '在展' ? 'success' : scope.row.storageInfo.currentStatus === '修缮中' ? 'danger' : ''"
 						>
-							{{ scope.row.state }}
+							{{ scope.row.storageInfo.currentStatus }}
 						</el-tag>
-					</template>-->
+					</template>
 				</el-table-column>
 				<el-table-column prop="collectInfo.collectTime" label="入藏时间" align="center"></el-table-column>
 				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
@@ -93,20 +93,20 @@
 						class="inline-input w-50" placeholder="请输入文物的年代" @select="eraHandleSelect" />
 				</el-form-item>
 				<el-form-item label="藏品状态">
-					<el-select v-model="form.status" placeholder="藏品状态" class="handle-select mr10">
+					<el-select v-model="form.storageInfo.currentStatus" placeholder="藏品状态" class="handle-select mr10">
 						<el-option key="1" label="在展" value="在展"></el-option>
 						<el-option key="2" label="在库" value="在库"></el-option>
 						<el-option key="3" label="修缮中" value="修缮中"></el-option>
 					</el-select>
 				</el-form-item>
 
-				<el-form-item v-if="form.status === '在展'" label="展厅名称">
-					<el-input v-if="form.status === '在展'" v-model="form.hall_name" class="handle-input mr10"></el-input>
+				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
+					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.hall_name" class="handle-input mr10"></el-input>
 				</el-form-item>
 
-				<el-form-item v-if="form.status === '在库'" label="库房名称">
+				<!-- <el-form-item v-if="form.status === '在库'" label="库房名称">
 					<el-input v-if="form.status === '在库'" v-model="form.storage_name" class="handle-input mr10"></el-input>
-				</el-form-item>
+				</el-form-item> -->
 
 			</el-form>
 			<template #footer>
@@ -121,7 +121,7 @@
 			<div>文物名称：{{ view.name }}</div>
 			<div>文物种类：{{ view.collectionType }}</div>
 			<div>文物年代：{{ view.era }}</div>
-			<div>藏品状态：{{ view.status }}</div>
+			<div>藏品状态：{{ view.storageInfo.currentStatus }}</div>
 
 			<template #footer>
 				<span class="dialog-footer">
@@ -158,16 +158,18 @@ interface TableItem {
 	collectionId: number;
 	name: string;
 	money: string;
-	state: string;
 	date: string;
 	collectionType: string;
 	collectInfo:{
-	collectTime:string;	//收藏的时间
+		collectTime:string;	//收藏的时间
 	}
 	era: string;
 	status: string;
 	hall_name: string;
-	storage_name: string;
+	storageInfo:{
+		currentStatus:string;
+		protectionLevel:string;
+	}
 }
 //请求数据
 const query = reactive({
@@ -180,7 +182,11 @@ const query = reactive({
 	excavation_date: ' ',   //出土日期
 	collectTime:'',	//收藏的时间
 	pageIndex: 1,      //所在页面
-	pageSize: 10       //总页面
+	pageSize: 10,       //总页面
+	storageInfo:{
+		currentStatus:'',
+		protectionLevel:''
+	}
 });
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
@@ -190,7 +196,8 @@ const getData = () => {
 	fetchData().then(res => {
 		console.log(res)
 		tableData.value = res;
-		console.log(tableData.value.length);
+		// console.log(tableData.value.length);
+		//截取有效时间显示
 		for(var i=0;i<tableData.value.length;i++){
 			var T=tableData.value[i].collectInfo.collectTime;
 			var dest='';
@@ -202,7 +209,7 @@ const getData = () => {
 			}
 			tableData.value[i].collectInfo.collectTime=dest;
 		}
-		console.log(res[0].collectionId);
+		// console.log(res[0].collectionId);
 		// pageTotal.value = res.data.pageTotal || 50;
 	});
 
@@ -244,14 +251,20 @@ let form = reactive({
 	era: ' ',    //文物的年代
 	status: ' ',    //文物的状态
 	hall_name: ' ', //文物的展厅（若在展）
-	storage_name: ' ' //文物的库房名称（若在库）
+	storageInfo:{
+		currentStatus:'',  //当前状态：在展，在库，修缮中
+		protectionLevel:'', //保护等级
+	}
 });
 //查看的内容
 let view = reactive({
 	name: '',    //文物的姓名
 	collectionType: '',    //文物的种类
 	era: ' ',    //文物的年代
-	status: ' '    //文物的状态
+	storageInfo:{
+		currentStatus:'',  //当前状态：在展，在库，修缮中
+		protectionLevel:'', //保护等级
+	}
 });
 
 //处理编辑操作
@@ -264,9 +277,9 @@ const handleEdit = (index: number, row: any) => {
 	form.name = row.name;
 	form.collectionType = row.collectionType;
 	form.era = row.era;
-	form.status = row.status;
+	// form.status = row.status;
 	form.hall_name = row.hall_name;
-	form.storage_name = row.storage_name;
+	form.storageInfo.currentStatus = row.storageInfo.currentStatus;
 	editVisible.value = true;
 };
 
@@ -277,7 +290,8 @@ const handleDetails = (index: number, row: any) => {
 	view.name = row.name;
 	view.collectionType = row.collectionType;
 	view.era = row.era;
-	view.status = row.status;
+	view.storageInfo.currentStatus = row.storageInfo.currentStatus;
+	//显示出编辑框
 	viewVisible.value = true;
 };
 const uploadData = async () => {
@@ -301,10 +315,11 @@ const saveEdit = async () => {
 	tableData.value[idx].name = form.name;        //将修改的文物姓名同步到表格当中
 	tableData.value[idx].collectionType = form.collectionType;        //将修改的文物的种类同步到表格当中
 	tableData.value[idx].era = form.era;          //将修改的文物的朝代同步到表格当中
-	tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
+	// tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
 	tableData.value[idx].hall_name = form.hall_name;      //将修改的文物的展厅名称同步到表格当中
-	tableData.value[idx].storage_name = form.storage_name;      //将修改的文物的库房名称同步到表格当中
-	console.log(tableData.value[idx]);
+	tableData.value[idx].storageInfo.currentStatus = form.storageInfo.currentStatus;      //将修改的文物的库房名称同步到表格当中
+	console.log(tableData.value);
+
 	// Update frontend table data
 	// tableData.value[idx] = updatedData;
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);  //弹出弹窗提示用户修改成功
