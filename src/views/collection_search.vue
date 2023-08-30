@@ -617,7 +617,7 @@ const handleDetails = (index: number, row: any) => {
 	viewVisible.value = true;
 };
 
-
+//将数据上传到数据库中
 const uploadData = async () => {
 	console.log(tableData.value[idx])
 	try {
