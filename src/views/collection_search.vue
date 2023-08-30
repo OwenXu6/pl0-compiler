@@ -117,266 +117,271 @@
 			<div>文物种类：{{ view.collectionType }}</div>
 			<div>文物年代：{{ view.era }}</div>
 			<div>藏品状态：{{ view.storageInfo.currentStatus }}</div> -->
+			<div class="cardContainer" id="container">
 
-			<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
-				<!-- 收藏单位 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item" :style="{ minWidth: view.collectInfo.collectMuseum.length * 12 + 'px'}"><el-icon :style="iconStyle">
-								<user />
-							</el-icon>
-							收藏单位</div>
-					</template>
-					{{ view.collectInfo.collectMuseum }}
-				</el-descriptions-item>
-				<!-- 现登记号 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<EditPen />
-							</el-icon>
-							现登记号
-						</div>
-					</template>
-					{{ view.collectionId }}
-				</el-descriptions-item>
-				<!-- 藏品图片 -->
-				<el-descriptions-item :span="2">
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Picture />
-							</el-icon>
-							藏品图片
-						</div>
-					</template>
-					<template #default="scope">
-						<el-image class="table-td-thumb" :src="view.collectionPhoto" :z-index="10" preview-teleported>
-						</el-image>
-					</template>
-				</el-descriptions-item>
-				<!-- 名称 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<tickets />
-							</el-icon>
-							名称
-						</div>
-					</template>
-					{{ view.name }}
-				</el-descriptions-item>
-				<!-- 文物原名 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<tickets />
-							</el-icon>
-							原名
-						</div>
-					</template>
-					{{view.originalName }} 
-				</el-descriptions-item>
-				<!-- 文物级别 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Medal />
-							</el-icon>
-							文物级别
-						</div>
-					</template>
-					{{view.storageInfo.protectionLevel}} 
-				</el-descriptions-item>
-				<!-- 文物类别 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Grid />
-							</el-icon>
-							文物类别
-						</div>
-					</template>
-					{{view.collectionType }} 
-				</el-descriptions-item>
-				<!-- 质地 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Pointer />
-							</el-icon>
-							质地
-						</div>
-					</template>
-					{{view.textureType}} 
-				</el-descriptions-item>
-				<!--年代 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Calendar />
-							</el-icon>
-							年代
-						</div>
-					</template>
-					{{view.era }} 
-				</el-descriptions-item>
-				<!-- 地域 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<LocationInformation />
-							</el-icon>
-							地域
-						</div>
-					</template>
-					{{view.area}} 
-				</el-descriptions-item>
-				<!-- 来源 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<MapLocation />
-							</el-icon>
-							来源
-						</div>
-					</template>
-					{{view.collectInfo.source }} 
-				</el-descriptions-item>
-				<!-- 保存状况 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Collection />
-							</el-icon>
-							保存状况
-						</div>
-					</template>
-					{{view.storageInfo.currentStatus }} 
-				</el-descriptions-item>
-				<!-- 完残程度 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Box />
-							</el-icon>
-							完残程度
-						</div>
-					</template>
-					{{view.completeness }} 
-				</el-descriptions-item>
-				<!-- 尺寸 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<FullScreen />
-							</el-icon>
-							尺寸
-						</div>
-					</template>
-					{{view.dimensionInfo.dimension+view.dimensionInfo.dimensionUnit }} 
-				</el-descriptions-item>
-				<!-- 质量-->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Coin />
-							</el-icon>
-							质量
-						</div>
-					</template>
-					{{view.dimensionInfo.weight+view.dimensionInfo.weightUnit}} 
-				</el-descriptions-item>
-				<!-- 传统数量 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Histogram />
-							</el-icon>
-							传统数量
-						</div>
-					</template>
-					{{view.dimensionInfo.traditionalQuantity+"个"}} 
-				</el-descriptions-item>
-				<!-- 实际数量 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Histogram />
-							</el-icon>
-							实际数量
-						</div>
-					</template>
-					{{view.dimensionInfo.realQuantity+"个"}} 
-				</el-descriptions-item>
-				<!-- 入藏时间 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<AlarmClock />
-							</el-icon>
-							入藏时间
-						</div>
-					</template>
-					{{view.collectInfo.collectTime }} 
-				</el-descriptions-item>
-				<!-- 保护等级 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Trophy />
-							</el-icon>
-							保护等级
-						</div>
-					</template>
-					{{view.storageInfo.protectionLevel }} 
-				</el-descriptions-item>
-				<!-- 鉴定意见 -->
-				<el-descriptions-item :span="2">
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<EditPen />
-							</el-icon>
-							鉴定意见
-						</div>
-					</template>
-					{{view.identificationComments+"\n"+"鉴定人："+view.identificationStaffName+"    "+"鉴定时间："+view.identificationDate}} 
-				</el-descriptions-item>
-				<!-- 备注 -->
-				<el-descriptions-item :span="2">
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Notebook />
-							</el-icon>
-							备注
-						</div>
-					</template>
-					{{view.remark }} 
-				</el-descriptions-item>
-			</el-descriptions>
-
+				<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
+					<!-- 收藏单位 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item" :style="{ minWidth: view.collectInfo.collectMuseum.length * 12 + 'px' }">
+								<el-icon :style="iconStyle">
+									<user />
+								</el-icon>
+								收藏单位</div>
+						</template>
+						{{ view.collectInfo.collectMuseum }}
+					</el-descriptions-item>
+					<!-- 现登记号 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<EditPen />
+								</el-icon>
+								现登记号
+							</div>
+						</template>
+						{{ view.collectionId }}
+					</el-descriptions-item>
+					<!-- 藏品图片 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Picture />
+								</el-icon>
+								藏品图片
+							</div>
+						</template>
+						<template #default="scope">
+							<el-image class="CollectionImg" :src="view.collectionPhoto" :z-index="10">
+							</el-image>
+						</template>
+					</el-descriptions-item>
+					<!-- 名称 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<tickets />
+								</el-icon>
+								名称
+							</div>
+						</template>
+						{{ view.name }}
+					</el-descriptions-item>
+					<!-- 文物原名 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<tickets />
+								</el-icon>
+								原名
+							</div>
+						</template>
+						{{ view.originalName }}
+					</el-descriptions-item>
+					<!-- 文物级别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Medal />
+								</el-icon>
+								文物级别
+							</div>
+						</template>
+						{{ view.storageInfo.protectionLevel }}
+					</el-descriptions-item>
+					<!-- 文物类别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Grid />
+								</el-icon>
+								文物类别
+							</div>
+						</template>
+						{{ view.collectionType }}
+					</el-descriptions-item>
+					<!-- 质地 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Pointer />
+								</el-icon>
+								质地
+							</div>
+						</template>
+						{{ view.textureType }}
+					</el-descriptions-item>
+					<!--年代 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Calendar />
+								</el-icon>
+								年代
+							</div>
+						</template>
+						{{ view.era }}
+					</el-descriptions-item>
+					<!-- 地域 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<LocationInformation />
+								</el-icon>
+								地域
+							</div>
+						</template>
+						{{ view.area }}
+					</el-descriptions-item>
+					<!-- 来源 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<MapLocation />
+								</el-icon>
+								来源
+							</div>
+						</template>
+						{{ view.collectInfo.source }}
+					</el-descriptions-item>
+					<!-- 保存状况 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Collection />
+								</el-icon>
+								保存状况
+							</div>
+						</template>
+						{{ view.storageInfo.currentStatus }}
+					</el-descriptions-item>
+					<!-- 完残程度 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Box />
+								</el-icon>
+								完残程度
+							</div>
+						</template>
+						{{ view.completeness }}
+					</el-descriptions-item>
+					<!-- 尺寸 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<FullScreen />
+								</el-icon>
+								尺寸
+							</div>
+						</template>
+						{{ view.dimensionInfo.dimension + view.dimensionInfo.dimensionUnit }}
+					</el-descriptions-item>
+					<!-- 质量-->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Coin />
+								</el-icon>
+								质量
+							</div>
+						</template>
+						{{ view.dimensionInfo.weight + view.dimensionInfo.weightUnit }}
+					</el-descriptions-item>
+					<!-- 传统数量 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Histogram />
+								</el-icon>
+								传统数量
+							</div>
+						</template>
+						{{ view.dimensionInfo.traditionalQuantity + "个" }}
+					</el-descriptions-item>
+					<!-- 实际数量 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Histogram />
+								</el-icon>
+								实际数量
+							</div>
+						</template>
+						{{ view.dimensionInfo.realQuantity + "个" }}
+					</el-descriptions-item>
+					<!-- 入藏时间 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<AlarmClock />
+								</el-icon>
+								入藏时间
+							</div>
+						</template>
+						{{ view.collectInfo.collectTime }}
+					</el-descriptions-item>
+					<!-- 保护等级 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Trophy />
+								</el-icon>
+								保护等级
+							</div>
+						</template>
+						{{ view.storageInfo.protectionLevel }}
+					</el-descriptions-item>
+					<!-- 鉴定意见 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<EditPen />
+								</el-icon>
+								鉴定意见
+							</div>
+						</template>
+						{{ view.identificationComments }}
+						<div style="margin-top: 10px">鉴定人：{{ view.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
+							view.identificationDate }}</div>
+					</el-descriptions-item>
+					<!-- 备注 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								备注
+							</div>
+						</template>
+						{{ view.remark }}
+					</el-descriptions-item>
+				</el-descriptions>
+			</div>
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button type="primary" @click="closeView">关 闭</el-button>
+					<el-button type="success" v-print="'#container'">打 印</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -397,6 +402,7 @@ import {
 	Tickets,
 	User,
 } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'; // 导入useRouter
 import axios from 'axios'
 
 //获取后端数据库的数据
@@ -536,8 +542,8 @@ let view = reactive({
 		dimensionUnit: '',
 		weight: '',
 		weightUnit: '',
-		realQuantity:'', 
-		traditionalQuantity:''
+		realQuantity: '',
+		traditionalQuantity: ''
 	},
 	era: '',
 	identificationComments: '',
@@ -550,7 +556,7 @@ let view = reactive({
 		protectionLevel: ''
 	},
 	originalName: '',
-	textureType:''
+	textureType: ''
 });
 
 //处理编辑操作
@@ -593,8 +599,8 @@ const handleDetails = (index: number, row: any) => {
 		dimensionUnit: row.dimensionInfo.dimensionUnit,
 		weight: row.dimensionInfo.weight,
 		weightUnit: row.dimensionInfo.weightUnit,
-		realQuantity:row.dimensionInfo.realQuantity,
-		traditionalQuantity:row.dimensionInfo.traditionalQuantity
+		realQuantity: row.dimensionInfo.realQuantity,
+		traditionalQuantity: row.dimensionInfo.traditionalQuantity
 	};
 	view.era = row.era;
 	view.identificationComments = row.identificationComments;
@@ -607,7 +613,7 @@ const handleDetails = (index: number, row: any) => {
 		protectionLevel: row.storageInfo.protectionLevel
 	};
 	view.originalName = row.originalName;
-	view.textureType=row.textureType;
+	view.textureType = row.textureType;
 	viewVisible.value = true;
 };
 
@@ -789,6 +795,17 @@ const blockMargin = computed(() => {
 	}
 })
 
+// 其他已经存在的变量和计算属性
+const router = useRouter(); // 使用useRouter获取路由实例
+
+const handlePrint = (): void => {
+	// 执行打印操作
+
+	// 执行页面跳转
+	router.push('./ccard.vue');
+};
+
+
 </script>
 
 <style scoped>
@@ -841,4 +858,11 @@ const blockMargin = computed(() => {
 .margin-top {
 	margin-top: 20px;
 }
-</style>
+
+.CollectionImg {
+	float: left;
+	width: 200px;
+	height: 130px;
+	margin: 10px;
+
+}</style>
