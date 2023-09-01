@@ -43,7 +43,7 @@
 					layout="total, prev, pager, next"
 					:current-page="query.pageIndex"
 					:page-size="query.pageSize"
-					:total="HumantableData.length"
+					:total="filteredData.length"
 					@current-change="handlePageChange"
 					@update:page-size = "PageSizeChange"
 				></el-pagination>
@@ -206,6 +206,7 @@ const query = reactive({
 const HumantableData = ref<TableItem[]>([]);
 const pageData = ref<TableItem[]>([]);   //
 const addedData = ref<TableItem[]>([]); // 保存新增的数据
+let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
 const compare = (a:TableItem,b:TableItem)=>{
 	return a.staffId < b.staffId ? -1:1;
 }
@@ -214,13 +215,13 @@ const compare = (a:TableItem,b:TableItem)=>{
 const getData = async () => {
 	const res = await fetchData();
 	HumantableData.value = res;  //記錄全部數據
-	let filteredData = res.concat(addedData.value);
+	filteredData.value = res.concat(addedData.value);
 	
 	//if (query.designIdea !== '') {
 		//filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
 	//}
 	console.log(query.value);
-	filteredData = filteredData.filter((item: TableItem) => 
+	filteredData.value = filteredData.value.filter((item: TableItem) => 
     	item.staffName.includes(query.value) || 
     	item.staffGender.includes(query.value) || 
     	item.staffPostRank.includes(query.value) ||
@@ -230,16 +231,16 @@ const getData = async () => {
 		String(item.staffSalary).includes(query.value)
 	);
 
-	filteredData = filteredData.sort(compare);
+	filteredData.value = filteredData.value.sort(compare);
 
 	// 分页逻辑
 	const startIndex = (query.pageIndex - 1) * query.pageSize;
 	const endIndex = query.pageIndex * query.pageSize;
 
 	// 截取当前页的数据
-	const pagedData = filteredData.slice(startIndex, endIndex);
+	const pagedData = filteredData.value.slice(startIndex, endIndex);
 
-	// 将截取的数据赋值给 HumantableData
+	// 将截取的数据赋值给 pagedData
 	pageData.value = pagedData;
 
 };
@@ -248,9 +249,10 @@ getData();
 
 const editData = async () => {
     try {
-		console.log(idx,HumantableData.value[idx].staffId, HumantableData.value[idx]);
-        const response = await axios.put('http://42.192.39.198:5000/api/Staffs/'+HumantableData.value[idx].staffId, HumantableData.value[idx]);
+		console.log(idx,pageData.value[idx].staffId, pageData.value[idx]);
+        const response = await axios.put('http://42.192.39.198:5000/api/Staffs/'+pageData.value[idx].staffId, pageData.value[idx]);
         ElMessage.success('数据修改成功');
+		PageSizeChange();
     } catch (error) {
         ElMessage.error('数据修改失败');
     }
@@ -258,9 +260,10 @@ const editData = async () => {
 
 const uploadData = async () => {
     try {
-		console.log(HumantableData.value[HumantableData.value.length-1]);
+		console.log(HumantableData.value[pageData.value.length-1]);
         const response = await axios.post('http://42.192.39.198:5000/api/Staffs', HumantableData.value[HumantableData.value.length-1]);
         ElMessage.success('数据上传成功');
+		PageSizeChange();
     } catch (error) {
         ElMessage.error('数据上传失败');
     }
@@ -268,10 +271,10 @@ const uploadData = async () => {
 
 const deleteData = async () => {
     try {
-		console.log(idx,HumantableData.value[idx]);
-        const response = await axios.delete('http://42.192.39.198:5000/api/Staffs/'+HumantableData.value[idx].staffId);
+		console.log(idx,pageData.value[idx]);
+        const response = await axios.delete('http://42.192.39.198:5000/api/Staffs/'+pageData.value[idx].staffId);
 		ElMessage.success('删除成功');
-		getData();
+		PageSizeChange();
     } catch (error) {
         ElMessage.error('删除失败');
     }
@@ -380,7 +383,7 @@ const saveEdit = () => {
 	HumantableData.value[idx].staffSalary = Number(form.staffSalary);
 	HumantableData.value[idx].workType = form.workType;
 	HumantableData.value[idx].job = form.job; //应该要至后端修改之
-		editData();
+	editData();
 	
 };
 
