@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
             },
             {
                 path: '/collection_add',
-                name: 'basetable',
+                name: 'basetable7',
                 meta: {
                     title: '新增藏品',
                     permiss: '2',

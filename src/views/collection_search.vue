@@ -53,13 +53,13 @@
 				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
 				<el-table-column label="操作" width="350" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="14">
+						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)">
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="15">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)">
 							删除
 						</el-button>
-						<el-button text :icon="View" @click="handleDetails(scope.$index, scope.row)" v-permiss="16">
+						<el-button text :icon="View" @click="handleDetails(scope.$index, scope.row)">
 							查看
 						</el-button>
 					</template>
