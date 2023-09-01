@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
             },
             {
                 path: '/collection_add',
-                name: 'basetable',
+                name: 'basetable7',
                 meta: {
                     title: '新增藏品',
                     permiss: '2',
@@ -50,7 +50,7 @@ const routes: RouteRecordRaw[] = [
             },
             {
                 path: '/collection_research4unknown',
-                name: 'basetable3',
+                name: 'basetable8',
                 meta: {
                     title: '未知文物研究鉴定',
                     permiss: '2',
