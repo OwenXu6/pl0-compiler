@@ -766,7 +766,15 @@ const handlePageChange = (val: number) => {
 	query.pageIndex = val;
 	getData();
 };
-
+const saveDelete = async (index: number) => {
+	try {
+		const deletedItemId = tableData.value[index].collectionId;
+		await axios.delete(`http://42.192.39.198:5000/api/Collections/${deletedItemId}`);
+		ElMessage.success('数据删除成功');
+	} catch (error) {
+		ElMessage.error('数据删除失败');
+	}
+};
 // 处理删除操作
 const handleDelete = (index: number) => {
 	// 二次确认删除
@@ -775,6 +783,8 @@ const handleDelete = (index: number) => {
 	})
 		.then(() => {
 			ElMessage.success('删除成功');
+			// 在这里调用 saveDelete 并传递要删除的数据索引
+			saveDelete(index);
 			tableData.value.splice(index, 1);
 		})
 		.catch(() => { });
