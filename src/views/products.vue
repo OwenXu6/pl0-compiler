@@ -188,11 +188,20 @@ type Product = NormalProduct | CulturalProduct;
 // Fetch and merge data from both APIs
 const getAndMergeData = async () => {
   try {
+<<<<<<< HEAD
     const responseNormal = await axios.get('http://42.192.39.198:5000/api/Products');
     const normalData: NormalProduct[] = responseNormal.data;
 
     const responseCultural = await axios.get('http://42.192.39.198:5000/api/CulturalProducts');
     const culturalData: CulturalProduct[] = responseCultural.data;
+=======
+    const response = await axios.get('http://42.192.39.198:5000/api/Products');
+    const data = response.data;
+    //检查data的内容
+	console.log(data)
+    // Apply filters
+    let filteredData = [...data];
+>>>>>>> origin/front_end_merge
 
     const culturalMap: Record<number, CulturalProduct> = {};
     culturalData.forEach(culturalItem => {
@@ -232,6 +241,7 @@ const handlePageChange = (val: number) => {
 	getData();
 };
 
+<<<<<<< HEAD
 const uploadCulturalData = async (data: CulturalProduct) => {
     try {
         const response = await axios.put(`http://42.192.39.198:5000/api/CulturalProducts/${data.productId}`, data);
@@ -239,6 +249,16 @@ const uploadCulturalData = async (data: CulturalProduct) => {
     } catch (error) {
         ElMessage.error('数据上传失败');
     }
+=======
+const uploadData = async () => {
+	console.log(tableData.value[idx])
+	try {
+		const response = await axios.put('http://42.192.39.198:5000/api/Products/' + tableData.value[idx].productId, tableData.value[idx]);
+		ElMessage.success('数据上传成功');
+	} catch (error) {
+		ElMessage.error('数据上传失败');
+	}
+>>>>>>> origin/front_end_merge
 };
 
 const uploadNormalData = async (data: NormalProduct) => {

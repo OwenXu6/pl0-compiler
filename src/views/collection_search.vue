@@ -3,60 +3,59 @@
 		<div class="container">
 			<!-- 查询的部分 -->
 			<div class="handle-box">
-
 				<el-input v-model="query.name" placeholder="文物名称" class="handle-input mr10"></el-input>
 				<!--显示一个输入框，用户可以输入名称进行搜索。v-model="query.name"将输入的值绑定到query.name变量上。-->
-
 				<el-input v-model="query.id" placeholder="文物ID" class="handle-input mr10"></el-input>
-
 				<br><br>
-
-				<el-select v-model="query.type" placeholder="文物种类" class="handle-select mr10">
+				<el-select v-model="query.collectionType" placeholder="文物种类" class="handle-select mr10">
 					<el-option key="1" label="瓷器" value="瓷器"></el-option>
 					<el-option key="2" label="青铜器" value="青铜器"></el-option>
 				</el-select>
-
 				<el-select v-model="query.era" placeholder="文物年代" class="handle-select mr10">
 					<el-option key="1" label="唐代" value="唐代"></el-option>
 					<el-option key="2" label="清代" value="清代"></el-option>
 				</el-select>
-
 				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10">
 					<el-option key="1" label="在库" value="在库"></el-option>
 					<el-option key="2" label="在展" value="在展"></el-option>
 				</el-select>
-
 				<el-select v-model="query.excavation_site" placeholder="出土地" class="handle-select mr10">
 					<el-option key="1" label="三星堆" value="三星堆"></el-option>
 					<el-option key="2" label="北首岭遗址" value="北首岭遗址"></el-option>
 				</el-select>
-
 				<el-input v-model="query.excavation_date" placeholder="出土日期" class="handle-input mr11"></el-input>
-
-
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
-
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="collectionId" label="ID" width="110" align="center"></el-table-column>
-				<el-table-column prop="name" label="文物名称"></el-table-column>
-				<!--<el-table-column prop="name" label="文物图片"></el-table-column>-->
-				<el-table-column prop="collectionType" label="文物种类">
+				<el-table-column prop="name" label="文物名称" align="center"></el-table-column>
+				<el-table-column label="文物图片(查看大图)" align="center">
+					<template #default="scope">
+						<el-image
+							class="table-td-thumb"
+							:src="scope.row.collectionPhoto"
+							:z-index="10"
+							:preview-src-list="[scope.row.thumb]"
+							preview-teleported
+						>
+						</el-image>
+					</template>
 				</el-table-column>
+				<el-table-column prop="collectionType" label="文物种类" align="center"></el-table-column>
 				<el-table-column prop="era" label="文物年代" align="center"></el-table-column>
 				<!--<el-table-column prop="address" label="地址"></el-table-column>-->
-				<el-table-column prop="storageInfo" label="藏品状态" align="center">
-					<!--<template #default="scope">
+				<el-table-column prop="storageInfo.currentStatus" label="藏品状态" align="center">
+					<template #default="scope">
 						<el-tag
-							:type="scope.row.state === '成功' ? 'success' : scope.row.state === '失败' ? 'danger' : ''"
+							:type="scope.row.storageInfo.currentStatus === '在展' ? 'success' : scope.row.storageInfo.currentStatus === '修缮中' ? 'danger' : ''"
 						>
-							{{ scope.row.state }}
+							{{ scope.row.storageInfo.currentStatus }}
 						</el-tag>
-					</template>-->
+					</template>
 				</el-table-column>
-
+				<el-table-column prop="collectInfo.collectTime" label="入藏时间" align="center"></el-table-column>
 				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
 				<el-table-column label="操作" width="350" align="center">
 					<template #default="scope">
@@ -86,28 +85,28 @@
 				</el-form-item>
 				<!-- 通过模糊搜索来输入文物的种类 -->
 				<el-form-item label="文物种类">
-					<el-autocomplete v-model="form.type" :fetch-suggestions="typeQuerySearch" clearable class="inline-input w-50"
-						placeholder="请输入文物的种类" @select="typeHandleSelect" /> 
+					<el-autocomplete v-model="form.collectionType" :fetch-suggestions="typeQuerySearch" clearable
+						class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
 				</el-form-item>
 				<el-form-item label="文物年代">
-					<el-autocomplete v-model="form.era" :fetch-suggestions="eraQuerySearch" clearable class="inline-input w-50"
-						placeholder="请输入文物的年代" @select="eraHandleSelect" /> 
+					<el-autocomplete v-model="form.era" :fetch-suggestions="eraQuerySearch" clearable
+						class="inline-input w-50" placeholder="请输入文物的年代" @select="eraHandleSelect" />
 				</el-form-item>
 				<el-form-item label="藏品状态">
-					<el-select v-model="form.status" placeholder="藏品状态" class="handle-select mr10">
+					<el-select v-model="form.storageInfo.currentStatus" placeholder="藏品状态" class="handle-select mr10">
 						<el-option key="1" label="在展" value="在展"></el-option>
 						<el-option key="2" label="在库" value="在库"></el-option>
 						<el-option key="3" label="修缮中" value="修缮中"></el-option>
 					</el-select>
 				</el-form-item>
 
-				<el-form-item v-if="form.status === '在展'" label="展厅名称">
-						<el-input v-if="form.status === '在展'" v-model="form.hall_name" class="handle-input mr10"></el-input>
+				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
+					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.hall_name" class="handle-input mr10"></el-input>
 				</el-form-item>
 
-				<el-form-item v-if="form.status === '在库'" label="库房名称">
-						<el-input v-if="form.status === '在库'" v-model="form.storage_name" class="handle-input mr10"></el-input>
-				</el-form-item>
+				<!-- <el-form-item v-if="form.status === '在库'" label="库房名称">
+					<el-input v-if="form.status === '在库'" v-model="form.storage_name" class="handle-input mr10"></el-input>
+				</el-form-item> -->
 
 			</el-form>
 			<template #footer>
@@ -120,9 +119,9 @@
 		<!-- 查看的弹出框 -->
 		<el-dialog title="查看" v-model="viewVisible" width="30%">
 			<div>文物名称：{{ view.name }}</div>
-			<div>文物种类：{{ view.type }}</div>
+			<div>文物种类：{{ view.collectionType }}</div>
 			<div>文物年代：{{ view.era }}</div>
-			<div>藏品状态：{{ view.status }}</div>
+			<div>藏品状态：{{ view.storageInfo.currentStatus }}</div>
 
 			<template #footer>
 				<span class="dialog-footer">
@@ -142,10 +141,11 @@ import { Delete, Edit, Search, Plus, View } from '@element-plus/icons-vue';
 import { onMounted } from 'vue'
 import axios from 'axios'
 
+//获取后端数据库的数据
 const fetchData = async () => {
 	try {
 		const response = await axios.get(' http://42.192.39.198:5000/api/Collections');
-		console.log(response.data); 
+		console.log(response.data);
 		console.log("数据库连接成功！");
 		return response.data;
 	} catch (error) {
@@ -155,28 +155,38 @@ const fetchData = async () => {
 
 //表格中展示的数据
 interface TableItem {
-	id: number;
+	collectionId: number;
 	name: string;
 	money: string;
-	state: string;
 	date: string;
-	type: string;
+	collectionType: string;
+	collectInfo:{
+		collectTime:string;	//收藏的时间
+	}
 	era: string;
 	status: string;
 	hall_name: string;
-	storage_name: string;
+	storageInfo:{
+		currentStatus:string;
+		protectionLevel:string;
+	}
 }
 //请求数据
 const query = reactive({
 	name: '',         //文物姓名
 	id: '',           //文物id
-	type: ' ',        //文物类别
+	collectionType: ' ',        //文物类别
 	era: ' ',         //文物的朝代
 	status: ' ',      //藏品状态
 	excavation_site: ' ',    //出土地
 	excavation_date: ' ',   //出土日期
+	collectTime:'',	//收藏的时间
 	pageIndex: 1,      //所在页面
-	pageSize: 10       //总页面
+	pageSize: 10,       //总页面
+	storageInfo:{
+		currentStatus:'',
+		protectionLevel:''
+	}
 });
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
@@ -186,10 +196,23 @@ const getData = () => {
 	fetchData().then(res => {
 		console.log(res)
 		tableData.value = res;
-		console.log(res[0].collectionId);
+		// console.log(tableData.value.length);
+		//截取有效时间显示
+		for(var i=0;i<tableData.value.length;i++){
+			var T=tableData.value[i].collectInfo.collectTime;
+			var dest='';
+			console.log(T)
+			for(var j=0;j<T.length;j++){
+				if(T[j]=='T')
+					break;
+				dest+=T[j];
+			}
+			tableData.value[i].collectInfo.collectTime=dest;
+		}
+		// console.log(res[0].collectionId);
 		// pageTotal.value = res.data.pageTotal || 50;
 	});
-	
+
 };
 getData();
 
@@ -224,30 +247,39 @@ const viewVisible = ref(false);
 //表单填写的内容
 let form = reactive({
 	name: '',    //文物的姓名
-	type: '',    //文物的种类
+	collectionType: '',    //文物的种类
 	era: ' ',    //文物的年代
 	status: ' ',    //文物的状态
 	hall_name: ' ', //文物的展厅（若在展）
-	storage_name: ' ' //文物的库房名称（若在库）
+	storageInfo:{
+		currentStatus:'',  //当前状态：在展，在库，修缮中
+		protectionLevel:'', //保护等级
+	}
 });
 //查看的内容
 let view = reactive({
 	name: '',    //文物的姓名
-	type: '',    //文物的种类
+	collectionType: '',    //文物的种类
 	era: ' ',    //文物的年代
-	status: ' '    //文物的状态
+	storageInfo:{
+		currentStatus:'',  //当前状态：在展，在库，修缮中
+		protectionLevel:'', //保护等级
+	}
 });
 
 //处理编辑操作
 let idx: number = -1;
+
+//打开编辑框
 const handleEdit = (index: number, row: any) => {
+	//将目前表格中的内容先同步到编辑框内
 	idx = index;
 	form.name = row.name;
-	form.type = row.type;
+	form.collectionType = row.collectionType;
 	form.era = row.era;
-	form.status = row.status;
+	// form.status = row.status;
 	form.hall_name = row.hall_name;
-	form.storage_name = row.storage_name;
+	form.storageInfo.currentStatus = row.storageInfo.currentStatus;
 	editVisible.value = true;
 };
 
@@ -256,23 +288,43 @@ let i: number = -1;
 const handleDetails = (index: number, row: any) => {
 	i = index;
 	view.name = row.name;
-	view.type = row.type;
+	view.collectionType = row.collectionType;
 	view.era = row.era;
-	view.status = row.status;
+	view.storageInfo.currentStatus = row.storageInfo.currentStatus;
+	//显示出编辑框
 	viewVisible.value = true;
+};
+const uploadData = async () => {
+	console.log(tableData.value[idx])
+	try {
+		const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
+		ElMessage.success('数据上传成功');
+	} catch (error) {
+		ElMessage.error('数据上传失败');
+	}
 };
 
 //存储编辑的内容
-const saveEdit = () => {
-	editVisible.value = false;                    //editVisible.value被用来控制编辑界面或对话框的显示与隐藏
-	ElMessage.success(`修改第 ${idx + 1} 行成功`);  //弹出弹窗提示用户修改成功
+const saveEdit = async () => {
+	editVisible.value = false;
+	//遇事不决console.log
+	console.log('saveEdit')
+	console.log(tableData.value[idx].collectionId)
+	console.log(idx)
+	// ElMessage.success(`修改第 ${idx + 1} 行成功`);
 	tableData.value[idx].name = form.name;        //将修改的文物姓名同步到表格当中
-	tableData.value[idx].type = form.type;        //将修改的文物的种类同步到表格当中
+	tableData.value[idx].collectionType = form.collectionType;        //将修改的文物的种类同步到表格当中
 	tableData.value[idx].era = form.era;          //将修改的文物的朝代同步到表格当中
-	tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
+	// tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
 	tableData.value[idx].hall_name = form.hall_name;      //将修改的文物的展厅名称同步到表格当中
-	tableData.value[idx].storage_name = form.storage_name;      //将修改的文物的库房名称同步到表格当中
-	
+	tableData.value[idx].storageInfo.currentStatus = form.storageInfo.currentStatus;      //将修改的文物的库房名称同步到表格当中
+	console.log(tableData.value);
+
+	// Update frontend table data
+	// tableData.value[idx] = updatedData;
+	ElMessage.success(`修改第 ${idx + 1} 行成功`);  //弹出弹窗提示用户修改成功
+	uploadData();
+
 };
 //关闭“查看详细信息”的弹窗
 const closeView = () => {
@@ -315,12 +367,12 @@ const typeLoadAll = () => {
 		{ value: '金器', index: 9 },
 		{ value: '其他金属器（锡、铅等）', index: 10 },
 		{ value: '瓷器', index: 11 },
-		{ value: '玉器', index: 12},
+		{ value: '玉器', index: 12 },
 		{ value: '宝石', index: 13 },
 		{ value: '珐琅', index: 14 },
 		{ value: '紫砂', index: 15 },
 		{ value: '玻璃器', index: 16 },
-		{ value: '书画', index: 17},
+		{ value: '书画', index: 17 },
 		{ value: '图书、文献', index: 18 },
 		{ value: '甲骨、简牍', index: 19 },
 		{ value: '文房用具', index: 20 },
@@ -332,7 +384,7 @@ const typeLoadAll = () => {
 		{ value: '家具', index: 26 },
 		{ value: '仪器、仪表', index: 27 },
 		{ value: '生产机械', index: 28 },
-		{ value: '建筑资料', index: 29},
+		{ value: '建筑资料', index: 29 },
 		{ value: '化石', index: 30 },
 		{ value: '其他', index: 31 },
 	]
@@ -382,7 +434,7 @@ const EraloadAll = () => {
 		{ value: '唐朝', index: 9 },
 		{ value: '五代十国', index: 10 },
 		{ value: '宋朝', index: 11 },
-		{ value: '元朝', index: 12},
+		{ value: '元朝', index: 12 },
 		{ value: '明朝', index: 13 },
 		{ value: '清朝', index: 14 },
 		{ value: '民国', index: 15 },
