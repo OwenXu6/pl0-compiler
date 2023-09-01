@@ -367,9 +367,6 @@
 						{{ form.remark }}
 					</el-descriptions-item>
 				</el-descriptions>
-				
-
-
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
