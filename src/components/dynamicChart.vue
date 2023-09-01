@@ -1,5 +1,5 @@
 <template>
-    <div id="myChart" :style="{ width: '1000px', height: '500px' }"></div>
+    <div id="myChart" :style="{ width: '1000px', height: '450px' }"></div>
 </template>
  
 <script lang="ts">
@@ -8,11 +8,19 @@ import { defineComponent, onMounted, getCurrentInstance, onUnmounted } from 'vue
 import * as echarts from 'echarts'
 
 export default defineComponent({
-
-    setup() {
+    props: {
+        inData: {
+            type: Number,
+            required: true,
+        },
+        outData: {
+            type: Number,
+            required: true,
+        },
+    },
+    setup(props) {
         var app: any = {};
-        let inCount = 0;
-        let outCount = 0;
+
         const stiIn = function(){
             return 5 + Math.round(Math.random() * 5);
         }
@@ -42,7 +50,6 @@ export default defineComponent({
             let len = 10;
             while (len--) {
                 res.push(stiIn());
-                inCount += res[res.length - 1];
             }
             return res;
         })();
@@ -51,7 +58,6 @@ export default defineComponent({
             let len = 0;
             while (len < 10) {
                 res.push(stiOut());
-                outCount += res[res.length - 1];
                 len++;
             }
             return res;
@@ -69,7 +75,7 @@ export default defineComponent({
 
         const option = {
             title: {
-                text: 'Dynamic Data'
+                text: '人流信息监测',
             },
             tooltip: {
                 trigger: 'axis',
@@ -170,11 +176,9 @@ export default defineComponent({
                 let axisData = new Date().toLocaleTimeString().replace(/^\D*/, '');
 
                 data.shift();
-                data.push(stiIn());
-                inCount += data[data.length - 1];
+                data.push(props.inData);
                 data2.shift();
-                data2.push(stiOut());
-                outCount += data2[data2.length - 1];
+                data2.push(props.outData);
 
                 data3.shift();
                 data3.push((data[data.length - 1] - data2[data2.length - 1]));

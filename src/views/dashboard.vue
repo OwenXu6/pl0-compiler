@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<el-row :gutter="20">
+		<el-row gutter="20">
 			<el-col :span="8">
-				<el-card shadow="hover" class="mgb20" style="height: 220px">
+				<el-card shadow="hover" class="mgb20" style=" height: 220px">
 					<div class="user-info">
 						<el-avatar :size="100" :src="imgurl" />
 						<div class="user-info-cont">
@@ -20,9 +20,9 @@
 					</div>
 				</el-card>
 			</el-col>
-			<el-col :span="16">
-				<capacity :onSet=0></capacity>
-			</el-col>
+			<el-col :span="16"><capacity :onSet="inAndOut.onSet"></capacity></el-col>
+				
+		</el-row>
 			<!-- <el-col :span="16"> -->
 				<!-- <el-row :gutter="20" class="mgb20">
 					<el-col :span="8">
@@ -90,11 +90,9 @@
 						</el-table-column>
 					</el-table>
 				</el-card> -->
-			<!-- </el-col> -->
-		</el-row>
-		<el-row>
-			<dynamicChart></dynamicChart>
-		</el-row>
+			<!-- </el-col> -->	
+		
+		<el-row><dynamicChart :inData="inAndOut.inData" :outData="inAndOut.outData"></dynamicChart></el-row>
 
 	</div>
 </template>
@@ -113,10 +111,22 @@ const role: string = name === 'admin' ? '超级管理员' : '普通用户';
 const inAndOut = reactive({
 	inData: 0,
 	outData: 0,
-	capacity: 2500
+	onSet:0,
 });
+let inCount = 0;
+let outCount = 0;
+const stiIn = function () {
+	return 5 + Math.round(Math.random() * 5);
+};
+const stiOut = function () {
+	return Math.round(Math.random() * 5);
+};
 
-
+setInterval(() => {
+	inAndOut.inData = stiIn();
+	inAndOut.outData = stiOut();
+	inAndOut.onSet += inAndOut.inData - inAndOut.outData;
+}, 1000);
 
 const todoList = reactive([
 	{
