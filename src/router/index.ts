@@ -186,6 +186,16 @@ const routes: RouteRecordRaw[] = [
                 component: () => import(/* webpackChunkName: "permission" */ '../views/permission.vue'),
             },
             {
+                path: '/demo',
+                name: 'demo',
+                meta: {
+                    title: '图标实例',
+                    permiss: '13',
+                },
+                component: () => import(/* webpackChunkName: "demo" */ '../views/demo.vue'),
+
+            },
+            {
                 path: '/upload',
                 name: 'upload',
                 meta: {

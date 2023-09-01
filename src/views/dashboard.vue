@@ -2,9 +2,9 @@
 	<div>
 		<el-row :gutter="20">
 			<el-col :span="8">
-				<el-card shadow="hover" class="mgb20" style="height: 252px">
+				<el-card shadow="hover" class="mgb20" style="height: 220px">
 					<div class="user-info">
-						<el-avatar :size="120" :src="imgurl" />
+						<el-avatar :size="100" :src="imgurl" />
 						<div class="user-info-cont">
 							<div class="user-info-name">{{ name }}</div>
 							<div>{{ role }}</div>
@@ -12,26 +12,28 @@
 					</div>
 					<div class="user-info-list">
 						上次登录时间：
-						<span>2022-10-01</span>
+						<span>{{ new Date().toDateString() }}</span>
 					</div>
 					<div class="user-info-list">
 						上次登录地点：
-						<span>东莞</span>
+						<span>深圳</span>
 					</div>
-				</el-card>
-				<el-card class="ringbox" shadow="hover" style="height: 330px">
-					<schart class="ringschart" canvasId="ring" :options="options4"></schart>
-					<button class="btn" @click="realTime">实时显示</button>
 				</el-card>
 			</el-col>
 			<el-col :span="16">
-				<el-row :gutter="20" class="mgb20">
+				<capacity :onSet=0></capacity>
+			</el-col>
+			<!-- <el-col :span="16"> -->
+				<!-- <el-row :gutter="20" class="mgb20">
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-1">
-								<el-icon class="grid-con-icon"><User /></el-icon>
+								<el-icon class="grid-con-icon">
+									<User />
+								</el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">{{ inAndOut.inData-inAndOut.outData }}/ {{inAndOut.maxPeople}}</div>
+									<div class="grid-num">{{ inAndOut.inData - inAndOut.outData }}/ {{ inAndOut.maxPeople }}
+									</div>
 									<div>在馆人数</div>
 								</div>
 							</div>
@@ -40,7 +42,9 @@
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-2">
-								<el-icon class="grid-con-icon"><ChatDotRound /></el-icon>
+								<el-icon class="grid-con-icon">
+									<ChatDotRound />
+								</el-icon>
 								<div class="grid-cont-right">
 									<div class="grid-num">{{ inAndOut.inData }}</div>
 									<div>进馆人数</div>
@@ -51,7 +55,9 @@
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-3">
-								<el-icon class="grid-con-icon"><Goods /></el-icon>
+								<el-icon class="grid-con-icon">
+									<Goods />
+								</el-icon>
 								<div class="grid-cont-right">
 									<div class="grid-num">{{ inAndOut.outData }}</div>
 									<div>出馆人数</div>
@@ -59,15 +65,14 @@
 							</div>
 						</el-card>
 					</el-col>
-				</el-row>
-				<el-card shadow="hover" style="height: 403px">
+				</el-row> -->
+				<!-- <el-card shadow="hover" style="height: 403px">
 					<template #header>
 						<div class="clearfix">
 							<span>待办事项</span>
 							<el-button style="float: right; padding: 3px 0" text>添加</el-button>
 						</div>
 					</template>
-
 					<el-table :show-header="false" :data="todoList" style="width: 100%">
 						<el-table-column width="40">
 							<template #default="scope">
@@ -76,176 +81,43 @@
 						</el-table-column>
 						<el-table-column>
 							<template #default="scope">
-								<div
-									class="todo-item"
-									:class="{
-										'todo-item-del': scope.row.status
-									}"
-								>
+								<div class="todo-item" :class="{
+									'todo-item-del': scope.row.status
+								}">
 									{{ scope.row.title }}
 								</div>
 							</template>
 						</el-table-column>
 					</el-table>
-				</el-card>
-			</el-col>
+				</el-card> -->
+			<!-- </el-col> -->
 		</el-row>
-		<el-row :gutter="20">
-			<el-col :span="12">
-				<el-card shadow="hover">
-					<schart ref="bar" class="schart" canvasId="bar" :options="options"></schart>
-				</el-card>
-			</el-col>
-			<el-col :span="12">
-				<el-card shadow="hover">
-					<schart ref="line" class="schart" canvasId="line" :options="options2"></schart>
-				</el-card>
-			</el-col>
+		<el-row>
+			<dynamicChart></dynamicChart>
 		</el-row>
-		
+
 	</div>
 </template>
 
 <script setup lang="ts" name="dashboard">
-import Schart from 'vue-schart';
-import { reactive,ref,watch} from 'vue';
+
+import { reactive, ref, watch } from 'vue';
 import imgurl from '../assets/img/img.jpg';
 import { CENTERED_ALIGNMENT } from 'element-plus/es/components/virtual-list/src/defaults';
+import dynamicChart from '../components/dynamicChart.vue'
+import capacity from '../components/capacity.vue'
 
 const name = localStorage.getItem('ms_username');
 const role: string = name === 'admin' ? '超级管理员' : '普通用户';
-const vis= reactive({
-	btn1vis:true,
-	btn2vis:false,
-	startTime:false,
-	endTime:true,
-});
-const timer1 = ref(0); // 创建一个引用变量来存储定时器
-const realTime=()=>{
-	//unWatch();
-	if(vis.endTime===true)
-	{
-		vis.endTime=false;
-		vis.startTime=true;
-		timer1.value = setInterval(myFunction, 1000); // 每隔一秒触发 myFunction 函数
-	}
-	else{
-		vis.endTime=true;
-		vis.startTime=false;
-		clearInterval(timer1.value);
-	}
-	//clearInterval(timer1.value);
-}
-const myFunction = () => {
-      // 在这里编写你要执行的代码
-	  //updateChart();
-	  //options4.datasets[0].data = [inAndOut.inData-inAndOut.outData, inAndOut.totData-(inAndOut.inData-inAndOut.outData)];
-	let num1=18;
-	let num2=15;
-	///var nowData=inAndOut.inData-inAndOut.outData;
-	
-	let nowData = inAndOut.inData -inAndOut.outData;
-	if(nowData<600){
-		inAndOut.inData+=Math.floor(Math.random()*(num1-10)+10);
-		inAndOut.outData+=Math.floor(Math.random()*(num2-10)+10);
-	}
-	else{
-		inAndOut.inData+=Math.floor(Math.random()*(num2-10)+10);
-		inAndOut.outData+=Math.floor(Math.random()*(num1-10)+10);
-	}
-};
+
 const inAndOut = reactive({
-	inData:1000,
-	outData:500,
-	maxPeople:5000,
-	flag:0,
-	li1:[{date:"7.2",inData1:0},
-	{date:"7.3",inData1:2000},
-	{date:"7.4",inData1:1500},
-	{date:"7.5",inData1:1800},
-	{date:"7.6",inData1:2000},
-	{date:"7.7",inData1:1500},
-	{date:"7.8",inData1:0},
-	{date:"7.9",inData1:2000},
-	{date:"7.10",inData1:1500},
-	{date:"7.11",inData1:1800},
-	{date:"7.12",inData1:2000},
-	{date:"7.13",inData1:1500},
-	{date:"7.14",inData1:2000},
-	{date:"7.15",inData1:1500},]
-	
-
-});
-const options4 = reactive({
-	type: 'ring',
-	title: {
-		text: ''
-	},
-	showValue: true,
-	legend: {
-		position: 'bottom',
-		bottom: 5
-	},
-	bgColor: '#fff',
-	labels: ['在馆人数', '馆内剩余容量'],
-	datasets: [
-		{
-			data:  [inAndOut.inData-inAndOut.outData, inAndOut.maxPeople-(inAndOut.inData-inAndOut.outData)],
-		}
-	],
+	inData: 0,
+	outData: 0,
+	capacity: 2500
 });
 
-const unWatch=watch(inAndOut, () => {
-      updateChart();
-   }, { deep: true });
-const updateChart = () => {
-      // 在这里更新图表数据
-      options4.datasets[0].data = [inAndOut.inData-inAndOut.outData, inAndOut.maxPeople-(inAndOut.inData-inAndOut.outData)];
-	  //options1.datasets[0].data = [inAndOut.li1[0].inData1, inAndOut.li1[1].inData1,inAndOut.li1[2].inData1, inAndOut.li1[3].inData1, inAndOut.li1[4].inData1,inAndOut.li1[5].inData1];
-};
-const options = {
-	type: 'bar',
-	title: {
-		text: '最近一周各品类销售图'
-	},
-	xRorate: 25,
-	labels: ['周一', '周二', '周三', '周四', '周五'],
-	datasets: [
-		{
-			label: '家电',
-			data: [234, 278, 270, 190, 230]
-		},
-		{
-			label: '百货',
-			data: [164, 178, 190, 135, 160]
-		},
-		{
-			label: '食品',
-			data: [144, 198, 150, 235, 120]
-		}
-	]
-};
-const options2 = {
-	type: 'line',
-	title: {
-		text: '最近几个月各品类销售趋势图'
-	},
-	labels: ['6月', '7月', '8月', '9月', '10月'],
-	datasets: [
-		{
-			label: '家电',
-			data: [234, 278, 270, 190, 230]
-		},
-		{
-			label: '百货',
-			data: [164, 178, 150, 135, 160]
-		},
-		{
-			label: '食品',
-			data: [74, 118, 200, 235, 90]
-		}
-	]
-};
+
+
 const todoList = reactive([
 	{
 		title: '今天要修复100个bug',
@@ -372,8 +244,9 @@ const todoList = reactive([
 	text-decoration: line-through;
 	color: #999;
 }
-.ringbox{
-}
+
+.ringbox {}
+
 .ringschart {
 	left: 22%;
 	width: 250px;
@@ -381,19 +254,18 @@ const todoList = reactive([
 	position: relative;
 }
 
-.btn{
-	
+.btn {
+
 	height: 30px;
 	width: 150px;
 	position: relative;
 	top: 15px;
 	left: 32%;
-	background-color:rgb(45, 140, 240);
+	background-color: rgb(45, 140, 240);
 	border: none;
 	text-align: center;
 	border-radius: 8px;
 	color: white;
 	font-size: 15px;
-	
-}
-</style>
+
+}</style>

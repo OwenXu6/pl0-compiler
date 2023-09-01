@@ -139,71 +139,87 @@ import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 
-import axios from 'axios'
+import axios from 'axios';
 
+interface CulturalProduct {
+  productId: number;
+  designIdea: string;
+  relatedCollectionId: number;
+  relatedProduct: number;
+}
+
+interface NormalProduct {
+  productId: number;
+  isRelated: boolean;
+  monthlySale: number;
+  price: number;
+  productName: string;
+}
 
 interface TableItem {
-	productId: number;
-	productName: string;
-	price: number;
-	isRelated: number;
-	relatedCollectionId: number;
-	designIdea: string;
-	monthlySale: number;
+  productId: number;
+  productName: string;
+  price: number;
+  isRelated: number;
+  relatedCollectionId: number;
+  designIdea: string;
+  monthlySale: number;
 }
 
 const query = reactive({
-	designIdea: '',
-	isRelated: 0,
-	productName: '',
-	pageIndex: 1,
-	pageSize: 10
+  designIdea: '',
+  isRelated: 0,
+  productName: '',
+  pageIndex: 1,
+  pageSize: 10
 });
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 const addedData = ref<TableItem[]>([]); // 保存新增的数据
 const compare = (a: TableItem, b: TableItem) => {
-	return a.productId < b.productId ? -1 : 1;
+  return a.productId < b.productId ? -1 : 1;
 }
 
 const selectedCategory = ref('all');
-// 获取表格数据
-const getData = async () => {
+
+// Fetch and merge data from both APIs
+type Product = NormalProduct | CulturalProduct;
+
+// Fetch and merge data from both APIs
+const getAndMergeData = async () => {
   try {
-    const response = await axios.get('http://42.192.39.198:5000/api/Products');
-    const data = response.data;
+    const responseNormal = await axios.get('http://42.192.39.198:5000/api/Products');
+    const normalData: NormalProduct[] = responseNormal.data;
 
-    // Apply filters
-    let filteredData = [...data];
+    const responseCultural = await axios.get('http://42.192.39.198:5000/api/CulturalProducts');
+    const culturalData: CulturalProduct[] = responseCultural.data;
 
-    if (query.designIdea !== '') {
-      filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
-    }
+    const culturalMap: Record<number, CulturalProduct> = {};
+    culturalData.forEach(culturalItem => {
+      culturalMap[culturalItem.productId] = culturalItem;
+    });
 
-    if (query.productName !== '') {
-      filteredData = filteredData.filter((item: TableItem) => item.productName.includes(query.productName));
-    }
+    const mergedData: Product[] = normalData.map(normalItem => {
+      const culturalItem = culturalMap[normalItem.productId];
+      if (culturalItem) {
+        return {
+          ...normalItem,
+          isRelated: true,
+          relatedCollectionId: culturalItem.relatedCollectionId,
+          designIdea: culturalItem.designIdea,
+        };
+      }
+      return normalItem;
+    });
 
-    if (selectedCategory.value !== 'all') {
-      const isRelatedValue = selectedCategory.value === '文创' ? 1 : 0;
-      filteredData = filteredData.filter((item: TableItem) => item.isRelated === isRelatedValue);
-    }
-
-    // Calculate total count and update pageTotal
-    pageTotal.value = filteredData.length;
-
-    // Calculate startIndex and endIndex for pagination
-    const startIndex = (query.pageIndex - 1) * query.pageSize;
-    const endIndex = startIndex + query.pageSize;
-
-    // Update tableData to display only the relevant range of items
-    tableData.value = filteredData.slice(startIndex, endIndex).sort(compare);
+    tableData.value = mergedData;
   } catch (error) {
     console.error(error);
   }
 };
 
-getData();
+getAndMergeData();
+
 
 // 查询操作
 const handleSearch = () => {
@@ -216,24 +232,43 @@ const handlePageChange = (val: number) => {
 	getData();
 };
 
-const uploadData = async () => {
-	try {
-		const response = await axios.put('http://42.192.39.198:5000/api/Products/' + tableData.value[idx].productId, tableData.value[idx]);
-		ElMessage.success('数据上传成功');
-	} catch (error) {
-		ElMessage.error('数据上传失败');
-	}
+const uploadCulturalData = async (data: CulturalProduct) => {
+    try {
+        const response = await axios.put(`http://42.192.39.198:5000/api/CulturalProducts/${data.productId}`, data);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
 };
 
-const uploadData1 = async () => {
-	try {
-		const response = await axios.post('http://42.192.39.198:5000/api/Products/', tableData.value[tableData.value.length - 1]);
-		console.log(tableData.value[tableData.value.length - 1]);
-		ElMessage.success('数据上传成功');
-	} catch (error) {
-		ElMessage.error('数据上传失败');
-	}
+const uploadNormalData = async (data: NormalProduct) => {
+    try {
+        const response = await axios.put(`http://42.192.39.198:5000/api/Products/${data.productId}`, data);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
 };
+
+
+const uploadCulturalData_1 = async (data: CulturalProduct) => {
+    try {
+        const response = await axios.post(`http://42.192.39.198:5000/api/CulturalProducts/${data.productId}`, data);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+};
+
+const uploadNormalData_1 = async (data: NormalProduct) => {
+    try {
+        const response = await axios.post(`http://42.192.39.198:5000/api/Products/${data.productId}`, data);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+};
+
 
 const updateIsRelated = () => {
 	if (addForm.isRelated === 1) {

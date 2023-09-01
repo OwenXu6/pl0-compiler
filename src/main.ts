@@ -6,9 +6,12 @@ import router from './router';
 import { usePermissStore } from './store/permiss';
 import 'element-plus/dist/index.css';
 import './assets/css/icon.css';
-import print from 'vue3-print-nb'
+import print from 'vue3-print-nb';
+//import * as ECharts from 'echarts'
+
 
 const app = createApp(App);
+//app.config.globalProperties.$ECharts = ECharts;
 app.use(createPinia());
 app.use(router);
 app.use(print);
