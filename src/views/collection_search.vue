@@ -190,7 +190,7 @@
 								文物类别
 							</div>
 						</template>
-						{{ view.collectionType }}
+						<el-input v-model="form.collectionType"></el-input>
 					</el-descriptions-item>
 					<!-- 质地 -->
 					<el-descriptions-item>
@@ -202,7 +202,8 @@
 								质地
 							</div>
 						</template>
-						{{ view.textureType }}
+						<el-autocomplete v-model="form.textureType" :fetch-suggestions="typeQuerySearch" clearable
+						class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
 					</el-descriptions-item>
 					<!--年代 -->
 					<el-descriptions-item>
@@ -227,7 +228,7 @@
 								地域
 							</div>
 						</template>
-						{{ view.area }}
+						<el-input v-model="form.area"></el-input>
 					</el-descriptions-item>
 					<!-- 来源 -->
 					<el-descriptions-item>
@@ -239,7 +240,7 @@
 								来源
 							</div>
 						</template>
-						{{ view.collectInfo.source }}
+						<el-input v-model="form.collectInfo.source"></el-input>
 					</el-descriptions-item>
 					<!-- 保存状况 -->
 					<el-descriptions-item>
@@ -251,7 +252,7 @@
 								保存状况
 							</div>
 						</template>
-						{{ view.storageInfo.currentStatus }}
+						<el-input v-model="form.storageInfo.currentStatus"></el-input>
 					</el-descriptions-item>
 					<!-- 完残程度 -->
 					<el-descriptions-item>
@@ -263,7 +264,7 @@
 								完残程度
 							</div>
 						</template>
-						{{ view.completeness }}
+						<el-input v-model="form.completeness"></el-input>
 					</el-descriptions-item>
 					<!-- 尺寸 -->
 					<el-descriptions-item>
@@ -275,7 +276,7 @@
 								尺寸
 							</div>
 						</template>
-						{{ view.dimensionInfo.dimension + view.dimensionInfo.dimensionUnit }}
+						<el-input v-model="form.dimensionInfo.dimension"></el-input>
 					</el-descriptions-item>
 					<!-- 质量-->
 					<el-descriptions-item>
@@ -287,7 +288,7 @@
 								质量
 							</div>
 						</template>
-						{{ view.dimensionInfo.weight + view.dimensionInfo.weightUnit }}
+						<el-input v-model="form.dimensionInfo.weight"></el-input>
 					</el-descriptions-item>
 					<!-- 传统数量 -->
 					<el-descriptions-item>
@@ -299,7 +300,7 @@
 								传统数量
 							</div>
 						</template>
-						{{ view.dimensionInfo.traditionalQuantity + "个" }}
+						<el-input v-model="form.dimensionInfo.traditionalQuantity"></el-input>
 					</el-descriptions-item>
 					<!-- 实际数量 -->
 					<el-descriptions-item>
@@ -311,7 +312,8 @@
 								实际数量
 							</div>
 						</template>
-						{{ view.dimensionInfo.realQuantity + "个" }}
+						<el-input v-model="form.dimensionInfo.realQuantity" ></el-input>
+						
 					</el-descriptions-item>
 					<!-- 入藏时间 -->
 					<el-descriptions-item>
@@ -323,7 +325,7 @@
 								入藏时间
 							</div>
 						</template>
-						{{ view.collectInfo.collectTime }}
+						{{ form.collectInfo.collectTime }}
 					</el-descriptions-item>
 					<!-- 保护等级 -->
 					<el-descriptions-item>
@@ -335,7 +337,8 @@
 								保护等级
 							</div>
 						</template>
-						{{ view.storageInfo.protectionLevel }}
+						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="eraQuerySearch" clearable
+						class="inline-input w-50" placeholder="请输入文物的保护等级" @select="protectLevelSelect" />
 					</el-descriptions-item>
 					<!-- 鉴定意见 -->
 					<el-descriptions-item :span="2">
@@ -347,9 +350,9 @@
 								鉴定意见
 							</div>
 						</template>
-						{{ view.identificationComments }}
-						<div style="margin-top: 10px">鉴定人：{{ view.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
-							view.identificationDate }}</div>
+						{{ form.identificationComments }}
+						<div style="margin-top: 10px">鉴定人：{{ form.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
+							form.identificationDate }}</div>
 					</el-descriptions-item>
 					<!-- 备注 -->
 					<el-descriptions-item :span="2">
@@ -361,7 +364,7 @@
 								备注
 							</div>
 						</template>
-						{{ view.remark }}
+						{{ form.remark }}
 					</el-descriptions-item>
 				</el-descriptions>
 				
@@ -1095,21 +1098,9 @@ onMounted(() => {
 //可选择的选项
 const protectLevelLoadAll = () => {
 	return [
-		{ value: '夏朝', index: 1 },
-		{ value: '商朝', index: 2 },
-		{ value: '春秋战国', index: 3 },
-		{ value: '秦朝', index: 4 },
-		{ value: '汉朝', index: 5 },
-		{ value: '三国', index: 6 },
-		{ value: '魏晋南北朝', index: 7 },
-		{ value: '隋朝', index: 8 },
-		{ value: '唐朝', index: 9 },
-		{ value: '五代十国', index: 10 },
-		{ value: '宋朝', index: 11 },
-		{ value: '元朝', index: 12 },
-		{ value: '明朝', index: 13 },
-		{ value: '清朝', index: 14 },
-		{ value: '民国', index: 15 },
+		{ value: '一级', index: 1 },
+		{ value: '两级', index: 2 },
+		{ value: '三级', index: 3 },
 	]
 }
 //处理选择的项，比如说给一个东西赋值
