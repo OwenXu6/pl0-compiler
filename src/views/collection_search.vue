@@ -75,11 +75,11 @@
 		<el-dialog title="编辑" v-model="editVisible" width="60%">
 			<el-form label-width="70px">
 				<!-- 文物名称 -->
-				<el-form-item label="文物名称">
+				<!-- <el-form-item label="文物名称">
 					<el-input v-model="form.name"></el-input>
-				</el-form-item>
+				</el-form-item> -->
 				<!-- 通过模糊搜索来输入文物的种类 -->
-				<el-form-item label="文物种类">
+				<!-- <el-form-item label="文物种类">
 					<el-autocomplete v-model="form.collectionType" :fetch-suggestions="typeQuerySearch" clearable
 						class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
 				</el-form-item>
@@ -93,18 +93,16 @@
 						<el-option key="2" label="在库" value="在库"></el-option>
 						<el-option key="3" label="修缮中" value="修缮中"></el-option>
 					</el-select>
-				</el-form-item>
-
-				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
+				</el-form-item> -->
+				<!-- <el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
 					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.hall_name"
 						class="handle-input mr10"></el-input>
-				</el-form-item>
-
+				</el-form-item> -->
 				<!-- <el-form-item v-if="form.status === '在库'" label="库房名称">
 					<el-input v-if="form.status === '在库'" v-model="form.storage_name" class="handle-input mr10"></el-input>
 				</el-form-item> -->
 
-				<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
+				<el-descriptions class="margin-top" :column="2" :size="size" border>
 					<!-- 收藏单位 -->
 					<el-descriptions-item>
 						<template #label>
@@ -691,6 +689,7 @@ interface TableItem {
 	collectionType: string;
 	collectInfo: {
 		collectTime: string;	//收藏的时间
+		source:string;
 	}
 	era: string;
 	status: string;
@@ -699,6 +698,18 @@ interface TableItem {
 		currentStatus: string;
 		protectionLevel: string;
 	}
+	textureType:string;
+	area:string;
+	completeness:string;
+	dimensionInfo: {
+		collectionId: string;
+		dimension: string;
+		dimensionUnit: string;
+		weight: string;
+		weightUnit: string;
+		realQuantity: string;
+		traditionalQuantity:string;
+	},
 }
 //请求数据
 const query = reactive({
@@ -892,6 +903,7 @@ const handleEdit = (index: number, row: any) => {
 	form.originalName = row.originalName;
 	form.textureType = row.textureType;
 	editVisible.value = true;
+	idx=index
 };
 
 //处理查看操作
@@ -953,14 +965,22 @@ const saveEdit = async () => {
 	//遇事不决console.log
 	console.log('saveEdit')
 	console.log(tableData.value[idx].collectionId)
-	console.log(idx)
 	// ElMessage.success(`修改第 ${idx + 1} 行成功`);
 	tableData.value[idx].name = form.name;        //将修改的文物姓名同步到表格当中
 	tableData.value[idx].collectionType = form.collectionType;        //将修改的文物的种类同步到表格当中
 	tableData.value[idx].era = form.era;          //将修改的文物的朝代同步到表格当中
 	// tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
 	// tableData.value[idx].hall_name = form.hall_name;      //将修改的文物的展厅名称同步到表格当中
-	tableData.value[idx].storageInfo.currentStatus = form.storageInfo.currentStatus;      //将修改的文物的库房名称同步到表格当中
+	tableData.value[idx].storageInfo.currentStatus = form.storageInfo.currentStatus; 
+	tableData.value[idx].storageInfo.protectionLevel = form.storageInfo.protectionLevel;    
+	tableData.value[idx].textureType = form.textureType;    
+	tableData.value[idx].area = form.area;    
+	tableData.value[idx].collectInfo.source = form.collectInfo.source;    
+	tableData.value[idx].completeness = form.completeness;    
+	tableData.value[idx].dimensionInfo.dimension = form.dimensionInfo.dimension;  
+	tableData.value[idx].dimensionInfo.weight = form.dimensionInfo.weight;  
+	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;  
+	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;     
 	console.log(tableData.value);
 
 	// Update frontend table data
