@@ -7,15 +7,22 @@
 				<el-button type="primary" :icon="Plus" @click="handlenew">新增</el-button>
 			</div>
 			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="staffId" label="ID" width="85" align="center"></el-table-column>
+				<el-table-column prop="staffId" label="ID" width="170" align="center"></el-table-column>
 				<el-table-column prop="staffName" label="姓名" align="center"></el-table-column>
 				<el-table-column prop="staffAge" label="年龄" align="center"></el-table-column>
 				<el-table-column prop="staffGender" label="性别" align="center"></el-table-column>
 				<el-table-column prop="staffPostRank" label="职级" align="center"></el-table-column>
 				<el-table-column prop="staffSalary" label="薪资" align="center"></el-table-column>
 				<el-table-column prop="workType" label="工作方向" align="center"></el-table-column>
-				<el-table-column prop="job" label="工作内容" align="center"></el-table-column>
-				<el-table-column label="操作" width="220" align="center">
+				<el-table-column prop="job" label="工作内容" align="center">
+  					<template v-slot:default="scope">
+    					<el-tooltip :content="scope.row.job" placement="top">
+      						<span>{{ scope.row.job.length > 4 ? scope.row.job.substring(0, 4) + '...' : scope.row.job }}</span>
+    						</el-tooltip>
+  					</template>
+				</el-table-column>
+
+				<el-table-column label="操作" width="350" align="center">
 					<template #default="scope">
 						<el-button text :icon="Edit"  @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
 							编辑
@@ -189,6 +196,17 @@ interface TableItem {
 	job: string;
 }
 
+let newEmployee: TableItem = {
+	staffId: '',
+	staffName: '',
+	staffAge: '',
+	staffGender: '',
+	staffPostRank: '',
+	staffSalary: 0,
+	workType: '',
+	job: ''
+	};
+
 const query = reactive({
 	value : '',
 	staffId: 0,
@@ -258,10 +276,10 @@ const editData = async () => {
     }
 };
 
-const uploadData = async () => {
+const uploadData = async (newEmployee:TableItem) => {
     try {
-		console.log(HumantableData.value[pageData.value.length-1]);
-        const response = await axios.post('http://42.192.39.198:5000/api/Staffs', HumantableData.value[HumantableData.value.length-1]);
+		console.log(newEmployee);
+        const response = await axios.post('http://42.192.39.198:5000/api/Staffs',newEmployee);
         ElMessage.success('数据上传成功');
 		PageSizeChange();
     } catch (error) {
@@ -374,15 +392,15 @@ const saveEdit = () => {
 
 	editVisible.value = false;
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);
-	console.log(idx,HumantableData);
-	HumantableData.value[idx].staffId = form.staffId;
-	HumantableData.value[idx].staffName = form.staffName;
-	HumantableData.value[idx].staffAge = form.staffAge;
-	HumantableData.value[idx].staffGender = form.staffGender;
-	HumantableData.value[idx].staffPostRank = form.staffPostRank;
-	HumantableData.value[idx].staffSalary = Number(form.staffSalary);
-	HumantableData.value[idx].workType = form.workType;
-	HumantableData.value[idx].job = form.job; //应该要至后端修改之
+	console.log(idx,pageData);
+	pageData.value[idx].staffId = form.staffId;
+	pageData.value[idx].staffName = form.staffName;
+	pageData.value[idx].staffAge = form.staffAge;
+	pageData.value[idx].staffGender = form.staffGender;
+	pageData.value[idx].staffPostRank = form.staffPostRank;
+	pageData.value[idx].staffSalary = Number(form.staffSalary);
+	pageData.value[idx].workType = form.workType;
+	pageData.value[idx].job = form.job; //应该要至后端修改之
 	editData();
 	
 };
@@ -404,28 +422,19 @@ const savenew = () => {         //保存新增人员
 
 
 	newVisible.value = false;
-	let newEmployee: TableItem = {
-	staffId: '',
-	staffName: '',
-	staffAge: '',
-	staffGender: '',
-	staffPostRank: '',
-	staffSalary: 0,
-	workType: '',
-	job: ''
-	};
-	HumantableData.value.push(newEmployee);
+
+	
 	ElMessage.success(`添加成功`);
 	console.log(idx,HumantableData);
-	HumantableData.value[idx].staffId = form.staffId;
-	HumantableData.value[idx].staffName = form.staffName;
-	HumantableData.value[idx].staffAge = form.staffAge;
-	HumantableData.value[idx].staffGender = form.staffGender;
-	HumantableData.value[idx].staffPostRank = form.staffPostRank;
-	HumantableData.value[idx].staffSalary = Number(form.staffSalary);
-	HumantableData.value[idx].workType = form.workType;
-	HumantableData.value[idx].job = form.job; 
-	uploadData();             //上传
+	newEmployee.staffId = form.staffId;     
+	newEmployee.staffName = form.staffName;
+	newEmployee.staffAge = form.staffAge;
+	newEmployee.staffGender = form.staffGender;
+	newEmployee.staffPostRank = form.staffPostRank;
+	newEmployee.staffSalary = Number(form.staffSalary);
+	newEmployee.workType = form.workType;
+	newEmployee.job = form.job; 
+	uploadData(newEmployee);             //上传
 };
 </script>
 
