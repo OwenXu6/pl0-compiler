@@ -110,7 +110,8 @@
 								<el-icon :style="iconStyle">
 									<user />
 								</el-icon>
-								收藏单位</div>
+								收藏单位
+							</div>
 						</template>
 						{{ form.collectInfo.collectMuseum }}
 					</el-descriptions-item>
@@ -175,8 +176,8 @@
 								文物级别
 							</div>
 						</template>
-						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="eraQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的保护等级" @select="protectLevelSelect" />
+						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="eraQuerySearch"
+							clearable class="inline-input w-50" placeholder="请输入文物的保护等级" @select="protectLevelSelect" />
 					</el-descriptions-item>
 					<!-- 文物类别 -->
 					<el-descriptions-item>
@@ -201,7 +202,7 @@
 							</div>
 						</template>
 						<el-autocomplete v-model="form.textureType" :fetch-suggestions="typeQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
+							class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
 					</el-descriptions-item>
 					<!--年代 -->
 					<el-descriptions-item>
@@ -214,7 +215,7 @@
 							</div>
 						</template>
 						<el-autocomplete v-model="form.era" :fetch-suggestions="eraQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的年代" @select="eraSelect" />
+							class="inline-input w-50" placeholder="请输入文物的年代" @select="eraSelect" />
 					</el-descriptions-item>
 					<!-- 地域 -->
 					<el-descriptions-item>
@@ -250,7 +251,13 @@
 								保存状况
 							</div>
 						</template>
-						<el-input v-model="form.storageInfo.currentStatus"></el-input>
+						<!-- <el-input v-model="form.storageInfo.currentStatus"></el-input> -->
+						<el-radio-group v-model="radio">
+							<el-radio :label="1">在展</el-radio>
+							<el-radio :label="2">在库</el-radio>
+							<el-radio :label="3">未鉴定</el-radio>
+						</el-radio-group>
+
 					</el-descriptions-item>
 					<!-- 完残程度 -->
 					<el-descriptions-item>
@@ -310,8 +317,8 @@
 								实际数量
 							</div>
 						</template>
-						<el-input v-model="form.dimensionInfo.realQuantity" ></el-input>
-						
+						<el-input v-model="form.dimensionInfo.realQuantity"></el-input>
+
 					</el-descriptions-item>
 					<!-- 入藏时间 -->
 					<el-descriptions-item>
@@ -335,8 +342,8 @@
 								保护等级
 							</div>
 						</template>
-						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="eraQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的保护等级" @select="protectLevelSelect" />
+						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="eraQuerySearch"
+							clearable class="inline-input w-50" placeholder="请输入文物的保护等级" @select="protectLevelSelect" />
 					</el-descriptions-item>
 					<!-- 鉴定意见 -->
 					<el-descriptions-item :span="2">
@@ -389,7 +396,8 @@
 								<el-icon :style="iconStyle">
 									<user />
 								</el-icon>
-								收藏单位</div>
+								收藏单位
+							</div>
 						</template>
 						{{ view.collectInfo.collectMuseum }}
 					</el-descriptions-item>
@@ -639,7 +647,7 @@
 						{{ view.remark }}
 					</el-descriptions-item>
 				</el-descriptions>
-				
+
 			</div>
 			<template #footer>
 				<span class="dialog-footer">
@@ -689,7 +697,7 @@ interface TableItem {
 	collectionType: string;
 	collectInfo: {
 		collectTime: string;	//收藏的时间
-		source:string;
+		source: string;
 	}
 	era: string;
 	status: string;
@@ -698,9 +706,9 @@ interface TableItem {
 		currentStatus: string;
 		protectionLevel: string;
 	}
-	textureType:string;
-	area:string;
-	completeness:string;
+	textureType: string;
+	area: string;
+	completeness: string;
 	dimensionInfo: {
 		collectionId: string;
 		dimension: string;
@@ -708,7 +716,7 @@ interface TableItem {
 		weight: string;
 		weightUnit: string;
 		realQuantity: string;
-		traditionalQuantity:string;
+		traditionalQuantity: string;
 	},
 }
 //请求数据
@@ -736,11 +744,12 @@ const getData = () => {
 	fetchData().then(res => {
 		console.log(res)
 		// tableData.value = res;
-		//过滤掉“未鉴定”的文物
-		tableData.value = res.filter(item => item.storageInfo.currentStatus !== '未鉴定');
+		//只显示鉴定了的文物
+		tableData.value = res.filter(item => item.storageInfo.currentStatus == '未鉴定');
 		// console.log(tableData.value.length);
-		//截取有效时间显示
+
 		for (var i = 0; i < tableData.value.length; i++) {
+			//对每一个文物截取有效时间显示
 			var T = tableData.value[i].collectInfo.collectTime;
 			var dest = '';
 			console.log(T)
@@ -750,7 +759,9 @@ const getData = () => {
 				dest += T[j];
 			}
 			tableData.value[i].collectInfo.collectTime = dest;
+			//检查文物的名字是否已知，如果是已知的则直接显示，如果是未知的就显示
 		}
+
 		// console.log(res[0].collectionId);
 		// pageTotal.value = res.data.pageTotal || 50;
 	});
@@ -915,7 +926,7 @@ const handleEdit = (index: number, row: any) => {
 	form.originalName = row.originalName;
 	form.textureType = row.textureType;
 	editVisible.value = true;
-	idx=index
+	idx = index
 };
 
 //处理查看操作
@@ -971,28 +982,37 @@ const uploadData = async () => {
 	}
 };
 
+let radio = ref(3);
 //存储编辑的内容
 const saveEdit = async () => {
 	editVisible.value = false;
 	//遇事不决console.log
 	console.log('saveEdit')
 	console.log(tableData.value[idx].collectionId)
+	console.log(radio)
 	// ElMessage.success(`修改第 ${idx + 1} 行成功`);
 	tableData.value[idx].name = form.name;        //将修改的文物姓名同步到表格当中
 	tableData.value[idx].collectionType = form.collectionType;        //将修改的文物的种类同步到表格当中
 	tableData.value[idx].era = form.era;          //将修改的文物的朝代同步到表格当中
 	// tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
 	// tableData.value[idx].hall_name = form.hall_name;      //将修改的文物的展厅名称同步到表格当中
-	tableData.value[idx].storageInfo.currentStatus = form.storageInfo.currentStatus; 
-	tableData.value[idx].storageInfo.protectionLevel = form.storageInfo.protectionLevel;    
-	tableData.value[idx].textureType = form.textureType;    
-	tableData.value[idx].area = form.area;    
-	tableData.value[idx].collectInfo.source = form.collectInfo.source;    
-	tableData.value[idx].completeness = form.completeness;    
-	tableData.value[idx].dimensionInfo.dimension = form.dimensionInfo.dimension;  
-	tableData.value[idx].dimensionInfo.weight = form.dimensionInfo.weight;  
-	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;  
-	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;     
+	if(radio.value==1)
+		tableData.value[idx].storageInfo.currentStatus = "在展";
+	else if(radio.value==2)
+		tableData.value[idx].storageInfo.currentStatus="在库";
+	else if(radio.value==3)
+	    tableData.value[idx].storageInfo.currentStatus="未鉴定";
+	radio.value=3;
+
+	tableData.value[idx].storageInfo.protectionLevel = form.storageInfo.protectionLevel;
+	tableData.value[idx].textureType = form.textureType;
+	tableData.value[idx].area = form.area;
+	tableData.value[idx].collectInfo.source = form.collectInfo.source;
+	tableData.value[idx].completeness = form.completeness;
+	tableData.value[idx].dimensionInfo.dimension = form.dimensionInfo.dimension;
+	tableData.value[idx].dimensionInfo.weight = form.dimensionInfo.weight;
+	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
+	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;
 	console.log(tableData.value);
 
 	// Update frontend table data
