@@ -77,14 +77,15 @@
 						<el-option key="2" label="在库" value="在库"></el-option>
 						<el-option key="3" label="修缮中" value="修缮中"></el-option>
 					</el-select>
-				</el-form-item> 
+				</el-form-item>
 				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
 					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.exhibitionHallId"
 						class="handle-input mr10"></el-input>
-				</el-form-item> 
+				</el-form-item>
 				<el-form-item v-if="form.storageInfo.currentStatus === '在库'" label="库房名称">
-					<el-input v-if="form.storageInfo.currentStatus === '在库'" v-model="form.storageId" class="handle-input mr10"></el-input>
-				</el-form-item> 
+					<el-input v-if="form.storageInfo.currentStatus === '在库'" v-model="form.storageId"
+						class="handle-input mr10"></el-input>
+				</el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
@@ -109,7 +110,8 @@
 								<el-icon :style="iconStyle">
 									<user />
 								</el-icon>
-								收藏单位</div>
+								收藏单位
+							</div>
 						</template>
 						{{ view.collectInfo.collectMuseum }}
 					</el-descriptions-item>
@@ -247,8 +249,8 @@
 							</div>
 						</template>
 						{{ view.storageInfo.currentStatus }}
-						<span v-if="view.storageInfo.currentStatus=='在展'">所在展厅：{{ view.exhibitionHallId }}</span>
-						<span v-if="view.storageInfo.currentStatus=='在库'">所在仓库：{{ view.storageId }}</span>
+						<span v-if="view.storageInfo.currentStatus == '在展'">所在展厅：{{ view.exhibitionHallId }}</span>
+						<span v-if="view.storageInfo.currentStatus == '在库'">所在仓库：{{ view.storageId }}</span>
 					</el-descriptions-item>
 					<!-- 完残程度 -->
 					<el-descriptions-item>
@@ -361,7 +363,7 @@
 						{{ view.remark }}
 					</el-descriptions-item>
 				</el-descriptions>
-				
+
 			</div>
 			<template #footer>
 				<span class="dialog-footer">
@@ -411,7 +413,7 @@ interface TableItem {
 	collectionType: string;
 	collectInfo: {
 		collectTime: string;	//收藏的时间
-		source:string;
+		source: string;
 	}
 	era: string;
 	status: string;
@@ -420,9 +422,9 @@ interface TableItem {
 		currentStatus: string;
 		protectionLevel: string;
 	}
-	textureType:string;
-	area:string;
-	completeness:string;
+	textureType: string;
+	area: string;
+	completeness: string;
 	dimensionInfo: {
 		collectionId: string;
 		dimension: string;
@@ -430,10 +432,10 @@ interface TableItem {
 		weight: string;
 		weightUnit: string;
 		realQuantity: string;
-		traditionalQuantity:string;
+		traditionalQuantity: string;
 	},
-	exhibitionHallId:string;
-	storageId:string;
+	exhibitionHallId: string;
+	storageId: string;
 }
 //请求数据
 const query = reactive({
@@ -534,8 +536,8 @@ let form = reactive({
 	},
 	originalName: '',
 	textureType: '',
-	exhibitionHallId:'',
-	storageId:'',
+	exhibitionHallId: '',
+	storageId: '',
 });
 //查看的内容
 let view = reactive({
@@ -574,8 +576,8 @@ let view = reactive({
 	},
 	originalName: '',
 	textureType: '',
-	exhibitionHallId:'',
-	storageId:'',
+	exhibitionHallId: '',
+	storageId: '',
 
 });
 
@@ -620,10 +622,10 @@ const handleEdit = (index: number, row: any) => {
 	};
 	form.originalName = row.originalName;
 	form.textureType = row.textureType;
-	form.exhibitionHallId=row.exhibitionHallId;
-	form.storageId=row.storageId;
+	form.exhibitionHallId = row.exhibitionHallId;
+	form.storageId = row.storageId;
 	editVisible.value = true;
-	idx=index
+	idx = index
 };
 
 //处理查看操作
@@ -665,8 +667,8 @@ const handleDetails = (index: number, row: any) => {
 	};
 	view.originalName = row.originalName;
 	view.textureType = row.textureType;
-	view.exhibitionHallId=row.exhibitionHallId;
-	view.storageId=row.storageId;
+	view.exhibitionHallId = row.exhibitionHallId;
+	view.storageId = row.storageId;
 	viewVisible.value = true;
 };
 
@@ -693,18 +695,18 @@ const saveEdit = async () => {
 	tableData.value[idx].era = form.era;          //将修改的文物的朝代同步到表格当中
 	// tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
 	// tableData.value[idx].hall_name = form.hall_name;      //将修改的文物的展厅名称同步到表格当中
-	tableData.value[idx].storageInfo.currentStatus = form.storageInfo.currentStatus; 
-	tableData.value[idx].storageInfo.protectionLevel = form.storageInfo.protectionLevel;    
-	tableData.value[idx].textureType = form.textureType;    
-	tableData.value[idx].area = form.area;    
-	tableData.value[idx].collectInfo.source = form.collectInfo.source;    
-	tableData.value[idx].completeness = form.completeness;    
-	tableData.value[idx].dimensionInfo.dimension = form.dimensionInfo.dimension;  
-	tableData.value[idx].dimensionInfo.weight = form.dimensionInfo.weight;  
-	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;  
-	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;   
-	tableData.value[idx].exhibitionHallId=form.exhibitionHallId;
-	tableData.value[idx].storageId=form.storageId;  
+	tableData.value[idx].storageInfo.currentStatus = form.storageInfo.currentStatus;
+	tableData.value[idx].storageInfo.protectionLevel = form.storageInfo.protectionLevel;
+	tableData.value[idx].textureType = form.textureType;
+	tableData.value[idx].area = form.area;
+	tableData.value[idx].collectInfo.source = form.collectInfo.source;
+	tableData.value[idx].completeness = form.completeness;
+	tableData.value[idx].dimensionInfo.dimension = form.dimensionInfo.dimension;
+	tableData.value[idx].dimensionInfo.weight = form.dimensionInfo.weight;
+	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
+	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;
+	tableData.value[idx].exhibitionHallId = form.exhibitionHallId;
+	tableData.value[idx].storageId = form.storageId;
 	console.log(tableData.value);
 
 	// Update frontend table data
@@ -922,4 +924,5 @@ const iconStyle = computed(() => {
 	height: 130px;
 	margin: 10px;
 
-}</style>
+}
+</style>
