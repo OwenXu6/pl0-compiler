@@ -735,7 +735,9 @@ const pageTotal = ref(0);
 const getData = () => {
 	fetchData().then(res => {
 		console.log(res)
-		tableData.value = res;
+		// tableData.value = res;
+		//过滤掉“未鉴定”的文物
+		tableData.value = res.filter(item => item.storageInfo.currentStatus !== '未鉴定');
 		// console.log(tableData.value.length);
 		//截取有效时间显示
 		for (var i = 0; i < tableData.value.length; i++) {

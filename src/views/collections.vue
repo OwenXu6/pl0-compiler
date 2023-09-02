@@ -130,7 +130,7 @@
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, Sort, More, ArrowLeft } from '@element-plus/icons-vue';
-import { fetchCollectionsData } from '../api/index';
+// import { fetchCollectionsData } from '../api/index';
 import { useRoute, useRouter } from 'vue-router';
 
 
