@@ -54,10 +54,7 @@
 				<el-table-column label="操作" width="350" align="center">
 					<template #default="scope">
 						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)">
-							编辑
-						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)">
-							删除
+							修改文物状态
 						</el-button>
 						<el-button text :icon="View" @click="handleDetails(scope.$index, scope.row)">
 							查看
@@ -72,299 +69,22 @@
 		</div>
 
 		<!-- 编辑的弹出框 -->
-		<el-dialog title="编辑" v-model="editVisible" width="60%">
+		<el-dialog title="修改文物状态" v-model="editVisible" width="60%">
 			<el-form label-width="70px">
-				<!-- 文物名称 -->
-				<!-- <el-form-item label="文物名称">
-					<el-input v-model="form.name"></el-input>
-				</el-form-item> -->
-				<!-- 通过模糊搜索来输入文物的种类 -->
-				<!-- <el-form-item label="文物种类">
-					<el-autocomplete v-model="form.collectionType" :fetch-suggestions="typeQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
-				</el-form-item>
-				<el-form-item label="文物年代">
-					<el-autocomplete v-model="form.era" :fetch-suggestions="eraQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的年代" @select="eraHandleSelect" />
-				</el-form-item>
 				<el-form-item label="藏品状态">
 					<el-select v-model="form.storageInfo.currentStatus" placeholder="藏品状态" class="handle-select mr10">
 						<el-option key="1" label="在展" value="在展"></el-option>
 						<el-option key="2" label="在库" value="在库"></el-option>
 						<el-option key="3" label="修缮中" value="修缮中"></el-option>
 					</el-select>
-				</el-form-item> -->
-				<!-- <el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
-					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.hall_name"
+				</el-form-item> 
+				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
+					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.exhibitionHallId"
 						class="handle-input mr10"></el-input>
-				</el-form-item> -->
-				<!-- <el-form-item v-if="form.status === '在库'" label="库房名称">
-					<el-input v-if="form.status === '在库'" v-model="form.storage_name" class="handle-input mr10"></el-input>
-				</el-form-item> -->
-
-				<el-descriptions class="margin-top" :column="2" :size="size" border>
-					<!-- 收藏单位 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item" :style="{ minWidth: view.collectInfo.collectMuseum.length * 12 + 'px' }">
-								<el-icon :style="iconStyle">
-									<user />
-								</el-icon>
-								收藏单位</div>
-						</template>
-						{{ form.collectInfo.collectMuseum }}
-					</el-descriptions-item>
-					<!-- 现登记号 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<EditPen />
-								</el-icon>
-								现登记号
-							</div>
-						</template>
-						{{ form.collectionId }}
-					</el-descriptions-item>
-					<!-- 藏品图片 -->
-					<el-descriptions-item :span="2">
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Picture />
-								</el-icon>
-								藏品图片
-							</div>
-						</template>
-						<template #default="scope">
-							<el-image class="CollectionImg" :src="form.collectionPhoto" :z-index="10">
-							</el-image>
-						</template>
-					</el-descriptions-item>
-					<!-- 名称 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<tickets />
-								</el-icon>
-								名称
-							</div>
-						</template>
-						<el-input v-model="form.name"></el-input>
-					</el-descriptions-item>
-					<!-- 文物原名 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<tickets />
-								</el-icon>
-								原名
-							</div>
-						</template>
-						{{ form.originalName }}
-					</el-descriptions-item>
-					<!-- 文物级别 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Medal />
-								</el-icon>
-								文物级别
-							</div>
-						</template>
-						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="eraQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的保护等级" @select="protectLevelSelect" />
-					</el-descriptions-item>
-					<!-- 文物类别 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Grid />
-								</el-icon>
-								文物类别
-							</div>
-						</template>
-						<el-input v-model="form.collectionType"></el-input>
-					</el-descriptions-item>
-					<!-- 质地 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Pointer />
-								</el-icon>
-								质地
-							</div>
-						</template>
-						<el-autocomplete v-model="form.textureType" :fetch-suggestions="typeQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
-					</el-descriptions-item>
-					<!--年代 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Calendar />
-								</el-icon>
-								年代
-							</div>
-						</template>
-						<el-autocomplete v-model="form.era" :fetch-suggestions="eraQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的年代" @select="eraSelect" />
-					</el-descriptions-item>
-					<!-- 地域 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<LocationInformation />
-								</el-icon>
-								地域
-							</div>
-						</template>
-						<el-input v-model="form.area"></el-input>
-					</el-descriptions-item>
-					<!-- 来源 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<MapLocation />
-								</el-icon>
-								来源
-							</div>
-						</template>
-						<el-input v-model="form.collectInfo.source"></el-input>
-					</el-descriptions-item>
-					<!-- 保存状况 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Collection />
-								</el-icon>
-								保存状况
-							</div>
-						</template>
-						<el-input v-model="form.storageInfo.currentStatus"></el-input>
-					</el-descriptions-item>
-					<!-- 完残程度 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Box />
-								</el-icon>
-								完残程度
-							</div>
-						</template>
-						<el-input v-model="form.completeness"></el-input>
-					</el-descriptions-item>
-					<!-- 尺寸 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<FullScreen />
-								</el-icon>
-								尺寸
-							</div>
-						</template>
-						<el-input v-model="form.dimensionInfo.dimension"></el-input>
-					</el-descriptions-item>
-					<!-- 质量-->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Coin />
-								</el-icon>
-								质量
-							</div>
-						</template>
-						<el-input v-model="form.dimensionInfo.weight"></el-input>
-					</el-descriptions-item>
-					<!-- 传统数量 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Histogram />
-								</el-icon>
-								传统数量
-							</div>
-						</template>
-						<el-input v-model="form.dimensionInfo.traditionalQuantity"></el-input>
-					</el-descriptions-item>
-					<!-- 实际数量 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Histogram />
-								</el-icon>
-								实际数量
-							</div>
-						</template>
-						<el-input v-model="form.dimensionInfo.realQuantity" ></el-input>
-						
-					</el-descriptions-item>
-					<!-- 入藏时间 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<AlarmClock />
-								</el-icon>
-								入藏时间
-							</div>
-						</template>
-						{{ form.collectInfo.collectTime }}
-					</el-descriptions-item>
-					<!-- 保护等级 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Trophy />
-								</el-icon>
-								保护等级
-							</div>
-						</template>
-						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="eraQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的保护等级" @select="protectLevelSelect" />
-					</el-descriptions-item>
-					<!-- 鉴定意见 -->
-					<el-descriptions-item :span="2">
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<EditPen />
-								</el-icon>
-								鉴定意见
-							</div>
-						</template>
-						{{ form.identificationComments }}
-						<div style="margin-top: 10px">鉴定人：{{ form.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
-							form.identificationDate }}</div>
-					</el-descriptions-item>
-					<!-- 备注 -->
-					<el-descriptions-item :span="2">
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Notebook />
-								</el-icon>
-								备注
-							</div>
-						</template>
-						{{ form.remark }}
-					</el-descriptions-item>
-				</el-descriptions>
+				</el-form-item> 
+				<el-form-item v-if="form.storageInfo.currentStatus === '在库'" label="库房名称">
+					<el-input v-if="form.storageInfo.currentStatus === '在库'" v-model="form.storageId" class="handle-input mr10"></el-input>
+				</el-form-item> 
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
@@ -527,6 +247,8 @@
 							</div>
 						</template>
 						{{ view.storageInfo.currentStatus }}
+						<span v-if="view.storageInfo.currentStatus=='在展'">所在展厅：{{ view.exhibitionHallId }}</span>
+						<span v-if="view.storageInfo.currentStatus=='在库'">所在仓库：{{ view.storageId }}</span>
 					</el-descriptions-item>
 					<!-- 完残程度 -->
 					<el-descriptions-item>
@@ -710,6 +432,8 @@ interface TableItem {
 		realQuantity: string;
 		traditionalQuantity:string;
 	},
+	exhibitionHallId:string;
+	storageId:string;
 }
 //请求数据
 const query = reactive({
@@ -768,29 +492,6 @@ const handlePageChange = (val: number) => {
 	query.pageIndex = val;
 	getData();
 };
-const saveDelete = async (index: number) => {
-	try {
-		const deletedItemId = tableData.value[index].collectionId;
-		await axios.delete(`http://42.192.39.198:5000/api/Collections/${deletedItemId}`);
-		ElMessage.success('数据删除成功');
-	} catch (error) {
-		ElMessage.error('数据删除失败');
-	}
-};
-// 处理删除操作
-const handleDelete = (index: number) => {
-	// 二次确认删除
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning'
-	})
-		.then(() => {
-			ElMessage.success('删除成功');
-			// 在这里调用 saveDelete 并传递要删除的数据索引
-			saveDelete(index);
-			tableData.value.splice(index, 1);
-		})
-		.catch(() => { });
-};
 
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
@@ -832,7 +533,9 @@ let form = reactive({
 		protectionLevel: ''
 	},
 	originalName: '',
-	textureType: ''
+	textureType: '',
+	exhibitionHallId:'',
+	storageId:'',
 });
 //查看的内容
 let view = reactive({
@@ -870,7 +573,10 @@ let view = reactive({
 		protectionLevel: ''
 	},
 	originalName: '',
-	textureType: ''
+	textureType: '',
+	exhibitionHallId:'',
+	storageId:'',
+
 });
 
 //处理编辑操作
@@ -914,6 +620,8 @@ const handleEdit = (index: number, row: any) => {
 	};
 	form.originalName = row.originalName;
 	form.textureType = row.textureType;
+	form.exhibitionHallId=row.exhibitionHallId;
+	form.storageId=row.storageId;
 	editVisible.value = true;
 	idx=index
 };
@@ -957,6 +665,8 @@ const handleDetails = (index: number, row: any) => {
 	};
 	view.originalName = row.originalName;
 	view.textureType = row.textureType;
+	view.exhibitionHallId=row.exhibitionHallId;
+	view.storageId=row.storageId;
 	viewVisible.value = true;
 };
 
@@ -992,7 +702,9 @@ const saveEdit = async () => {
 	tableData.value[idx].dimensionInfo.dimension = form.dimensionInfo.dimension;  
 	tableData.value[idx].dimensionInfo.weight = form.dimensionInfo.weight;  
 	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;  
-	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;     
+	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;   
+	tableData.value[idx].exhibitionHallId=form.exhibitionHallId;
+	tableData.value[idx].storageId=form.storageId;  
 	console.log(tableData.value);
 
 	// Update frontend table data
