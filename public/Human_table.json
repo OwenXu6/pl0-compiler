@@ -1,23 +1,23 @@
 
 {
     "list": [{
-            "StaffId": 2050780,
-            "StaffName": "焦驁",
-            "StaffAge": "20",
-            "StaffGender": "男",
-            "StaffPostRank": "超級經理",
-            "StaffSalary": 10000000,
-            "WorkType": "全能神",
+            "Staff_id": 2050780,
+            "Staff_Name": "焦驁",
+            "Staff_Age": "20",
+            "Staff_Gender": "男",
+            "Staff_Post_Rank": "超級經理",
+            "Staff_Salary": 10000000,
+            "Work_Type": "全能神",
             "Job": "乜都做"
         },
         {
-            "StaffId": 2051498,
-            "StaffName": "儲岱澤",
-            "StaffAge": "22",
-            "StaffGender": "女",
-            "StaffPostRank": "設計總監",
-            "StaffSalary": 1000000,
-            "WorkType": "設計部門",
+            "Staff_id": 2051498,
+            "Staff_Name": "儲岱澤",
+            "Staff_Age": "22",
+            "Staff_Gender": "女",
+            "Staff_Post_Rank": "設計總監",
+            "Staff_Salary": 1000000,
+            "Work_Type": "設計部門",
             "Job": "管理整體設計"
         }
     ],
