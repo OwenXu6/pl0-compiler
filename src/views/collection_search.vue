@@ -76,6 +76,7 @@
 						<el-option key="1" label="在展" value="在展"></el-option>
 						<el-option key="2" label="在库" value="在库"></el-option>
 						<el-option key="3" label="修缮中" value="修缮中"></el-option>
+						<el-option key="4" label="未鉴定" value="未鉴定"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
@@ -441,11 +442,11 @@ interface TableItem {
 const query = reactive({
 	name: '',         //文物姓名
 	id: '',           //文物id
-	collectionType: ' ',        //文物类别
-	era: ' ',         //文物的朝代
-	status: ' ',      //藏品状态
-	excavation_site: ' ',    //出土地
-	excavation_date: ' ',   //出土日期
+	collectionType: '',        //文物类别
+	era: '',         //文物的朝代
+	status: '',      //藏品状态
+	excavation_site: '',    //出土地
+	excavation_date: '',   //出土日期
 	collectTime: '',	//收藏的时间
 	pageIndex: 1,      //所在页面
 	pageSize: 10,       //总页面
@@ -456,20 +457,31 @@ const query = reactive({
 });
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
+let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
 	fetchData().then(res => {
-		console.log(res)
-		// tableData.value = res;
+
+		console.log(res);
 		//过滤掉“未鉴定”的文物
-		tableData.value = res.filter(item => item.storageInfo.currentStatus !== '未鉴定');
-		// console.log(tableData.value.length);
+
+		filteredData.value = res.filter(item => item.storageInfo.currentStatus !== '未鉴定');
+		console.log(query);
+		filteredData.value = filteredData.value.filter(item => item.name.includes(query.name));
+		filteredData.value = filteredData.value.filter(item => String(item.collectionId).includes(query.id));
+		filteredData.value = filteredData.value.filter(item => item.collectionType.includes(query.collectionType));
+		filteredData.value = filteredData.value.filter(item => item.era.includes(query.era));
+		filteredData.value = filteredData.value.filter(item => item.storageInfo.currentStatus.includes(query.status));
+		filteredData.value = filteredData.value.filter(item => item.area.includes(query.excavation_site)); //命名不统一
+		filteredData.value = filteredData.value.filter(item => item.collectInfo.collectTime.includes(query.excavation_date));
+
+		tableData.value=filteredData.value;
+		console.log(tableData.value);
 		//截取有效时间显示
 		for (var i = 0; i < tableData.value.length; i++) {
 			var T = tableData.value[i].collectInfo.collectTime;
 			var dest = '';
-			console.log(T)
 			for (var j = 0; j < T.length; j++) {
 				if (T[j] == 'T')
 					break;
@@ -482,6 +494,7 @@ const getData = () => {
 	});
 
 };
+
 getData();
 
 // 查询操作
