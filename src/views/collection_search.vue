@@ -63,8 +63,18 @@
 				</el-table-column>
 			</el-table>
 			<div class="pagination">
+				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
+				 size="small" style="width: 100px;" >
+				 <el-option label="5" value="5"></el-option>
+				 <el-option label="10" value="10"></el-option>
+				 <el-option label="20" value="20"></el-option>
+				 <el-option label="50" value="50"></el-option>
+				</el-select>
 				<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
-					:page-size="query.pageSize" :total="filteredData.length" @current-change="handlePageChange"></el-pagination>
+					:page-size="query.pageSize" :total="filteredData.length"
+					 @current-change="handlePageChange"
+					 @update:page-size = "handleSearch">
+				</el-pagination>
 			</div>
 		</div>
 
@@ -450,6 +460,7 @@ const query = reactive({
 	collectTime: '',	//收藏的时间
 	pageIndex: 1,      //所在页面
 	pageSize: 1,       //一页最多拥有的条目个数
+	tempPageSize : '', //中间变量，存储用户选择的PageSize
 	storageInfo: {
 		currentStatus: '',
 		protectionLevel: ''
@@ -517,6 +528,15 @@ const handlePageChange = (val: number) => {
 	query.pageIndex = val;
 	getData();
 };
+
+//改变页面大小
+const applyPageSize = () =>{
+	query.pageSize = Number(query.tempPageSize);
+	console.log(query.pageSize);
+	query.pageIndex = 1;
+	getData();
+}
+
 
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
