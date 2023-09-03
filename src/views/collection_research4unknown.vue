@@ -355,7 +355,9 @@
 								鉴定意见
 							</div>
 						</template>
-						{{ form.identificationComments }}
+						<!-- {{ form.identificationComments }} -->
+						<el-input v-model="form.identificationComments" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
+							placeholder="请输入鉴定意见" />
 						<div style="margin-top: 10px">鉴定人：{{ form.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
 							form.identificationDate }}</div>
 					</el-descriptions-item>
@@ -718,6 +720,7 @@ interface TableItem {
 		realQuantity: string;
 		traditionalQuantity: string;
 	},
+	identificationComments:string;
 }
 //请求数据
 const query = reactive({
@@ -1013,6 +1016,7 @@ const saveEdit = async () => {
 	tableData.value[idx].dimensionInfo.weight = form.dimensionInfo.weight;
 	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
 	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;
+	tableData.value[idx].identificationComments=form.identificationComments
 	console.log(tableData.value);
 
 	// Update frontend table data
