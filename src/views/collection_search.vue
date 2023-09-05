@@ -3,112 +3,100 @@
 		<div class="container">
 			<!-- 查询的部分 -->
 			<div class="handle-box">
-
 				<el-input v-model="query.name" placeholder="文物名称" class="handle-input mr10"></el-input>
 				<!--显示一个输入框，用户可以输入名称进行搜索。v-model="query.name"将输入的值绑定到query.name变量上。-->
-
 				<el-input v-model="query.id" placeholder="文物ID" class="handle-input mr10"></el-input>
-
 				<br><br>
-
-				<el-select v-model="query.type" placeholder="文物种类" class="handle-select mr10">
+				<el-select v-model="query.collectionType" placeholder="文物种类" class="handle-select mr10">
 					<el-option key="1" label="瓷器" value="瓷器"></el-option>
 					<el-option key="2" label="青铜器" value="青铜器"></el-option>
 				</el-select>
-
 				<el-select v-model="query.era" placeholder="文物年代" class="handle-select mr10">
 					<el-option key="1" label="唐代" value="唐代"></el-option>
 					<el-option key="2" label="清代" value="清代"></el-option>
 				</el-select>
-
 				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10">
 					<el-option key="1" label="在库" value="在库"></el-option>
 					<el-option key="2" label="在展" value="在展"></el-option>
 				</el-select>
-
 				<el-select v-model="query.excavation_site" placeholder="出土地" class="handle-select mr10">
 					<el-option key="1" label="三星堆" value="三星堆"></el-option>
 					<el-option key="2" label="北首岭遗址" value="北首岭遗址"></el-option>
 				</el-select>
-
 				<el-input v-model="query.excavation_date" placeholder="出土日期" class="handle-input mr11"></el-input>
-
-
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
-
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="collectionId" label="ID" width="110" align="center"></el-table-column>
-				<el-table-column prop="name" label="文物名称"></el-table-column>
-				<!--<el-table-column prop="name" label="文物图片"></el-table-column>-->
-				<el-table-column prop="collectionType" label="文物种类">
+				<el-table-column prop="name" label="文物名称" align="center"></el-table-column>
+				<el-table-column label="文物图片(查看大图)" align="center">
+					<template #default="scope">
+						<el-image class="table-td-thumb" :src="scope.row.collectionPhoto" :z-index="10"
+							:preview-src-list="[scope.row.thumb]" preview-teleported>
+						</el-image>
+					</template>
 				</el-table-column>
+				<el-table-column prop="collectionType" label="文物种类" align="center"></el-table-column>
 				<el-table-column prop="era" label="文物年代" align="center"></el-table-column>
 				<!--<el-table-column prop="address" label="地址"></el-table-column>-->
-				<el-table-column prop="storageInfo" label="藏品状态" align="center">
-					<!--<template #default="scope">
+				<el-table-column prop="storageInfo.currentStatus" label="藏品状态" align="center">
+					<template #default="scope">
 						<el-tag
-							:type="scope.row.state === '成功' ? 'success' : scope.row.state === '失败' ? 'danger' : ''"
-						>
-							{{ scope.row.state }}
+							:type="scope.row.storageInfo.currentStatus === '在展' ? 'success' : scope.row.storageInfo.currentStatus === '修缮中' ? 'danger' : ''">
+							{{ scope.row.storageInfo.currentStatus }}
 						</el-tag>
-					</template>-->
+					</template>
 				</el-table-column>
-
+				<el-table-column prop="collectInfo.collectTime" label="入藏时间" align="center"></el-table-column>
 				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
 				<el-table-column label="操作" width="350" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="14">
-							编辑
+						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)">
+							修改文物状态
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="15">
-							删除
-						</el-button>
-						<el-button text :icon="View" @click="handleDetails(scope.$index, scope.row)" v-permiss="16">
+						<el-button text :icon="View" @click="handleDetails(scope.$index, scope.row)">
 							查看
 						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="pagination">
+			<div class="pagination"  style="display: flex; align-items: center;">
+				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
+				 size="small" style="width: 100px;" >
+				 <el-option label="5" value="5"></el-option>
+				 <el-option label="10" value="10"></el-option>
+				 <el-option label="20" value="20"></el-option>
+				 <el-option label="50" value="50"></el-option>
+				</el-select>
 				<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
-					:page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
+					:page-size="query.pageSize" :total="filteredData.length"
+					 @current-change="handlePageChange"
+					 @update:page-size = "handleSearch">
+				</el-pagination>
 			</div>
 		</div>
 
 		<!-- 编辑的弹出框 -->
-		<el-dialog title="编辑" v-model="editVisible" width="30%">
+		<el-dialog title="修改文物状态" v-model="editVisible" width="60%">
 			<el-form label-width="70px">
-				<el-form-item label="文物名称">
-					<el-input v-model="form.name"></el-input>
-				</el-form-item>
-				<!-- 通过模糊搜索来输入文物的种类 -->
-				<el-form-item label="文物种类">
-					<el-autocomplete v-model="form.type" :fetch-suggestions="typeQuerySearch" clearable class="inline-input w-50"
-						placeholder="请输入文物的种类" @select="typeHandleSelect" /> 
-				</el-form-item>
-				<el-form-item label="文物年代">
-					<el-autocomplete v-model="form.era" :fetch-suggestions="eraQuerySearch" clearable class="inline-input w-50"
-						placeholder="请输入文物的年代" @select="eraHandleSelect" /> 
-				</el-form-item>
 				<el-form-item label="藏品状态">
-					<el-select v-model="form.status" placeholder="藏品状态" class="handle-select mr10">
+					<el-select v-model="form.storageInfo.currentStatus" placeholder="藏品状态" class="handle-select mr10">
 						<el-option key="1" label="在展" value="在展"></el-option>
 						<el-option key="2" label="在库" value="在库"></el-option>
 						<el-option key="3" label="修缮中" value="修缮中"></el-option>
+						<el-option key="4" label="未鉴定" value="未鉴定"></el-option>
 					</el-select>
 				</el-form-item>
-
-				<el-form-item v-if="form.status === '在展'" label="展厅名称">
-						<el-input v-if="form.status === '在展'" v-model="form.hall_name" class="handle-input mr10"></el-input>
+				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
+					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.exhibitionHallId"
+						class="handle-input mr10"></el-input>
 				</el-form-item>
-
-				<el-form-item v-if="form.status === '在库'" label="库房名称">
-						<el-input v-if="form.status === '在库'" v-model="form.storage_name" class="handle-input mr10"></el-input>
+				<el-form-item v-if="form.storageInfo.currentStatus === '在库'" label="库房名称">
+					<el-input v-if="form.storageInfo.currentStatus === '在库'" v-model="form.storageId"
+						class="handle-input mr10"></el-input>
 				</el-form-item>
-
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
@@ -118,15 +106,280 @@
 			</template>
 		</el-dialog>
 		<!-- 查看的弹出框 -->
-		<el-dialog title="查看" v-model="viewVisible" width="30%">
-			<div>文物名称：{{ view.name }}</div>
-			<div>文物种类：{{ view.type }}</div>
+		<el-dialog title="查看" v-model="viewVisible" width="60%">
+			<!-- <div>文物名称：{{ view.name }}</div>
+			<div>文物种类：{{ view.collectionType }}</div>
 			<div>文物年代：{{ view.era }}</div>
-			<div>藏品状态：{{ view.status }}</div>
+			<div>藏品状态：{{ view.storageInfo.currentStatus }}</div> -->
+			<div class="cardContainer" id="container">
 
+				<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
+					<!-- 收藏单位 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item" :style="{ minWidth: view.collectInfo.collectMuseum.length * 12 + 'px' }">
+								<el-icon :style="iconStyle">
+									<user />
+								</el-icon>
+								收藏单位
+							</div>
+						</template>
+						{{ view.collectInfo.collectMuseum }}
+					</el-descriptions-item>
+					<!-- 现登记号 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<EditPen />
+								</el-icon>
+								现登记号
+							</div>
+						</template>
+						{{ view.collectionId }}
+					</el-descriptions-item>
+					<!-- 藏品图片 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Picture />
+								</el-icon>
+								藏品图片
+							</div>
+						</template>
+						<template #default="scope">
+							<el-image class="CollectionImg" :src="view.collectionPhoto" :z-index="10">
+							</el-image>
+						</template>
+					</el-descriptions-item>
+					<!-- 名称 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<tickets />
+								</el-icon>
+								名称
+							</div>
+						</template>
+						{{ view.name }}
+					</el-descriptions-item>
+					<!-- 文物原名 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<tickets />
+								</el-icon>
+								原名
+							</div>
+						</template>
+						{{ view.originalName }}
+					</el-descriptions-item>
+					<!-- 文物级别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Medal />
+								</el-icon>
+								文物级别
+							</div>
+						</template>
+						{{ view.storageInfo.protectionLevel }}
+					</el-descriptions-item>
+					<!-- 文物类别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Grid />
+								</el-icon>
+								文物类别
+							</div>
+						</template>
+						{{ view.collectionType }}
+					</el-descriptions-item>
+					<!-- 质地 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Pointer />
+								</el-icon>
+								质地
+							</div>
+						</template>
+						{{ view.textureType }}
+					</el-descriptions-item>
+					<!--年代 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Calendar />
+								</el-icon>
+								年代
+							</div>
+						</template>
+						{{ view.era }}
+					</el-descriptions-item>
+					<!-- 地域 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<LocationInformation />
+								</el-icon>
+								地域
+							</div>
+						</template>
+						{{ view.area }}
+					</el-descriptions-item>
+					<!-- 来源 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<MapLocation />
+								</el-icon>
+								来源
+							</div>
+						</template>
+						{{ view.collectInfo.source }}
+					</el-descriptions-item>
+					<!-- 保存状况 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Collection />
+								</el-icon>
+								保存状况
+							</div>
+						</template>
+						{{ view.storageInfo.currentStatus }}
+						<span v-if="view.storageInfo.currentStatus == '在展'">所在展厅：{{ view.exhibitionHallId }}</span>
+						<span v-if="view.storageInfo.currentStatus == '在库'">所在仓库：{{ view.storageId }}</span>
+					</el-descriptions-item>
+					<!-- 完残程度 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Box />
+								</el-icon>
+								完残程度
+							</div>
+						</template>
+						{{ view.completeness }}
+					</el-descriptions-item>
+					<!-- 尺寸 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<FullScreen />
+								</el-icon>
+								尺寸
+							</div>
+						</template>
+						{{ view.dimensionInfo.dimension + view.dimensionInfo.dimensionUnit }}
+					</el-descriptions-item>
+					<!-- 质量-->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Coin />
+								</el-icon>
+								质量
+							</div>
+						</template>
+						{{ view.dimensionInfo.weight + view.dimensionInfo.weightUnit }}
+					</el-descriptions-item>
+					<!-- 传统数量 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Histogram />
+								</el-icon>
+								传统数量
+							</div>
+						</template>
+						{{ view.dimensionInfo.traditionalQuantity + "个" }}
+					</el-descriptions-item>
+					<!-- 实际数量 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Histogram />
+								</el-icon>
+								实际数量
+							</div>
+						</template>
+						{{ view.dimensionInfo.realQuantity + "个" }}
+					</el-descriptions-item>
+					<!-- 入藏时间 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<AlarmClock />
+								</el-icon>
+								入藏时间
+							</div>
+						</template>
+						{{ view.collectInfo.collectTime }}
+					</el-descriptions-item>
+					<!-- 保护等级 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Trophy />
+								</el-icon>
+								保护等级
+							</div>
+						</template>
+						{{ view.storageInfo.protectionLevel }}
+					</el-descriptions-item>
+					<!-- 鉴定意见 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<EditPen />
+								</el-icon>
+								鉴定意见
+							</div>
+						</template>
+						{{ view.identificationComments }}
+						<div style="margin-top: 10px">鉴定人：{{ view.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
+							view.identificationDate }}</div>
+					</el-descriptions-item>
+					<!-- 备注 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								备注
+							</div>
+						</template>
+						{{ view.remark }}
+					</el-descriptions-item>
+				</el-descriptions>
+
+			</div>
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button type="primary" @click="closeView">关 闭</el-button>
+					<el-button type="success" v-print="'#container'">打 印</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -135,17 +388,26 @@
 </template>
 
 <script setup lang="ts" name="basetable">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, View } from '@element-plus/icons-vue';
 // import { fetchData } from '../api/index';
 import { onMounted } from 'vue'
+import {
+	Iphone,
+	Location,
+	OfficeBuilding,
+	Tickets,
+	User,
+} from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'; // 导入useRouter
 import axios from 'axios'
 
+//获取后端数据库的数据
 const fetchData = async () => {
 	try {
 		const response = await axios.get(' http://42.192.39.198:5000/api/Collections');
-		console.log(response.data); 
+		console.log(response.data);
 		console.log("数据库连接成功！");
 		return response.data;
 	} catch (error) {
@@ -155,42 +417,105 @@ const fetchData = async () => {
 
 //表格中展示的数据
 interface TableItem {
-	id: number;
+	collectionId: number;
 	name: string;
 	money: string;
-	state: string;
 	date: string;
-	type: string;
+	collectionType: string;
+	collectInfo: {
+		collectTime: string;	//收藏的时间
+		source: string;
+	}
 	era: string;
 	status: string;
 	hall_name: string;
-	storage_name: string;
+	storageInfo: {
+		currentStatus: string;
+		protectionLevel: string;
+	}
+	textureType: string;
+	area: string;
+	completeness: string;
+	dimensionInfo: {
+		collectionId: string;
+		dimension: string;
+		dimensionUnit: string;
+		weight: string;
+		weightUnit: string;
+		realQuantity: string;
+		traditionalQuantity: string;
+	},
+	exhibitionHallId: string;
+	storageId: string;
 }
 //请求数据
 const query = reactive({
 	name: '',         //文物姓名
 	id: '',           //文物id
-	type: ' ',        //文物类别
-	era: ' ',         //文物的朝代
-	status: ' ',      //藏品状态
-	excavation_site: ' ',    //出土地
-	excavation_date: ' ',   //出土日期
+	collectionType: '',        //文物类别
+	era: '',         //文物的朝代
+	status: '',      //藏品状态
+	excavation_site: '',    //出土地
+	excavation_date: '',   //出土日期
+	collectTime: '',	//收藏的时间
 	pageIndex: 1,      //所在页面
-	pageSize: 10       //总页面
+	pageSize: 1,       //一页最多拥有的条目个数
+	tempPageSize : '', //中间变量，存储用户选择的PageSize
+	storageInfo: {
+		currentStatus: '',
+		protectionLevel: ''
+	}
 });
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
+const pageData = ref<TableItem[]>([]);   //
+let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
+
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
 	fetchData().then(res => {
-		console.log(res)
-		tableData.value = res;
-		console.log(res[0].collectionId);
+
+		console.log(res);
+		//过滤掉“未鉴定”的文物
+
+		filteredData.value = res.filter(item => item.storageInfo.currentStatus !== '未鉴定');
+		console.log(query);
+		filteredData.value = filteredData.value.filter(item => item.name.includes(query.name));
+		filteredData.value = filteredData.value.filter(item => String(item.collectionId).includes(query.id));
+		filteredData.value = filteredData.value.filter(item => item.textureType.includes(query.collectionType)); //命名不统一
+		filteredData.value = filteredData.value.filter(item => item.era.includes(query.era));
+		filteredData.value = filteredData.value.filter(item => item.storageInfo.currentStatus.includes(query.status));
+		filteredData.value = filteredData.value.filter(item => item.area.includes(query.excavation_site)); //命名不统一
+		filteredData.value = filteredData.value.filter(item => item.collectInfo.collectTime.includes(query.excavation_date));
+
+		tableData.value=filteredData.value;
+		console.log(tableData.value);
+		const startIndex = (query.pageIndex - 1) * query.pageSize;
+		const endIndex = query.pageIndex * query.pageSize;
+
+		// 截取当前页的数据
+		const pagedData = filteredData.value.slice(startIndex, endIndex);
+
+		// 将截取的数据赋值给 pagedData
+		pageData.value = pagedData;
+		//截取有效时间显示
+		for (var i = 0; i < pageData.value.length; i++) {
+			var T = pageData.value[i].collectInfo.collectTime;
+			var dest = '';
+			for (var j = 0; j < T.length; j++) {
+				if (T[j] == 'T')
+					break;
+				dest += T[j];
+			}
+			pageData.value[i].collectInfo.collectTime = dest;
+		}
+		// console.log(res[0].collectionId);
 		// pageTotal.value = res.data.pageTotal || 50;
 	});
-	
+
 };
+
 getData();
 
 // 查询操作
@@ -204,18 +529,14 @@ const handlePageChange = (val: number) => {
 	getData();
 };
 
-// 处理删除操作
-const handleDelete = (index: number) => {
-	// 二次确认删除
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning'
-	})
-		.then(() => {
-			ElMessage.success('删除成功');
-			tableData.value.splice(index, 1);
-		})
-		.catch(() => { });
-};
+//改变页面大小
+const applyPageSize = () =>{
+	query.pageSize = Number(query.tempPageSize);
+	console.log(query.pageSize);
+	query.pageIndex = 1;
+	getData();
+}
+
 
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
@@ -223,56 +544,219 @@ const editVisible = ref(false);
 const viewVisible = ref(false);
 //表单填写的内容
 let form = reactive({
-	name: '',    //文物的姓名
-	type: '',    //文物的种类
-	era: ' ',    //文物的年代
-	status: ' ',    //文物的状态
-	hall_name: ' ', //文物的展厅（若在展）
-	storage_name: ' ' //文物的库房名称（若在库）
+	area: '',
+	collectInfo: {
+		collectionId: '',
+		source: '',
+		collectMuseum: '',
+		generalRegistrationId: '',
+		collectTime: '',
+		collectionLevel: ''
+	},
+	collectionId: '',
+	collectionPhoto: '',
+	collectionType: '',
+	completeness: '',
+	completenessType: '',
+	dimensionInfo: {
+		collectionId: '',
+		dimension: '',
+		dimensionUnit: '',
+		weight: '',
+		weightUnit: '',
+		realQuantity: '',
+		traditionalQuantity: ''
+	},
+	era: '',
+	identificationComments: '',
+	identificationDate: '',
+	identificationStaffName: '',
+	name: '',
+	remark: '',
+	storageInfo: {
+		currentStatus: '',
+		protectionLevel: ''
+	},
+	originalName: '',
+	textureType: '',
+	exhibitionHallId: '',
+	storageId: '',
 });
 //查看的内容
 let view = reactive({
-	name: '',    //文物的姓名
-	type: '',    //文物的种类
-	era: ' ',    //文物的年代
-	status: ' '    //文物的状态
+	area: '',
+	collectInfo: {
+		collectionId: '',
+		source: '',
+		collectMuseum: '',
+		generalRegistrationId: '',
+		collectTime: '',
+		collectionLevel: ''
+	},
+	collectionId: '',
+	collectionPhoto: '',
+	collectionType: '',
+	completeness: '',
+	completenessType: '',
+	dimensionInfo: {
+		collectionId: '',
+		dimension: '',
+		dimensionUnit: '',
+		weight: '',
+		weightUnit: '',
+		realQuantity: '',
+		traditionalQuantity: ''
+	},
+	era: '',
+	identificationComments: '',
+	identificationDate: '',
+	identificationStaffName: '',
+	name: '',
+	remark: '',
+	storageInfo: {
+		currentStatus: '',
+		protectionLevel: ''
+	},
+	originalName: '',
+	textureType: '',
+	exhibitionHallId: '',
+	storageId: '',
+
 });
 
 //处理编辑操作
 let idx: number = -1;
+
+//打开编辑框
 const handleEdit = (index: number, row: any) => {
-	idx = index;
-	form.name = row.name;
-	form.type = row.type;
+	//将目前表格中的内容先同步到编辑框内
+	form.area = row.area;
+	form.collectInfo = {
+		collectionId: row.collectInfo.collectionId,
+		source: row.collectInfo.source,
+		collectMuseum: row.collectInfo.collectMuseum,
+		generalRegistrationId: row.collectInfo.generalRegistrationId,
+		collectTime: row.collectInfo.collectTime,
+		collectionLevel: row.collectInfo.collectionLevel
+	};
+	form.collectionId = row.collectionId;
+	form.collectionPhoto = row.collectionPhoto;
+	form.collectionType = row.collectionType;
+	form.completeness = row.completeness;
+	form.completenessType = row.completenessType;
+	form.dimensionInfo = {
+		collectionId: row.dimensionInfo.collectionId,
+		dimension: row.dimensionInfo.dimension,
+		dimensionUnit: row.dimensionInfo.dimensionUnit,
+		weight: row.dimensionInfo.weight,
+		weightUnit: row.dimensionInfo.weightUnit,
+		realQuantity: row.dimensionInfo.realQuantity,
+		traditionalQuantity: row.dimensionInfo.traditionalQuantity
+	};
 	form.era = row.era;
-	form.status = row.status;
-	form.hall_name = row.hall_name;
-	form.storage_name = row.storage_name;
+	form.identificationComments = row.identificationComments;
+	form.identificationDate = row.identificationDate;
+	form.identificationStaffName = row.identificationStaffName;
+	form.name = row.name;
+	form.remark = row.remark;
+	form.storageInfo = {
+		currentStatus: row.storageInfo.currentStatus,
+		protectionLevel: row.storageInfo.protectionLevel
+	};
+	form.originalName = row.originalName;
+	form.textureType = row.textureType;
+	form.exhibitionHallId = row.exhibitionHallId;
+	form.storageId = row.storageId;
 	editVisible.value = true;
+	idx = index
 };
 
 //处理查看操作
 let i: number = -1;
+// const view = ref<TableItem[]>([]);
 const handleDetails = (index: number, row: any) => {
-	i = index;
-	view.name = row.name;
-	view.type = row.type;
+	view.area = row.area;
+	view.collectInfo = {
+		collectionId: row.collectInfo.collectionId,
+		source: row.collectInfo.source,
+		collectMuseum: row.collectInfo.collectMuseum,
+		generalRegistrationId: row.collectInfo.generalRegistrationId,
+		collectTime: row.collectInfo.collectTime,
+		collectionLevel: row.collectInfo.collectionLevel
+	};
+	view.collectionId = row.collectionId;
+	view.collectionPhoto = row.collectionPhoto;
+	view.collectionType = row.collectionType;
+	view.completeness = row.completeness;
+	view.completenessType = row.completenessType;
+	view.dimensionInfo = {
+		collectionId: row.dimensionInfo.collectionId,
+		dimension: row.dimensionInfo.dimension,
+		dimensionUnit: row.dimensionInfo.dimensionUnit,
+		weight: row.dimensionInfo.weight,
+		weightUnit: row.dimensionInfo.weightUnit,
+		realQuantity: row.dimensionInfo.realQuantity,
+		traditionalQuantity: row.dimensionInfo.traditionalQuantity
+	};
 	view.era = row.era;
-	view.status = row.status;
+	view.identificationComments = row.identificationComments;
+	view.identificationDate = row.identificationDate;
+	view.identificationStaffName = row.identificationStaffName;
+	view.name = row.name;
+	view.remark = row.remark;
+	view.storageInfo = {
+		currentStatus: row.storageInfo.currentStatus,
+		protectionLevel: row.storageInfo.protectionLevel
+	};
+	view.originalName = row.originalName;
+	view.textureType = row.textureType;
+	view.exhibitionHallId = row.exhibitionHallId;
+	view.storageId = row.storageId;
 	viewVisible.value = true;
 };
 
+//将数据上传到数据库中
+const uploadData = async () => {
+	console.log(tableData.value[idx])
+	try {
+		const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
+		ElMessage.success('数据上传成功');
+	} catch (error) {
+		ElMessage.error('数据上传失败');
+	}
+};
+
 //存储编辑的内容
-const saveEdit = () => {
-	editVisible.value = false;                    //editVisible.value被用来控制编辑界面或对话框的显示与隐藏
-	ElMessage.success(`修改第 ${idx + 1} 行成功`);  //弹出弹窗提示用户修改成功
+const saveEdit = async () => {
+	editVisible.value = false;
+	//遇事不决console.log
+	console.log('saveEdit')
+	console.log(tableData.value[idx].collectionId)
+	// ElMessage.success(`修改第 ${idx + 1} 行成功`);
 	tableData.value[idx].name = form.name;        //将修改的文物姓名同步到表格当中
-	tableData.value[idx].type = form.type;        //将修改的文物的种类同步到表格当中
+	tableData.value[idx].collectionType = form.collectionType;        //将修改的文物的种类同步到表格当中
 	tableData.value[idx].era = form.era;          //将修改的文物的朝代同步到表格当中
-	tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
-	tableData.value[idx].hall_name = form.hall_name;      //将修改的文物的展厅名称同步到表格当中
-	tableData.value[idx].storage_name = form.storage_name;      //将修改的文物的库房名称同步到表格当中
-	
+	// tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
+	// tableData.value[idx].hall_name = form.hall_name;      //将修改的文物的展厅名称同步到表格当中
+	tableData.value[idx].storageInfo.currentStatus = form.storageInfo.currentStatus;
+	tableData.value[idx].storageInfo.protectionLevel = form.storageInfo.protectionLevel;
+	tableData.value[idx].textureType = form.textureType;
+	tableData.value[idx].area = form.area;
+	tableData.value[idx].collectInfo.source = form.collectInfo.source;
+	tableData.value[idx].completeness = form.completeness;
+	tableData.value[idx].dimensionInfo.dimension = form.dimensionInfo.dimension;
+	tableData.value[idx].dimensionInfo.weight = form.dimensionInfo.weight;
+	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
+	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;
+	tableData.value[idx].exhibitionHallId = form.exhibitionHallId;
+	tableData.value[idx].storageId = form.storageId;
+	console.log(tableData.value);
+
+	// Update frontend table data
+	// tableData.value[idx] = updatedData;
+	ElMessage.success(`修改第 ${idx + 1} 行成功`);  //弹出弹窗提示用户修改成功
+	uploadData();
+
 };
 //关闭“查看详细信息”的弹窗
 const closeView = () => {
@@ -315,12 +799,12 @@ const typeLoadAll = () => {
 		{ value: '金器', index: 9 },
 		{ value: '其他金属器（锡、铅等）', index: 10 },
 		{ value: '瓷器', index: 11 },
-		{ value: '玉器', index: 12},
+		{ value: '玉器', index: 12 },
 		{ value: '宝石', index: 13 },
 		{ value: '珐琅', index: 14 },
 		{ value: '紫砂', index: 15 },
 		{ value: '玻璃器', index: 16 },
-		{ value: '书画', index: 17},
+		{ value: '书画', index: 17 },
 		{ value: '图书、文献', index: 18 },
 		{ value: '甲骨、简牍', index: 19 },
 		{ value: '文房用具', index: 20 },
@@ -332,7 +816,7 @@ const typeLoadAll = () => {
 		{ value: '家具', index: 26 },
 		{ value: '仪器、仪表', index: 27 },
 		{ value: '生产机械', index: 28 },
-		{ value: '建筑资料', index: 29},
+		{ value: '建筑资料', index: 29 },
 		{ value: '化石', index: 30 },
 		{ value: '其他', index: 31 },
 	]
@@ -382,14 +866,14 @@ const EraloadAll = () => {
 		{ value: '唐朝', index: 9 },
 		{ value: '五代十国', index: 10 },
 		{ value: '宋朝', index: 11 },
-		{ value: '元朝', index: 12},
+		{ value: '元朝', index: 12 },
 		{ value: '明朝', index: 13 },
 		{ value: '清朝', index: 14 },
 		{ value: '民国', index: 15 },
 	]
 }
 //处理选择的项，比如说给一个东西赋值
-const eraHandleSelect = (item: EraSelectItem) => {
+const eraSelect = (item: EraSelectItem) => {
 	console.log(item)
 }
 
@@ -397,6 +881,33 @@ onMounted(() => {
 	toSelectEra.value = EraloadAll()
 })
 
+//可选择的选项
+const protectLevelLoadAll = () => {
+	return [
+		{ value: '一级', index: 1 },
+		{ value: '两级', index: 2 },
+		{ value: '三级', index: 3 },
+	]
+}
+//处理选择的项，比如说给一个东西赋值
+const protectLevelSelect = (item: EraSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectEra.value = protectLevelLoadAll()
+})
+const size = ref('')
+const iconStyle = computed(() => {
+	const marginMap = {
+		large: '8px',
+		default: '6px',
+		small: '4px',
+	}
+	return {
+		marginRight: marginMap.default,
+	}
+})
 </script>
 
 <style scoped>
@@ -435,5 +946,26 @@ onMounted(() => {
 	margin: auto;
 	width: 40px;
 	height: 40px;
+}
+
+.el-descriptions {
+	margin-top: 20px;
+}
+
+.cell-item {
+	display: flex;
+	align-items: center;
+}
+
+.margin-top {
+	margin-top: 20px;
+}
+
+.CollectionImg {
+	float: left;
+	width: 200px;
+	height: 130px;
+	margin: 10px;
+
 }
 </style>

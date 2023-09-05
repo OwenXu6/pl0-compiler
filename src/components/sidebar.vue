@@ -159,6 +159,18 @@ const items = [
                 permiss: '3',
             },
         ]
+    },
+    {
+        icon:"DocumentCopy",
+        index:"/ccard",
+        title:"藏品编目",
+        permiss:"3",
+    },
+    {
+        icon:"DocumentCopy",
+        index:"/demo",
+        title:"demo",
+        permiss:"3",
     }
 ];
 

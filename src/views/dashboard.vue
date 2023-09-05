@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<el-row :gutter="20">
+		<el-row gutter="20">
 			<el-col :span="8">
-				<el-card shadow="hover" class="mgb20" style="height: 252px">
+				<el-card shadow="hover" class="mgb20" style=" height: 220px">
 					<div class="user-info">
-						<el-avatar :size="120" :src="imgurl" />
+						<el-avatar :size="100" :src="imgurl" />
 						<div class="user-info-cont">
 							<div class="user-info-name">{{ name }}</div>
 							<div>{{ role }}</div>
@@ -12,20 +12,19 @@
 					</div>
 					<div class="user-info-list">
 						上次登录时间：
-						<span>2022-10-01</span>
+						<span>{{ new Date().toDateString() }}</span>
 					</div>
 					<div class="user-info-list">
 						上次登录地点：
-						<span>东莞</span>
+						<span>深圳</span>
 					</div>
 				</el-card>
-				<el-card class="ringbox" shadow="hover" style="height: 330px">
-					<schart class="ringschart" canvasId="ring" :options="options4"></schart>
-					<button class="btn" @click="realTime">实时显示</button>
-				</el-card>
 			</el-col>
-			<el-col :span="16">
-				<el-row :gutter="20" class="mgb20">
+			<el-col :span="16"><capacity :onSet="inAndOut.onSet"></capacity></el-col>
+				
+		</el-row>
+			<!-- <el-col :span="16"> -->
+				<!-- <el-row :gutter="20" class="mgb20">
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-1">
@@ -33,8 +32,9 @@
 									<User />
 								</el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">1234</div>
-									<div>用户访问量</div>
+									<div class="grid-num">{{ inAndOut.inData - inAndOut.outData }}/ {{ inAndOut.maxPeople }}
+									</div>
+									<div>在馆人数</div>
 								</div>
 							</div>
 						</el-card>
@@ -46,8 +46,8 @@
 									<ChatDotRound />
 								</el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">321</div>
-									<div>系统消息</div>
+									<div class="grid-num">{{ inAndOut.inData }}</div>
+									<div>进馆人数</div>
 								</div>
 							</div>
 						</el-card>
@@ -59,20 +59,21 @@
 									<Goods />
 								</el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">5000</div>
-									<div>商品数量</div>
+									<div class="grid-num">{{ inAndOut.outData }}</div>
+									<div>出馆人数</div>
 								</div>
 							</div>
 						</el-card>
 					</el-col>
-				</el-row>
-				<el-card shadow="hover" style="height: 403px">
+				</el-row> -->
+				<!-- <el-card shadow="hover" style="height: 403px">
 					<template #header>
 						<div class="clearfix">
 							<span>待办事项</span>
 							<el-button style="float: right; padding: 3px 0" text @click="addTodo">添加</el-button>
 						</div>
 					</template>
+<<<<<<< HEAD
 
 					<div class="todo-list-container">
 						<el-table :show-header="false" :data="todoList" style="width: 100%">
@@ -107,15 +108,43 @@
 				</el-card>
 			</el-col>
 		</el-row>
+=======
+					<el-table :show-header="false" :data="todoList" style="width: 100%">
+						<el-table-column width="40">
+							<template #default="scope">
+								<el-checkbox v-model="scope.row.status"></el-checkbox>
+							</template>
+						</el-table-column>
+						<el-table-column>
+							<template #default="scope">
+								<div class="todo-item" :class="{
+									'todo-item-del': scope.row.status
+								}">
+									{{ scope.row.title }}
+								</div>
+							</template>
+						</el-table-column>
+					</el-table>
+				</el-card> -->
+			<!-- </el-col> -->	
+		
+		<el-row><dynamicChart :inData="inAndOut.inData" :outData="inAndOut.outData"></dynamicChart></el-row>
+>>>>>>> 443d7dc27f862417685bf326ea2ecc7e3fb587f3
 
 	</div>
 </template>
 
 <script setup lang="ts" name="dashboard">
+<<<<<<< HEAD
 import Schart from 'vue-schart';
+=======
+
+>>>>>>> 443d7dc27f862417685bf326ea2ecc7e3fb587f3
 import { reactive, ref, watch } from 'vue';
 import imgurl from '../assets/img/img.jpg';
 import { CENTERED_ALIGNMENT } from 'element-plus/es/components/virtual-list/src/defaults';
+import dynamicChart from '../components/dynamicChart.vue'
+import capacity from '../components/capacity.vue'
 
 const viewTodo = (todo) => {
 	// 在这里处理查看待办事项的逻辑，你可以在控制台输出待办事项内容
@@ -126,6 +155,7 @@ const viewTodo = (todo) => {
 
 const name = localStorage.getItem('ms_username');
 const role: string = name === 'admin' ? '超级管理员' : '普通用户';
+<<<<<<< HEAD
 const vis = reactive({
 	btn1vis: true,
 	btn2vis: false,
@@ -204,8 +234,30 @@ const options4 = reactive({
 			data: [inAndOut.inData - inAndOut.outData, inAndOut.maxPeople - (inAndOut.inData - inAndOut.outData)],
 		}
 	],
-});
+=======
 
+const inAndOut = reactive({
+	inData: 0,
+	outData: 0,
+	onSet:0,
+>>>>>>> 443d7dc27f862417685bf326ea2ecc7e3fb587f3
+});
+let inCount = 0;
+let outCount = 0;
+const stiIn = function () {
+	return 5 + Math.round(Math.random() * 5);
+};
+const stiOut = function () {
+	return Math.round(Math.random() * 5);
+};
+
+setInterval(() => {
+	inAndOut.inData = stiIn();
+	inAndOut.outData = stiOut();
+	inAndOut.onSet += inAndOut.inData - inAndOut.outData;
+}, 1000);
+
+<<<<<<< HEAD
 const unWatch = watch(inAndOut, () => {
 	updateChart();
 }, { deep: true });
@@ -257,6 +309,8 @@ const options2 = {
 		}
 	]
 };
+=======
+>>>>>>> 443d7dc27f862417685bf326ea2ecc7e3fb587f3
 const todoList = reactive([
 	{
 		title: '今天要修复100个bug',
@@ -413,5 +467,9 @@ const todoList = reactive([
 	color: white;
 	font-size: 15px;
 
+<<<<<<< HEAD
 }
 </style>
+=======
+}</style>
+>>>>>>> 443d7dc27f862417685bf326ea2ecc7e3fb587f3

@@ -157,8 +157,9 @@ import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 
-import axios from 'axios'
+import axios from 'axios';
 
+<<<<<<< HEAD
 function getToken() {
 	// 替换为获取token的逻辑
 	return ("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUHJvZHVjdE1hbmFnZXIiLCJqdGkiOiI1MWNjYTNlOC0xZTFiLTRhZTItYWJhMC1hOGJiMThlZTlmZjQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiVXNlciIsIlByb2R1Y3RBZG1pbiJdLCJleHAiOjE2OTM3MzI0MzcsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMCIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIwMCJ9.B_LkyI8QWIHhNKK_s7iaFrtETz0l5UxzrVBm_MdtJH8")
@@ -194,17 +195,43 @@ interface TableItem {
 	price: number;
 	monthlySale: number;
 	isRelated: boolean; // 修改为boolean类型
+=======
+interface CulturalProduct {
+  productId: number;
+  designIdea: string;
+  relatedCollectionId: number;
+  relatedProduct: number;
+}
+
+interface NormalProduct {
+  productId: number;
+  isRelated: boolean;
+  monthlySale: number;
+  price: number;
+  productName: string;
+}
+
+interface TableItem {
+  productId: number;
+  productName: string;
+  price: number;
+  isRelated: number;
+  relatedCollectionId: number;
+  designIdea: string;
+  monthlySale: number;
+>>>>>>> 443d7dc27f862417685bf326ea2ecc7e3fb587f3
 }
 
 const query = reactive({
-	designIdea: '',
-	isRelated: 0,
-	productName: '',
-	pageIndex: 1,
-	pageSize: 10
+  designIdea: '',
+  isRelated: 0,
+  productName: '',
+  pageIndex: 1,
+  pageSize: 10
 });
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
+<<<<<<< HEAD
 
 const selectedCategory = ref('all');
 // 获取表格数据
@@ -225,6 +252,62 @@ const getAllProducts = async () => {
 	}
 };
 getAllProducts();
+=======
+const addedData = ref<TableItem[]>([]); // 保存新增的数据
+const compare = (a: TableItem, b: TableItem) => {
+  return a.productId < b.productId ? -1 : 1;
+}
+
+const selectedCategory = ref('all');
+
+// Fetch and merge data from both APIs
+type Product = NormalProduct | CulturalProduct;
+
+// Fetch and merge data from both APIs
+const getAndMergeData = async () => {
+  try {
+<<<<<<< HEAD
+    const responseNormal = await axios.get('http://42.192.39.198:5000/api/Products');
+    const normalData: NormalProduct[] = responseNormal.data;
+
+    const responseCultural = await axios.get('http://42.192.39.198:5000/api/CulturalProducts');
+    const culturalData: CulturalProduct[] = responseCultural.data;
+=======
+    const response = await axios.get('http://42.192.39.198:5000/api/Products');
+    const data = response.data;
+    //检查data的内容
+	console.log(data)
+    // Apply filters
+    let filteredData = [...data];
+>>>>>>> origin/front_end_merge
+
+    const culturalMap: Record<number, CulturalProduct> = {};
+    culturalData.forEach(culturalItem => {
+      culturalMap[culturalItem.productId] = culturalItem;
+    });
+
+    const mergedData: Product[] = normalData.map(normalItem => {
+      const culturalItem = culturalMap[normalItem.productId];
+      if (culturalItem) {
+        return {
+          ...normalItem,
+          isRelated: true,
+          relatedCollectionId: culturalItem.relatedCollectionId,
+          designIdea: culturalItem.designIdea,
+        };
+      }
+      return normalItem;
+    });
+
+    tableData.value = mergedData;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+getAndMergeData();
+
+>>>>>>> 443d7dc27f862417685bf326ea2ecc7e3fb587f3
 
 // 查询操作
 const handleSearch = () => {
@@ -237,8 +320,22 @@ const handlePageChange = (val: number) => {
 	getAllProducts();
 };
 
+<<<<<<< HEAD
 // 上传普通商品信息
 const uploadNormalData = async () => {
+=======
+<<<<<<< HEAD
+const uploadCulturalData = async (data: CulturalProduct) => {
+    try {
+        const response = await axios.put(`http://42.192.39.198:5000/api/CulturalProducts/${data.productId}`, data);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+=======
+const uploadData = async () => {
+	console.log(tableData.value[idx])
+>>>>>>> 443d7dc27f862417685bf326ea2ecc7e3fb587f3
 	try {
 		const response = await axiosInstance.put(`/Products/${tableData.value[idx].productId}`, {
 			productName: form.productName,
@@ -249,8 +346,10 @@ const uploadNormalData = async () => {
 	} catch (error) {
 		ElMessage.error('数据上传失败');
 	}
+>>>>>>> origin/front_end_merge
 };
 
+<<<<<<< HEAD
 // 上传文创产品信息
 const uploadCreativeData = async () => {
 	try {
@@ -271,6 +370,45 @@ const uploadCreativeData = async () => {
 	}
 };
 
+=======
+const uploadNormalData = async (data: NormalProduct) => {
+    try {
+        const response = await axios.put(`http://42.192.39.198:5000/api/Products/${data.productId}`, data);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+};
+
+
+const uploadCulturalData_1 = async (data: CulturalProduct) => {
+    try {
+        const response = await axios.post(`http://42.192.39.198:5000/api/CulturalProducts/${data.productId}`, data);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+};
+
+const uploadNormalData_1 = async (data: NormalProduct) => {
+    try {
+        const response = await axios.post(`http://42.192.39.198:5000/api/Products/${data.productId}`, data);
+        ElMessage.success('数据上传成功');
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+};
+
+
+const updateIsRelated = () => {
+	if (addForm.isRelated === 1) {
+		addForm.isRelated = 0;
+	} else {
+		addForm.isRelated = 1;
+	}
+};
+
+>>>>>>> 443d7dc27f862417685bf326ea2ecc7e3fb587f3
 
 const viewVisible = ref(false);
 let viewForm = reactive({

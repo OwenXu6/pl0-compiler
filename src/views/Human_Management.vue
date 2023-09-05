@@ -2,46 +2,63 @@
 	<div>
 		<div class="container">
 			<div class="handle-box">
-				<el-select v-model="query.work_type" placeholder="工作方向" class="handle-select mr10">
-					<el-option key="1" label="大领导" value="大领导"></el-option>
-					<el-option key="2" label="全能神" value="全能神"></el-option>
-					<el-option key="3" label="藏品管理员" value="藏品管理员"></el-option>
-					<el-option key="4" label="导览人员" value="导览人员"></el-option>
-					<el-option key="5" label="考古人员" value="考古人员"></el-option>
-					<el-option key="6" label="其他工作人员" value="其他工作人员"></el-option>
-				</el-select>
-				<el-input v-model="query.name" placeholder="ID/姓名" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="handlenew">新增</el-button>
+				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
+				<el-button type="primary" :icon="Search" @click="handleSearch" v-permiss="15">搜索</el-button>
+				<el-button type="primary" :icon="Plus" @click="handlenew" v-permiss="16">新增</el-button>
 			</div>
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="staffId" label="ID" width="85" align="center"></el-table-column>
-				<el-table-column prop="staffName" label="姓名" align="center"></el-table-column>
+			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+				<el-table-column prop="staffId" label="ID" width="170" align="center"></el-table-column>
+				<el-table-column prop="staffName" label="姓名" width="110" align="center">
+					<template v-slot:default="scope">
+    					<el-tooltip :content="scope.row.staffName" placement="top">
+      						<span>{{ scope.row.staffName.length > 4 ? scope.row.staffName.substring(0, 4) + '...' : scope.row.staffName }}</span>
+    						</el-tooltip>
+  					</template>
+				</el-table-column>
 				<el-table-column prop="staffAge" label="年龄" align="center"></el-table-column>
-				<el-table-column prop="staffGender" label="性别" align="center"></el-table-column>
+				<el-table-column prop="staffGender" label="性别" width="120" align="center"></el-table-column>
 				<el-table-column prop="staffPostRank" label="职级" align="center"></el-table-column>
 				<el-table-column prop="staffSalary" label="薪资" align="center"></el-table-column>
-				<el-table-column prop="workType" label="工作方向" align="center"></el-table-column>
-				<el-table-column prop="job" label="工作内容" align="center"></el-table-column>
-				<el-table-column label="操作" width="220" align="center">
+				<el-table-column prop="workType" label="工作方向" width="120" align="center"></el-table-column>
+				<el-table-column prop="job" label="工作内容" width="120" align="center">
+  					<template v-slot:default="scope">
+    					<el-tooltip :content="scope.row.job" placement="top">
+      						<span>{{ scope.row.job.length > 4 ? scope.row.job.substring(0, 4) + '...' : scope.row.job }}</span>
+    						</el-tooltip>
+  					</template>
+				</el-table-column>
+
+				<el-table-column label="操作" width="320" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
+						<el-button text :icon="Edit"  @click="handleEdit(scope.$index, scope.row)" v-permiss="16">
 							编辑
 						</el-button>
 						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
 							删除
 						</el-button>
+						<el-button text :icon="More"  @click="" v-permiss="15">
+							详细信息
+						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="pagination">
+			<div class="pagination" style="display: flex; align-items: center;">
+				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
+				 size="small" style="width: 100px;" >
+				 <el-option label="5" value="5"></el-option>
+				 <el-option label="10" value="10"></el-option>
+				 <el-option label="20" value="20"></el-option>
+				 <el-option label="50" value="50"></el-option>
+				</el-select>
+
 				<el-pagination
 					background
 					layout="total, prev, pager, next"
 					:current-page="query.pageIndex"
 					:page-size="query.pageSize"
-					:total="tableData.values.length"
+					:total="filteredData.length"
 					@current-change="handlePageChange"
+					@update:page-size = "PageSizeChange"
 				></el-pagination>
 			</div>
 		</div>
@@ -50,13 +67,13 @@
 		<el-dialog title="编辑信息" v-model="editVisible" width="30%">
 			<el-form label-width="70px">
 				<el-form-item label="姓名">
-					<el-input v-model="form.name"></el-input>
+					<el-input v-model="form.staffName"></el-input>
 				</el-form-item>
 				<el-form-item label="年龄">
-					<el-input v-model="form.age"></el-input>
+					<el-input v-model="form.staffAge"></el-input>
 				</el-form-item>
 				<el-form-item label="性别">
-					<el-select v-model="form.gender" placeholder="请选择性别"  class="full-width-select">
+					<el-select v-model="form.staffGender" placeholder="请选择性别"  class="full-width-select">
 						<el-option label="男" value="男"></el-option>
 						<el-option label="女" value="女"></el-option>
 						<el-option label="双性人" value="双性人"></el-option>
@@ -68,18 +85,21 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="职级">
-					<el-input v-model="form.post_rank"></el-input>
+					<el-input v-model="form.staffPostRank"></el-input>
 				</el-form-item>
 				<el-form-item label="薪资">
-					<el-input v-model="form.salary"></el-input>
+					<el-input v-model="form.staffSalary"></el-input>
 				</el-form-item>
 				<el-form-item label="工作方向">
-					<el-select v-model="form.work_type" placeholder="请选择工作方向"  class="full-width-select">
+					<el-select v-model="form.workType" placeholder="请选择工作方向"  class="full-width-select">
 						<el-option label="大领导" value="大领导"></el-option>
 						<el-option label="全能神" value="全能神"></el-option>
 						<el-option label="藏品管理员" value="藏品管理员"></el-option>
+						<el-option label="库房管理员" value="库房管理员"></el-option>
+						<el-option label="系统管理员" value="系统管理员"></el-option>
 						<el-option label="导览人员" value="导览人员"></el-option>
 						<el-option label="考古人员" value="考古人员"></el-option>
+						<el-option label="安保人员" value="安保人员"></el-option>
 						<el-option label="其他工作人员" value="其他工作人员"></el-option>
 					</el-select>
 				</el-form-item>
@@ -99,16 +119,16 @@
 		<el-dialog title="新增人员信息" v-model="newVisible" width="30%">
 			<el-form label-width="70px">
 				<el-form-item label="ID">
-					<el-input v-model="form.id" ></el-input>
+					<el-input v-model="form.staffId" ></el-input>
 				</el-form-item>
 				<el-form-item label="姓名">
-					<el-input v-model="form.name"></el-input>
+					<el-input v-model="form.staffName"></el-input>
 				</el-form-item>
 				<el-form-item label="年龄">
-					<el-input v-model="form.age"></el-input>
+					<el-input v-model="form.staffAge"></el-input>
 				</el-form-item>
 				<el-form-item label="性别">
-					<el-select v-model="form.gender" placeholder="请选择性别"  class="full-width-select">
+					<el-select v-model="form.staffGender" placeholder="请选择性别"  class="full-width-select">
 						<el-option label="男" value="男"></el-option>
 						<el-option label="女" value="女"></el-option>
 						<el-option label="双性人" value="双性人"></el-option>
@@ -120,17 +140,21 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="职级">
-					<el-input v-model="form.post_rank"></el-input>
+					<el-input v-model="form.staffPostRank"></el-input>
 				</el-form-item>
 				<el-form-item label="薪资">
-					<el-input v-model="form.salary"></el-input>
+					<el-input v-model="form.staffSalary"></el-input>
 				</el-form-item>
 				<el-form-item label="工作方向">
-					<el-select v-model="form.work_type" placeholder="请选择工作方向"  class="full-width-select">
+					<el-select v-model="form.workType" placeholder="请选择工作方向"  class="full-width-select">
 						<el-option label="大领导" value="大领导"></el-option>
+						<el-option label="全能神" value="全能神"></el-option>
 						<el-option label="藏品管理员" value="藏品管理员"></el-option>
+						<el-option label="库房管理员" value="库房管理员"></el-option>
+						<el-option label="系统管理员" value="系统管理员"></el-option>
 						<el-option label="导览人员" value="导览人员"></el-option>
 						<el-option label="考古人员" value="考古人员"></el-option>
+						<el-option label="安保人员" value="安保人员"></el-option>
 						<el-option label="其他工作人员" value="其他工作人员"></el-option>
 					</el-select>
 				</el-form-item>
@@ -151,9 +175,10 @@
 <script setup lang="ts" name="basetable">
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus , More } from '@element-plus/icons-vue';
 import axios from 'axios'; 
 import { ta } from 'element-plus/es/locale';
+import { ITEM_RENDER_EVT } from 'element-plus/es/components/virtual-list/src/defaults';
 
 
 const fetchData = async () => {
@@ -167,7 +192,7 @@ const fetchData = async () => {
 };
 
 interface TableItem {
-	staffId: number;
+	staffId: string;
 	staffName: string;
 	staffAge: string;
 	staffGender: string;
@@ -175,55 +200,94 @@ interface TableItem {
 	staffSalary: number;
 	workType: string;
 	job: string;
-
 }
 
+let newEmployee: TableItem = {
+	staffId: '',
+	staffName: '',
+	staffAge: '',
+	staffGender: '',
+	staffPostRank: '',
+	staffSalary: 0,
+	workType: '',
+	job: ''
+	};
+
 const query = reactive({
-	id: 0,
-	name: '',
-	gender: '',
-	post_rank: '',
-	work_type: '',
+	value : '',
+	staffId: 0,
+	staffName: '',
+	staffAge : '',
+	staffGender: '',
+	staffPostRank: '',
+	staffSalary: 0,
+	workType: '',
+	job: '',
 	pageIndex: 1,
-	pageSize: 10
+	pageSize: 10,
+	tempPageSize : ''
 });
-const tableData = ref<TableItem[]>([]);
+const HumantableData = ref<TableItem[]>([]);
+const pageData = ref<TableItem[]>([]);   //
 const addedData = ref<TableItem[]>([]); // 保存新增的数据
+let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
 const compare = (a:TableItem,b:TableItem)=>{
 	return a.staffId < b.staffId ? -1:1;
 }
 
-// 获取表格数据
+// 获取表格数据及筛选
 const getData = async () => {
 	const res = await fetchData();
-	let filteredData = res.concat(addedData.value);
+	HumantableData.value = res;  //記錄全部數據
+	filteredData.value = res.concat(addedData.value);
+	
 	//if (query.designIdea !== '') {
 		//filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
 	//}
-	if (query.name !== '') {
-		filteredData = filteredData.filter((item: TableItem) => item.staffName.includes(query.name));
-	}
-	tableData.value = filteredData.sort(compare);
-	console.log(tableData.value); 
+	console.log(query.value);
+	filteredData.value = filteredData.value.filter((item: TableItem) => 
+    	item.staffName.includes(query.value) || 
+    	item.staffGender.includes(query.value) || 
+    	item.staffPostRank.includes(query.value) ||
+		item.job.includes(query.value) ||
+		item.workType.includes(query.value) ||
+		String(item.staffId).includes(query.value)||
+		String(item.staffSalary).includes(query.value)
+	);
+
+	filteredData.value = filteredData.value.sort(compare);
+
+	// 分页逻辑
+	const startIndex = (query.pageIndex - 1) * query.pageSize;
+	const endIndex = query.pageIndex * query.pageSize;
+
+	// 截取当前页的数据
+	const pagedData = filteredData.value.slice(startIndex, endIndex);
+
+	// 将截取的数据赋值给 pagedData
+	pageData.value = pagedData;
+
 };
 getData();
 
 
 const editData = async () => {
     try {
-		console.log(idx,tableData.value[idx].staffId, tableData.value[idx]);
-        const response = await axios.put('http://42.192.39.198:5000/api/Staffs/'+tableData.value[idx].staffId, tableData.value[idx]);
-        ElMessage.success('数据上传成功');
+		console.log(idx,pageData.value[idx].staffId, pageData.value[idx]);
+        const response = await axios.put('http://42.192.39.198:5000/api/Staffs/'+pageData.value[idx].staffId, pageData.value[idx]);
+        ElMessage.success('数据修改成功');
+		PageSizeChange();
     } catch (error) {
-        ElMessage.error('数据上传失败');
+        ElMessage.error('数据修改失败');
     }
 };
 
-const uploadData = async () => {
+const uploadData = async (newEmployee:TableItem) => {
     try {
-		console.log(tableData.value[tableData.value.length-1]);
-        const response = await axios.post('http://42.192.39.198:5000/api/Staffs', tableData.value[tableData.value.length-1]);
+		console.log(newEmployee);
+        const response = await axios.post('http://42.192.39.198:5000/api/Staffs',newEmployee);
         ElMessage.success('数据上传成功');
+		PageSizeChange();
     } catch (error) {
         ElMessage.error('数据上传失败');
     }
@@ -231,13 +295,12 @@ const uploadData = async () => {
 
 const deleteData = async () => {
     try {
-		console.log(idx,tableData.value[idx]);
-        const response = await axios.delete('http://42.192.39.198:5000/api/Staffs/'+tableData.value[idx].staffId);
+		console.log(idx,pageData.value[idx]);
+        const response = await axios.delete('http://42.192.39.198:5000/api/Staffs/'+pageData.value[idx].staffId);
 		ElMessage.success('删除成功');
-        ElMessage.success('数据上传成功');
-		getData();
+		PageSizeChange();
     } catch (error) {
-        ElMessage.error('数据上传失败');
+        ElMessage.error('删除失败');
     }
 };
 
@@ -251,6 +314,19 @@ const handlePageChange = (val: number) => {
 	query.pageIndex = val;
 	getData();
 };
+
+//改变大小
+const applyPageSize = () =>{
+	query.pageSize = Number(query.tempPageSize);
+	console.log(query.pageSize);
+	query.pageIndex = 1;
+	getData();
+}
+
+const PageSizeChange = () =>{
+	query.pageIndex = 1;
+	getData();
+}
 
 // 删除操作
 const handleDelete = (index: number) => {
@@ -269,14 +345,14 @@ const handleDelete = (index: number) => {
 
 //新增操作
 const handlenew = () => {
-	idx = tableData.value.length;
-	form.id = 0;
-	form.name = '';           
-	form.age = '',
-	form.gender = '',
-	form.post_rank = '',
-	form.salary = 0,
-	form.work_type = '',
+	idx = HumantableData.value.length;
+	form.staffId = '';
+	form.staffName = '';           
+	form.staffAge = '',
+	form.staffGender = '',
+	form.staffPostRank = '',
+	form.staffSalary = '',
+	form.workType = '',
 	form.job = '',
 	newVisible.value = true;
 };
@@ -286,69 +362,254 @@ const handlenew = () => {
 const editVisible = ref(false);
 const newVisible = ref(false);
 let form = reactive({
-	id: 0,
-	name: '',
-	age: '',
-	gender: '',
-	post_rank: '',
-	salary: 0,
-	work_type: '',
+	staffId: '',
+	staffName: '',
+	staffAge: '',
+	staffGender: '',
+	staffPostRank: '',
+	staffSalary: '',
+	workType: '',
 	job: '',
 });
 let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
 	idx = index;
 
-	form.id = row.staffId;
-	form.name = row.staffName;           //命名不同
-	form.age = row.staffAge,
-	form.gender = row.staffGender,
-	form.post_rank = row.staffPostRank,
-	form.salary = row.staffSalary,
-	form.work_type = row.workType,
+	form.staffId = row.staffId;
+	form.staffName = row.staffName;          
+	form.staffAge = String(row.staffAge),
+	form.staffGender = row.staffGender,
+	form.staffPostRank = row.staffPostRank,
+	form.staffSalary = String(row.staffSalary),
+	form.workType = row.workType,
 	form.job = row.job,
 	editVisible.value = true;
 };
 
-const saveEdit = () => {
-	editVisible.value = false;
-	ElMessage.success(`修改第 ${idx + 1} 行成功`);
-	console.log(idx,tableData);
-	tableData.value[idx].staffId = form.id;
-	tableData.value[idx].staffName = form.name;
-	tableData.value[idx].staffAge = form.age;
-	tableData.value[idx].staffGender = form.gender;
-	tableData.value[idx].staffPostRank = form.post_rank;
-	tableData.value[idx].staffSalary = form.salary;
-	tableData.value[idx].workType = form.work_type;
-	tableData.value[idx].job = form.job; //应该要至后端修改之
-	editData();
+const testId = () => {
+  // 检查 form.staffId 是否存在以及是否是一个字符串
+  if (!form.staffId || typeof form.staffId !== 'string') {
+    return "ID 不能为空！";
+  }
+  // 去除前后空白，然后检查长度
+  const trimmedId = form.staffId.trim();
+  if (trimmedId.length !== 18) {
+    return "ID 必须是 18 位数字！";
+  }
+  // 使用正则表达式检查是否仅由数字组成
+  const isIdDigits = /^[0-9]+$/.test(trimmedId);
+  if (!isIdDigits) {
+    return "ID 必须仅由数字组成！";
+  }
+  // 如果所有条件都满足，返回 true
+  return true;
 };
 
-const savenew = () => {
+const testStaffName = () => {
+  // 首先检查 form.staffName 是否存在以及是否是一个字符串
+  if (!form.staffName || typeof form.staffName !== 'string') {
+    return "姓名不能为空！";
+  }
+  // 去除前后空白，然后检查长度
+  const trimmedName = form.staffName.trim();
+  if (trimmedName.length === 0) {
+    return "姓名不能为空！";
+  }
+  if (trimmedName.length > 15) {
+    return "姓名不能超过 15 个字符！";
+  }
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+const testStaffAge = () => {
+  // 首先检查 form.staffAge 是否存在以及是否是一个字符串
+  if (!form.staffAge || typeof form.staffAge !== 'string') {
+	console.log(typeof form.staffAge);
+    return "年龄不能为空";
+  }
+  // 去除前后空白，然后检查是否为数字和长度
+  const trimmedAge = form.staffAge.trim();
+  if (trimmedAge.length === 0) {
+    return "年龄不能为空";
+  }
+  // 使用正则表达式检查是否仅由数字组成
+  const isAgeDigits = /^[0-9]+$/.test(trimmedAge);
+  if (!isAgeDigits) {
+    return "年龄必须仅由数字组成";
+  }
+  // 检查数字长度是否超过10位
+  if (trimmedAge.length > 10) {
+    return "年龄不能超过 10 位数字";
+  }
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+const testStaffGender = () => {
+  // 首先检查 form.staffGender 是否存在以及是否是一个字符串
+  if (!form.staffGender || typeof form.staffGender !== 'string') {
+    return "性别不能为空";
+  }
+
+  // 去除前后空白，然后检查是否为空
+  const trimmedGender = form.staffGender.trim();
+  if (trimmedGender.length === 0) {
+    return "性别不能为空";
+  }
+
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+const testStaffSalary = () => {
+  // 首先检查 form.staffSalary 是否存在以及是否是一个字符串
+  if (!form.staffSalary || typeof form.staffSalary !== 'string') {
+    return "薪资不能为空";
+  }
+
+  // 去除前后空白，然后检查是否为数字和长度
+  const trimmedSalary = form.staffSalary.trim();
+  if (trimmedSalary.length === 0) {
+    return "薪资不能为空";
+  }
+
+  // 使用正则表达式检查是否仅由数字组成
+  const isSalaryDigits = /^[0-9]+$/.test(trimmedSalary);
+  if (!isSalaryDigits) {
+    return "薪资必须仅由数字组成";
+  }
+
+  // 检查数字长度是否超过10位
+  if (trimmedSalary.length >= 10) {
+    return "薪资不能超过 10 位数字";
+  }
+
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+
+
+const testFieldNotEmpty = (field, fieldName) => {
+  // 首先检查 field 是否存在以及是否是一个字符串
+  if (!field || typeof field !== 'string') {
+    return `${fieldName}不能为空`;
+  }
+
+  // 去除前后空白，然后检查是否为空
+  const trimmedField = field.trim();
+  if (trimmedField.length === 0) {
+    return `${fieldName}不能为空`;
+  }
+
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+
+const testStaffPostRank = () => testFieldNotEmpty(form.staffPostRank, "职级");
+const testWorkType = () => testFieldNotEmpty(form.workType, "工作方向");
+const testJob = () => testFieldNotEmpty(form.job, "工作内容");
+
+
+const saveEdit = () => {
+	
+	let Nametested = testStaffName();
+	if(Nametested != true){
+		ElMessage.error(Nametested);
+		return;
+	}
+	let Agetested = testStaffAge();
+	if(Agetested != true){
+		ElMessage.error(Agetested);
+		return;
+	}
+	let Salarytested = testStaffSalary();
+	if(Salarytested != true){
+		ElMessage.error(Salarytested);
+		return;
+	}
+	let Jobtested = testJob();
+	if(Jobtested != true){
+		ElMessage.error(Jobtested);
+		return;
+	}
+	let PostRanktested = testStaffPostRank();
+	if(PostRanktested != true){
+		ElMessage.error(PostRanktested);
+		return;
+	}
+	let WorkTypetested = testWorkType();
+	if(WorkTypetested != true){
+		ElMessage.error(WorkTypetested);
+		return;
+	}
+
+	editVisible.value = false;
+	ElMessage.success(`修改第 ${idx + 1} 行成功`);
+	console.log(idx,pageData);
+	pageData.value[idx].staffId = form.staffId;
+	pageData.value[idx].staffName = form.staffName;
+	pageData.value[idx].staffAge = form.staffAge;
+	pageData.value[idx].staffGender = form.staffGender;
+	pageData.value[idx].staffPostRank = form.staffPostRank;
+	pageData.value[idx].staffSalary = Number(form.staffSalary);
+	pageData.value[idx].workType = form.workType;
+	pageData.value[idx].job = form.job; //应该要至后端修改之
+	editData();
+	
+};
+
+
+
+
+const savenew = () => {         //保存新增人员
+
+	//检查各项输入值是否符合条件
+	let IDtested = testId();
+	if(IDtested != true){
+		ElMessage.error(IDtested);
+		return;
+	}
+	let Nametested = testStaffName();
+	if(Nametested != true){
+		ElMessage.error(Nametested);
+		return;
+	}
+	let Agetested = testStaffAge();
+	if(Agetested != true){
+		ElMessage.error(Agetested);
+		return;
+	}
+	let Salarytested = testStaffSalary();
+	if(Salarytested != true){
+		ElMessage.error(Salarytested);
+		return;
+	}
+	let Jobtested = testJob();
+	if(Jobtested != true){
+		ElMessage.error(Jobtested);
+		return;
+	}
+	let PostRanktested = testStaffPostRank();
+	if(PostRanktested != true){
+		ElMessage.error(PostRanktested);
+		return;
+	}
+	let WorkTypetested = testWorkType();
+	if(WorkTypetested != true){
+		ElMessage.error(WorkTypetested);
+		return;
+	}
+
 	newVisible.value = false;
-	let newEmployee: TableItem = {
-	staffId: 0,
-	staffName: '',
-	staffAge: '',
-	staffGender: '',
-	staffPostRank: '',
-	staffSalary: 0,
-	workType: '',
-	job: ''
-	};
-	tableData.value.push(newEmployee);
 	ElMessage.success(`添加成功`);
-	console.log(idx,tableData);
-	tableData.value[idx].staffId = form.id;
-	tableData.value[idx].staffName = form.name;
-	tableData.value[idx].staffAge = form.age;
-	tableData.value[idx].staffGender = form.gender;
-	tableData.value[idx].staffPostRank = form.post_rank;
-	tableData.value[idx].staffSalary = form.salary;
-	tableData.value[idx].workType = form.work_type;
-	tableData.value[idx].job = form.job; //应该要至后端修改之
-	uploadData();
+	console.log(idx,HumantableData);
+	newEmployee.staffId = form.staffId;     
+	newEmployee.staffName = form.staffName;
+	newEmployee.staffAge = form.staffAge;
+	newEmployee.staffGender = form.staffGender;
+	newEmployee.staffPostRank = form.staffPostRank;
+	newEmployee.staffSalary = Number(form.staffSalary);
+	newEmployee.workType = form.workType;
+	newEmployee.job = form.job; 
+	uploadData(newEmployee);             //上传
 };
 </script>
 

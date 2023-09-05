@@ -10,7 +10,7 @@
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<!-- <el-button type="primary" :icon="Plus">新增</el-button> -->
 			</div>
-			<el-table :data="tableData.slice((query.pageIndex-1)*query.pageSize,query.pageIndex*query.pageSize)" v-if="showTable.isFull" border class="table" ref="multipleTable"  header-cell-class-name="table-header">
+			<el-table :data="tableData.slice((query.pageIndex-1)*query.pageSize,query.pageIndex*query.pageSize)" border class="table" ref="multipleTable"  header-cell-class-name="table-header">
 				<el-table-column prop="date" label="日期"></el-table-column>
 				<el-table-column prop="totalTickets" label="总门票"></el-table-column>
 				<el-table-column prop="soldTickets" label="已预约门票"></el-table-column>
@@ -107,7 +107,7 @@
 				</span>
 			</template>
 		</el-dialog>
-		<el-button @click="showCurrent()">click</el-button>
+		
 	</div>
 </template>
 
@@ -121,10 +121,10 @@ import axios from 'axios';
 
 
 const resTicket = ref(0);
-const showCurrent=()=>{
+// const showCurrent=()=>{
 
-	showTable.isFull=0;
-}
+// 	showTable.isFull=0;
+// }
 const showTable = reactive({
 	isFull:1,
 

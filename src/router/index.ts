@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
             },
             {
                 path: '/collection_add',
-                name: 'basetable',
+                name: 'basetable7',
                 meta: {
                     title: '新增藏品',
                     permiss: '2',
@@ -50,7 +50,7 @@ const routes: RouteRecordRaw[] = [
             },
             {
                 path: '/collection_research4unknown',
-                name: 'basetable3',
+                name: 'basetable8',
                 meta: {
                     title: '未知文物研究鉴定',
                     permiss: '2',
@@ -141,6 +141,15 @@ const routes: RouteRecordRaw[] = [
 
             },
             {
+                path:'/ccard',
+                name:'ccard',
+                meta:{
+                    title:'文创卡片',
+                    permiss:'12',
+                },
+                component:()=>import(/* webpackChunkName: "ccard" */ '../views/ccard.vue'),
+            },
+            {
                 path: '/form',
                 name: 'baseform',
                 meta: {
@@ -175,6 +184,16 @@ const routes: RouteRecordRaw[] = [
                     permiss: '13',
                 },
                 component: () => import(/* webpackChunkName: "permission" */ '../views/permission.vue'),
+            },
+            {
+                path: '/demo',
+                name: 'demo',
+                meta: {
+                    title: '图标实例',
+                    permiss: '13',
+                },
+                component: () => import(/* webpackChunkName: "demo" */ '../views/demo.vue'),
+
             },
             {
                 path: '/upload',

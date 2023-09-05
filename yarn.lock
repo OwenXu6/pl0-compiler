@@ -27,6 +27,19 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@canvasjs/charts@^3.7.5":
+  version "3.7.17"
+  resolved "https://registry.npmjs.org/@canvasjs/charts/-/charts-3.7.17.tgz"
+  integrity sha512-5Ur8psPuizF801Y1l6MBHmsmVcZ0oJmF35IFIYj/drnSOgWQnQMeVnXWEFQZIC7tjgfYea2fGNeKhuHMY3O1EQ==
+
+"@canvasjs/vue-charts@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/@canvasjs/vue-charts/-/vue-charts-1.0.1.tgz"
+  integrity sha512-3eEG2EGBIT6sykW5goNL5irGdt9GIUxELQZe2htTiB0W1im4MyNU8NWl7U62xv5KX5TLOMsk11sc23XfFOyclA==
+  dependencies:
+    "@canvasjs/charts" "^3.7.5"
+    vue ">=3.0.0"
+
 "@ctrl/tinycolor@^3.4.1":
   version "3.4.1"
   resolved "https://repo.huaweicloud.com/repository/npm/@ctrl/tinycolor/-/tinycolor-3.4.1.tgz"
@@ -393,6 +406,14 @@ delayed-stream@~1.0.0:
   resolved "https://repo.huaweicloud.com/repository/npm/delayed-stream/-/delayed-stream-1.0.0.tgz"
   integrity sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==
 
+echarts@^5.4.3:
+  version "5.4.3"
+  resolved "https://registry.npmjs.org/echarts/-/echarts-5.4.3.tgz"
+  integrity sha512-mYKxLxhzy6zyTi/FaEbJMOZU1ULGEQHaeIeuMR5L+JnJTpz+YR03mnnpBhbR4+UYJAgiXgpyTVLffPAjOTLkZA==
+  dependencies:
+    tslib "2.3.0"
+    zrender "5.4.4"
+
 element-plus@^2.2.14:
   version "2.2.14"
   resolved "https://repo.huaweicloud.com/repository/npm/element-plus/-/element-plus-2.2.14.tgz"
@@ -418,6 +439,11 @@ esbuild-darwin-64@0.14.54:
   version "0.14.54"
   resolved "https://repo.huaweicloud.com/repository/npm/esbuild-darwin-64/-/esbuild-darwin-64-0.14.54.tgz"
   integrity sha512-jtdKWV3nBviOd5v4hOpkVmpxsBy90CGzebpbO9beiqUYVMBtSc0AL9zGftFuBon7PNDcdvNCEuQqw2x0wP9yug==
+
+esbuild-darwin-arm64@0.14.54:
+  version "0.14.54"
+  resolved "https://repo.huaweicloud.com/repository/npm/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.14.54.tgz"
+  integrity sha512-OPafJHD2oUPyvJMrsCvDGkRrVCar5aVyHfWGQzY1dWnzErjrDuSETxwA2HSsyg2jORLY8yBfzc1MIpUkXlctmw==
 
 esbuild-windows-64@0.14.54:
   version "0.14.54"
@@ -825,6 +851,11 @@ tslib@^2.1.0:
   resolved "https://repo.huaweicloud.com/repository/npm/tslib/-/tslib-2.4.0.tgz"
   integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
 
+tslib@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.npmjs.org/tslib/-/tslib-2.3.0.tgz"
+  integrity sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==
+
 typescript@*, typescript@^4.6.4, typescript@>=4.4.4:
   version "4.7.4"
   resolved "https://repo.huaweicloud.com/repository/npm/typescript/-/typescript-4.7.4.tgz"
@@ -942,7 +973,7 @@ vue-tsc@^0.38.4:
   dependencies:
     "@volar/vue-typescript" "0.38.9"
 
-"vue@^2.6.14 || ^3.2.0", "vue@^3.0.0-0 || ^2.6.0", vue@^3.2.0, vue@^3.2.25, vue@^3.2.37, vue@>=3.0.0, "vue@2 || 3", vue@3.2.37:
+"vue@^2.6.14 || ^3.2.0", "vue@^3.0.0-0 || ^2.6.0", vue@^3.0.5, vue@^3.2.0, vue@^3.2.25, vue@^3.2.37, vue@>=3.0.0, "vue@2 || 3", vue@3.2.37:
   version "3.2.37"
   resolved "https://repo.huaweicloud.com/repository/npm/vue/-/vue-3.2.37.tgz"
   integrity sha512-bOKEZxrm8Eh+fveCqS1/NkG/n6aMidsI6hahas7pa0w/l7jkbssJVsRhVDs07IdDq7h9KHswZOgItnwJAgtVtQ==
@@ -952,6 +983,13 @@ vue-tsc@^0.38.4:
     "@vue/runtime-dom" "3.2.37"
     "@vue/server-renderer" "3.2.37"
     "@vue/shared" "3.2.37"
+
+vue3-print-nb@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.npmjs.org/vue3-print-nb/-/vue3-print-nb-0.1.4.tgz"
+  integrity sha512-LExI7viEzplR6ZKQ2b+V4U0cwGYbVD4fut/XHvk3UPGlT5CcvIGs6VlwGp107aKgk6P8Pgx4rco3Rehv2lti3A==
+  dependencies:
+    vue "^3.0.5"
 
 wangeditor@^4.7.15:
   version "4.7.15"
@@ -994,3 +1032,10 @@ xlsx@^0.18.5:
     ssf "~0.11.2"
     wmf "~1.0.1"
     word "~0.3.0"
+
+zrender@5.4.4:
+  version "5.4.4"
+  resolved "https://registry.npmjs.org/zrender/-/zrender-5.4.4.tgz"
+  integrity sha512-0VxCNJ7AGOMCWeHVyTrGzUgrK4asT4ml9PEkeGirAkKNYXYzoPJCLvmyfdoOXcjTHPs10OZVMfD1Rwg16AZyYw==
+  dependencies:
+    tslib "2.3.0"
