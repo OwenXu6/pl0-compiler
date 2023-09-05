@@ -28,7 +28,7 @@
 				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="collectionId" label="ID" width="110" align="center"></el-table-column>
 				<el-table-column prop="name" label="文物名称" align="center"></el-table-column>
 				<el-table-column label="文物图片(查看大图)" align="center">
@@ -62,9 +62,19 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="pagination">
+			<div class="pagination"  style="display: flex; align-items: center;">
+				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
+				 size="small" style="width: 100px;" >
+				 <el-option label="5" value="5"></el-option>
+				 <el-option label="10" value="10"></el-option>
+				 <el-option label="20" value="20"></el-option>
+				 <el-option label="50" value="50"></el-option>
+				</el-select>
 				<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
-					:page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
+					:page-size="query.pageSize" :total="filteredData.length"
+					 @current-change="handlePageChange"
+					 @update:page-size = "handleSearch">
+				</el-pagination>
 			</div>
 		</div>
 
@@ -76,6 +86,7 @@
 						<el-option key="1" label="在展" value="在展"></el-option>
 						<el-option key="2" label="在库" value="在库"></el-option>
 						<el-option key="3" label="修缮中" value="修缮中"></el-option>
+						<el-option key="4" label="未鉴定" value="未鉴定"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
@@ -441,14 +452,15 @@ interface TableItem {
 const query = reactive({
 	name: '',         //文物姓名
 	id: '',           //文物id
-	collectionType: ' ',        //文物类别
-	era: ' ',         //文物的朝代
-	status: ' ',      //藏品状态
-	excavation_site: ' ',    //出土地
-	excavation_date: ' ',   //出土日期
+	collectionType: '',        //文物类别
+	era: '',         //文物的朝代
+	status: '',      //藏品状态
+	excavation_site: '',    //出土地
+	excavation_date: '',   //出土日期
 	collectTime: '',	//收藏的时间
 	pageIndex: 1,      //所在页面
-	pageSize: 10,       //总页面
+	pageSize: 1,       //一页最多拥有的条目个数
+	tempPageSize : '', //中间变量，存储用户选择的PageSize
 	storageInfo: {
 		currentStatus: '',
 		protectionLevel: ''
@@ -456,32 +468,54 @@ const query = reactive({
 });
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
+const pageData = ref<TableItem[]>([]);   //
+let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
+
 const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
 	fetchData().then(res => {
-		console.log(res)
-		// tableData.value = res;
+
+		console.log(res);
 		//过滤掉“未鉴定”的文物
-		tableData.value = res.filter(item => item.storageInfo.currentStatus !== '未鉴定');
-		// console.log(tableData.value.length);
+
+		filteredData.value = res.filter(item => item.storageInfo.currentStatus !== '未鉴定');
+		console.log(query);
+		filteredData.value = filteredData.value.filter(item => item.name.includes(query.name));
+		filteredData.value = filteredData.value.filter(item => String(item.collectionId).includes(query.id));
+		filteredData.value = filteredData.value.filter(item => item.textureType.includes(query.collectionType)); //命名不统一
+		filteredData.value = filteredData.value.filter(item => item.era.includes(query.era));
+		filteredData.value = filteredData.value.filter(item => item.storageInfo.currentStatus.includes(query.status));
+		filteredData.value = filteredData.value.filter(item => item.area.includes(query.excavation_site)); //命名不统一
+		filteredData.value = filteredData.value.filter(item => item.collectInfo.collectTime.includes(query.excavation_date));
+
+		tableData.value=filteredData.value;
+		console.log(tableData.value);
+		const startIndex = (query.pageIndex - 1) * query.pageSize;
+		const endIndex = query.pageIndex * query.pageSize;
+
+		// 截取当前页的数据
+		const pagedData = filteredData.value.slice(startIndex, endIndex);
+
+		// 将截取的数据赋值给 pagedData
+		pageData.value = pagedData;
 		//截取有效时间显示
-		for (var i = 0; i < tableData.value.length; i++) {
-			var T = tableData.value[i].collectInfo.collectTime;
+		for (var i = 0; i < pageData.value.length; i++) {
+			var T = pageData.value[i].collectInfo.collectTime;
 			var dest = '';
-			console.log(T)
 			for (var j = 0; j < T.length; j++) {
 				if (T[j] == 'T')
 					break;
 				dest += T[j];
 			}
-			tableData.value[i].collectInfo.collectTime = dest;
+			pageData.value[i].collectInfo.collectTime = dest;
 		}
 		// console.log(res[0].collectionId);
 		// pageTotal.value = res.data.pageTotal || 50;
 	});
 
 };
+
 getData();
 
 // 查询操作
@@ -494,6 +528,15 @@ const handlePageChange = (val: number) => {
 	query.pageIndex = val;
 	getData();
 };
+
+//改变页面大小
+const applyPageSize = () =>{
+	query.pageSize = Number(query.tempPageSize);
+	console.log(query.pageSize);
+	query.pageIndex = 1;
+	getData();
+}
+
 
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
