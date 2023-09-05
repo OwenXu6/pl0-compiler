@@ -29,7 +29,9 @@
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-1">
-								<el-icon class="grid-con-icon"><User /></el-icon>
+								<el-icon class="grid-con-icon">
+									<User />
+								</el-icon>
 								<div class="grid-cont-right">
 									<div class="grid-num">1234</div>
 									<div>用户访问量</div>
@@ -40,7 +42,9 @@
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-2">
-								<el-icon class="grid-con-icon"><ChatDotRound /></el-icon>
+								<el-icon class="grid-con-icon">
+									<ChatDotRound />
+								</el-icon>
 								<div class="grid-cont-right">
 									<div class="grid-num">321</div>
 									<div>系统消息</div>
@@ -51,7 +55,9 @@
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-3">
-								<el-icon class="grid-con-icon"><Goods /></el-icon>
+								<el-icon class="grid-con-icon">
+									<Goods />
+								</el-icon>
 								<div class="grid-cont-right">
 									<div class="grid-num">5000</div>
 									<div>商品数量</div>
@@ -64,30 +70,29 @@
 					<template #header>
 						<div class="clearfix">
 							<span>待办事项</span>
-							<el-button style="float: right; padding: 3px 0" text>添加</el-button>
+							<el-button style="float: right; padding: 3px 0" text @click="addTodo">添加</el-button>
 						</div>
 					</template>
 
-					<el-table :show-header="false" :data="todoList" style="width: 100%">
-						<el-table-column width="40">
-							<template #default="scope">
-								<el-checkbox v-model="scope.row.status"></el-checkbox>
-							</template>
-						</el-table-column>
-						<el-table-column>
-							<template #default="scope">
-								<div
-									class="todo-item"
-									:class="{
-										'todo-item-del': scope.row.status
-									}"
-								>
-									{{ scope.row.title }}
-								</div>
-							</template>
-						</el-table-column>
-					</el-table>
+					<div class="todo-list-container">
+						<el-table :show-header="false" :data="todoList" style="width: 100%">
+							<el-table-column width="40">
+								<template #default="scope">
+									<el-checkbox v-model="scope.row.status"></el-checkbox>
+								</template>
+							</el-table-column>
+							<el-table-column>
+								<template #default="scope">
+									<div class="todo-item" :class="{ 'todo-item-del': scope.row.status }">
+										{{ scope.row.title }}
+									</div>
+									<el-button @click="viewTodo(scope.row)" size="mini">查看</el-button>
+								</template>
+							</el-table-column>
+						</el-table>
+					</div>
 				</el-card>
+
 			</el-col>
 		</el-row>
 		<el-row :gutter="20">
@@ -102,78 +107,84 @@
 				</el-card>
 			</el-col>
 		</el-row>
-		
+
 	</div>
 </template>
 
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart';
-import { reactive,ref,watch} from 'vue';
+import { reactive, ref, watch } from 'vue';
 import imgurl from '../assets/img/img.jpg';
 import { CENTERED_ALIGNMENT } from 'element-plus/es/components/virtual-list/src/defaults';
 
+const viewTodo = (todo) => {
+	// 在这里处理查看待办事项的逻辑，你可以在控制台输出待办事项内容
+	console.log('查看待办事项:', todo);
+};
+
+
+
 const name = localStorage.getItem('ms_username');
 const role: string = name === 'admin' ? '超级管理员' : '普通用户';
-const vis= reactive({
-	btn1vis:true,
-	btn2vis:false,
-	startTime:false,
-	endTime:true,
+const vis = reactive({
+	btn1vis: true,
+	btn2vis: false,
+	startTime: false,
+	endTime: true,
 });
 const timer1 = ref(0); // 创建一个引用变量来存储定时器
-const realTime=()=>{
+const realTime = () => {
 	//unWatch();
-	if(vis.endTime===true)
-	{
-		vis.endTime=false;
-		vis.startTime=true;
+	if (vis.endTime === true) {
+		vis.endTime = false;
+		vis.startTime = true;
 		timer1.value = setInterval(myFunction, 1000); // 每隔一秒触发 myFunction 函数
 	}
-	else{
-		vis.endTime=true;
-		vis.startTime=false;
+	else {
+		vis.endTime = true;
+		vis.startTime = false;
 		clearInterval(timer1.value);
 	}
 	//clearInterval(timer1.value);
 }
 const myFunction = () => {
-      // 在这里编写你要执行的代码
-	  //updateChart();
-	  //options4.datasets[0].data = [inAndOut.inData-inAndOut.outData, inAndOut.totData-(inAndOut.inData-inAndOut.outData)];
-	let num1=18;
-	let num2=15;
+	// 在这里编写你要执行的代码
+	//updateChart();
+	//options4.datasets[0].data = [inAndOut.inData-inAndOut.outData, inAndOut.totData-(inAndOut.inData-inAndOut.outData)];
+	let num1 = 18;
+	let num2 = 15;
 	///var nowData=inAndOut.inData-inAndOut.outData;
-	
-	let nowData = inAndOut.inData -inAndOut.outData;
-	if(nowData<600){
-		inAndOut.inData+=Math.floor(Math.random()*(num1-10)+10);
-		inAndOut.outData+=Math.floor(Math.random()*(num2-10)+10);
+
+	let nowData = inAndOut.inData - inAndOut.outData;
+	if (nowData < 600) {
+		inAndOut.inData += Math.floor(Math.random() * (num1 - 10) + 10);
+		inAndOut.outData += Math.floor(Math.random() * (num2 - 10) + 10);
 	}
-	else{
-		inAndOut.inData+=Math.floor(Math.random()*(num2-10)+10);
-		inAndOut.outData+=Math.floor(Math.random()*(num1-10)+10);
+	else {
+		inAndOut.inData += Math.floor(Math.random() * (num2 - 10) + 10);
+		inAndOut.outData += Math.floor(Math.random() * (num1 - 10) + 10);
 	}
 };
 const inAndOut = reactive({
-	inData:1000,
-	outData:500,
-	maxPeople:5000,
-	flag:0,
-	li1:[{date:"7.2",inData1:0},
-	{date:"7.3",inData1:2000},
-	{date:"7.4",inData1:1500},
-	{date:"7.5",inData1:1800},
-	{date:"7.6",inData1:2000},
-	{date:"7.7",inData1:1500},
-	{date:"7.8",inData1:0},
-	{date:"7.9",inData1:2000},
-	{date:"7.10",inData1:1500},
-	{date:"7.11",inData1:1800},
-	{date:"7.12",inData1:2000},
-	{date:"7.13",inData1:1500},
-	{date:"7.14",inData1:2000},
-	{date:"7.15",inData1:1500},]
-	
+	inData: 1000,
+	outData: 500,
+	maxPeople: 5000,
+	flag: 0,
+	li1: [{ date: "7.2", inData1: 0 },
+	{ date: "7.3", inData1: 2000 },
+	{ date: "7.4", inData1: 1500 },
+	{ date: "7.5", inData1: 1800 },
+	{ date: "7.6", inData1: 2000 },
+	{ date: "7.7", inData1: 1500 },
+	{ date: "7.8", inData1: 0 },
+	{ date: "7.9", inData1: 2000 },
+	{ date: "7.10", inData1: 1500 },
+	{ date: "7.11", inData1: 1800 },
+	{ date: "7.12", inData1: 2000 },
+	{ date: "7.13", inData1: 1500 },
+	{ date: "7.14", inData1: 2000 },
+	{ date: "7.15", inData1: 1500 },]
+
 
 });
 const options4 = reactive({
@@ -190,18 +201,18 @@ const options4 = reactive({
 	labels: ['在馆人数', '馆内剩余容量'],
 	datasets: [
 		{
-			data:  [inAndOut.inData-inAndOut.outData, inAndOut.maxPeople-(inAndOut.inData-inAndOut.outData)],
+			data: [inAndOut.inData - inAndOut.outData, inAndOut.maxPeople - (inAndOut.inData - inAndOut.outData)],
 		}
 	],
 });
 
-const unWatch=watch(inAndOut, () => {
-      updateChart();
-   }, { deep: true });
+const unWatch = watch(inAndOut, () => {
+	updateChart();
+}, { deep: true });
 const updateChart = () => {
-      // 在这里更新图表数据
-      options4.datasets[0].data = [inAndOut.inData-inAndOut.outData, inAndOut.maxPeople-(inAndOut.inData-inAndOut.outData)];
-	  //options1.datasets[0].data = [inAndOut.li1[0].inData1, inAndOut.li1[1].inData1,inAndOut.li1[2].inData1, inAndOut.li1[3].inData1, inAndOut.li1[4].inData1,inAndOut.li1[5].inData1];
+	// 在这里更新图表数据
+	options4.datasets[0].data = [inAndOut.inData - inAndOut.outData, inAndOut.maxPeople - (inAndOut.inData - inAndOut.outData)];
+	//options1.datasets[0].data = [inAndOut.li1[0].inData1, inAndOut.li1[1].inData1,inAndOut.li1[2].inData1, inAndOut.li1[3].inData1, inAndOut.li1[4].inData1,inAndOut.li1[5].inData1];
 };
 const options = {
 	type: 'bar',
@@ -275,6 +286,12 @@ const todoList = reactive([
 </script>
 
 <style scoped>
+
+.todo-list-container {
+  max-height: 300px; /* 设置合适的高度 */
+  overflow-y: auto; /* 启用纵向滚动 */
+}
+
 .el-row {
 	margin-bottom: 20px;
 }
@@ -372,8 +389,9 @@ const todoList = reactive([
 	text-decoration: line-through;
 	color: #999;
 }
-.ringbox{
-}
+
+.ringbox {}
+
 .ringschart {
 	left: 22%;
 	width: 250px;
@@ -381,19 +399,19 @@ const todoList = reactive([
 	position: relative;
 }
 
-.btn{
-	
+.btn {
+
 	height: 30px;
 	width: 150px;
 	position: relative;
 	top: 15px;
 	left: 32%;
-	background-color:rgb(45, 140, 240);
+	background-color: rgb(45, 140, 240);
 	border: none;
 	text-align: center;
 	border-radius: 8px;
 	color: white;
 	font-size: 15px;
-	
+
 }
 </style>

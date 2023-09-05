@@ -14,7 +14,7 @@
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="id" label="ID" width="100" align="center"></el-table-column>
 				<el-table-column prop="name" label="联名名称"></el-table-column>
-				<el-table-column label="联名金额（单位：万元）">
+				<el-table-column label="联名金额（万元）">
 					<template #default="scope">￥{{ scope.row.price }}</template>
 				</el-table-column>
 				<el-table-column prop="partner" label="合作方"></el-table-column>
@@ -44,7 +44,7 @@
 				<el-form-item label="联名名称">
 					<el-input v-model="form.name"></el-input>
 				</el-form-item>
-				<el-form-item label="联名金额（单位：万元）">
+				<el-form-item label="联名金额（万元）">
 					<el-input v-model="form.price"></el-input>
 				</el-form-item>
 				<el-form-item label="合作方">
@@ -71,7 +71,7 @@
 				<el-form-item label="联名名称">
 					<el-input v-model="addForm.name"></el-input>
 				</el-form-item>
-				<el-form-item label="联名金额（单位：万元）">
+				<el-form-item label="联名金额（万元）">
 					<el-input v-model="addForm.price"></el-input>
 				</el-form-item>
 				<el-form-item label="合作方">
