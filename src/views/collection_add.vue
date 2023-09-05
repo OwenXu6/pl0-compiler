@@ -1,271 +1,6 @@
 <template>
 	<div>
 		<div class="cardContainer" id="container">
-<<<<<<< Updated upstream
-
-			<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
-				<!-- 收藏单位 -->
-				<el-descriptions-item>
-					<template #label>
-						<div v-model="form.collectInfo.collectMuseum" class="cell-item" :style="{ minWidth: form.collectInfo.collectMuseum.length * 12 + 'px' }">
-							<el-icon :style="iconStyle">
-								<user />
-							</el-icon>
-							收藏单位
-						</div>
-					</template>
-					{{ form.collectInfo.collectMuseum }}
-				</el-descriptions-item>
-				<!-- 现登记号 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<EditPen />
-							</el-icon>
-							现登记号
-						</div>
-					</template>
-					{{ form.collectionId }}
-				</el-descriptions-item>
-				<!-- 藏品图片 -->
-				<el-descriptions-item :span="2">
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Picture />
-							</el-icon>
-							藏品图片
-						</div>
-					</template>
-					<template #default="scope">
-						<el-image class="CollectionImg" :src="form.collectionPhoto" :z-index="10">
-						</el-image>
-					</template>
-				</el-descriptions-item>
-				<!-- 名称 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<tickets />
-							</el-icon>
-							名称
-						</div>
-					</template>
-					{{ form.name }}
-				</el-descriptions-item>
-				<!-- 文物原名 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<tickets />
-							</el-icon>
-							原名
-						</div>
-					</template>
-					{{ form.originalName }}
-				</el-descriptions-item>
-				<!-- 文物级别 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Medal />
-							</el-icon>
-							文物级别
-						</div>
-					</template>
-					{{ form.storageInfo.protectionLevel }}
-				</el-descriptions-item>
-				<!-- 文物类别 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Grid />
-							</el-icon>
-							文物类别
-						</div>
-					</template>
-					{{ form.collectionType }}
-				</el-descriptions-item>
-				<!-- 质地 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Pointer />
-							</el-icon>
-							质地
-						</div>
-					</template>
-					{{ form.textureType }}
-				</el-descriptions-item>
-				<!--年代 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Calendar />
-							</el-icon>
-							年代
-						</div>
-					</template>
-					{{ form.era }}
-				</el-descriptions-item>
-				<!-- 地域 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<LocationInformation />
-							</el-icon>
-							地域
-						</div>
-					</template>
-					{{ form.area }}
-				</el-descriptions-item>
-				<!-- 来源 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<MapLocation />
-							</el-icon>
-							来源
-						</div>
-					</template>
-					{{ form.collectInfo.source }}
-				</el-descriptions-item>
-				<!-- 保存状况 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Collection />
-							</el-icon>
-							保存状况
-						</div>
-					</template>
-					{{ form.storageInfo.currentStatus }}
-					<span v-if="form.storageInfo.currentStatus == '在展'">所在展厅：{{ form.exhibitionHallId }}</span>
-					<span v-if="form.storageInfo.currentStatus == '在库'">所在仓库：{{ form.storageId }}</span>
-				</el-descriptions-item>
-				<!-- 完残程度 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Box />
-							</el-icon>
-							完残程度
-						</div>
-					</template>
-					{{ form.completeness }}
-				</el-descriptions-item>
-				<!-- 尺寸 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<FullScreen />
-							</el-icon>
-							尺寸
-						</div>
-					</template>
-					{{ form.dimensionInfo.dimension + form.dimensionInfo.dimensionUnit }}
-				</el-descriptions-item>
-				<!-- 质量-->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Coin />
-							</el-icon>
-							质量
-						</div>
-					</template>
-					{{ form.dimensionInfo.weight + form.dimensionInfo.weightUnit }}
-				</el-descriptions-item>
-				<!-- 传统数量 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Histogram />
-							</el-icon>
-							传统数量
-						</div>
-					</template>
-					{{ form.dimensionInfo.traditionalQuantity + "个" }}
-				</el-descriptions-item>
-				<!-- 实际数量 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Histogram />
-							</el-icon>
-							实际数量
-						</div>
-					</template>
-					{{ form.dimensionInfo.realQuantity + "个" }}
-				</el-descriptions-item>
-				<!-- 入藏时间 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<AlarmClock />
-							</el-icon>
-							入藏时间
-						</div>
-					</template>
-					{{ form.collectInfo.collectTime }}
-				</el-descriptions-item>
-				<!-- 保护等级 -->
-				<el-descriptions-item>
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Trophy />
-							</el-icon>
-							保护等级
-						</div>
-					</template>
-					{{ form.storageInfo.protectionLevel }}
-				</el-descriptions-item>
-				<!-- 鉴定意见 -->
-				<el-descriptions-item :span="2">
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<EditPen />
-							</el-icon>
-							鉴定意见
-						</div>
-					</template>
-					{{ form.identificationComments }}
-					<div style="margin-top: 10px">鉴定人：{{ form.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
-						form.identificationDate }}</div>
-				</el-descriptions-item>
-				<!-- 备注 -->
-				<el-descriptions-item :span="2">
-					<template #label>
-						<div class="cell-item">
-							<el-icon :style="iconStyle">
-								<Notebook />
-							</el-icon>
-							备注
-						</div>
-					</template>
-					{{ form.remark }}
-				</el-descriptions-item>
-			</el-descriptions>
-
-=======
 
 			<el-form label-width="70px">
 
@@ -636,7 +371,6 @@
 			</el-form>
 
 
->>>>>>> Stashed changes
 		</div>
 	</div>
 </template>
@@ -645,9 +379,6 @@
 import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-<<<<<<< Updated upstream
-import { fetchData } from '../api/index';
-=======
 import {
 	Iphone,
 	Location,
@@ -657,23 +388,16 @@ import {
 } from '@element-plus/icons-vue'
 
 //import { fetchData } from '../api/index';
->>>>>>> Stashed changes
 import { onMounted } from 'vue'
 import axios from 'axios';
 import type { FormInstance, FormRules } from 'element-plus'
 
-<<<<<<< Updated upstream
-let tmp = ({
-	location: "",
-})
-=======
 
 
 let tmp = ({
 	location: "",
 })
 
->>>>>>> Stashed changes
 
 interface TableItem {
 	collectionId: number,      //ID
@@ -685,10 +409,7 @@ interface TableItem {
 	textureType: string,       //质地类别（例如有机质类、无机质类）
 	completeness: string,      //完残程度
 	completenessType: string,  //完残程度类别：完、残、缺、失
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 	collectionPhoto: string,   //图片
 	collectionAudio: string,   //音频
 
@@ -696,10 +417,6 @@ interface TableItem {
 		collectionId: number,  //ID
 		source: string,        //来源，如旧藏、拨交、移交
 		collectMuseum: string, //收藏博物馆
-<<<<<<< Updated upstream
-		generalRegistrationId: string,  //总登记号，不是说总登记号即Collection_id?
-=======
->>>>>>> Stashed changes
 		collectTime: string,            //入藏时间
 		collectionLevel: string         //藏品级别
 	},
@@ -711,13 +428,8 @@ interface TableItem {
 		weightUnit: string,         //质量单位，默认为克
 		realQuantity: number,       //实际数量
 		realQuantityUnit: string,   //实际数量单位，默认为件
-<<<<<<< Updated upstream
-		traditionalQuantity: number //传统数量
-		//where is 传统数量单位
-=======
 		traditionalQuantity: number, //传统数量
 		traditionalQuantityUnit: string//传统数量单位
->>>>>>> Stashed changes
 	},
 	storageInfo: {                  //保存组
 		collectionId: number,       //ID
@@ -727,10 +439,7 @@ interface TableItem {
 	exhibitionHallId: number,  //展厅ID
 	warehouseId: number,       //仓库ID
 	containerId: number,       //库架ID
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 	identificationStaffName: string, //鉴别人员名称
 	identificationComments: string,  //鉴别结果
 	identificationDate: string,      //鉴别日期
@@ -738,11 +447,7 @@ interface TableItem {
 }
 
 let newCollection: TableItem = {
-<<<<<<< Updated upstream
-	collectionId: 4,
-=======
 	collectionId: 99,
->>>>>>> Stashed changes
 	originalName: "string",
 	name: "string",
 	collectionType: "12",
@@ -754,17 +459,6 @@ let newCollection: TableItem = {
 	collectionPhoto: "string",
 	collectionAudio: "string",
 	collectInfo: {
-<<<<<<< Updated upstream
-		"collectionId": 4,
-		"source": "string",
-		"collectMuseum": "string",
-		"generalRegistrationId": "string",
-		"collectTime": "2023-09-03T00:00:00",
-		"collectionLevel": "string"
-	},
-	dimensionInfo: {
-		collectionId: 4,
-=======
 		collectionId: 99,
 		source: "string",
 		collectMuseum: "string",
@@ -773,92 +467,31 @@ let newCollection: TableItem = {
 	},
 	dimensionInfo: {
 		collectionId: 99,
->>>>>>> Stashed changes
 		dimension: "string",
 		dimensionUnit: "string",
 		weight: 0,
 		weightUnit: "string",
 		realQuantity: 0,
 		realQuantityUnit: "string",
-<<<<<<< Updated upstream
-		traditionalQuantity: 0
-	},
-	storageInfo: {
-		collectionId: 4,
-=======
 		traditionalQuantity: 0,
 		traditionalQuantityUnit: "string"
 	},
 	storageInfo: {
 		collectionId: 99,
->>>>>>> Stashed changes
 		currentStatus: "未鉴定",
 		protectionLevel: "string"
 	},
 	exhibitionHallId: null,
-<<<<<<< Updated upstream
-	warehouseId: 1,
-	containerId: 1,
-	identificationStaffName: "jiaoao",
-	identificationComments: "string",
-	identificationDate: "2023-09-03T07:46:58.924",
-=======
 	warehouseId: null,
 	containerId: null,
 	identificationStaffName: "1212",
 	identificationComments: "string",
 	identificationDate: "2023-09-03T07:46:58",
->>>>>>> Stashed changes
 	remark: "string"
 
 };
 
 const form = reactive({
-<<<<<<< Updated upstream
-	collectionId: 4,
-	originalName: "string",
-	name: "string",
-	collectionType: "12",
-	era: "string",
-	area: "string",
-	textureType: "string",
-	completeness: "string",
-	completenessType: "string",
-	collectionPhoto: "string",
-	collectionAudio: "string",
-	collectInfo: {
-		"collectionId": 4,
-		"source": "string",
-		"collectMuseum": "string",
-		"generalRegistrationId": "string",
-		"collectTime": "2023-09-03T00:00:00",
-		"collectionLevel": "string"
-	},
-	dimensionInfo: {
-		collectionId: 4,
-		dimension: "string",
-		dimensionUnit: "string",
-		weight: 0,
-		weightUnit: "string",
-		realQuantity: 0,
-		realQuantityUnit: "string",
-		traditionalQuantity: 0
-	},
-	storageInfo: {
-		collectionId: 4,
-		currentStatus: "未鉴定",
-		protectionLevel: "string"
-	},
-	exhibitionHallId: null,
-	warehouseId: 1,
-	containerId: 1,
-	identificationStaffName: "jiaoao",
-	identificationComments: "string",
-	identificationDate: "2023-09-03T07:46:58.924",
-	remark: "string"
-
-})
-=======
 	collectionId: 777,
 	originalName: "",
 	name: "",
@@ -902,7 +535,6 @@ const form = reactive({
 	remark: ""
 
 });
->>>>>>> Stashed changes
 
 const rules = {
 	/*CollectionID: [
@@ -1064,8 +696,6 @@ const typeHandleSelect = (item: TypeSelectItem) => {
 	console.log(item)
 }
 
-<<<<<<< Updated upstream
-=======
 
 //可选择的选项
 const protectLevelLoadAll = () => {
@@ -1080,17 +710,13 @@ const protectLevelSelect = (item: EraSelectItem) => {
 	console.log(item)
 }
 
->>>>>>> Stashed changes
 onMounted(() => {
 	toSelect.value = typeLoadAll()
 })
 
-<<<<<<< Updated upstream
-=======
 
 const size = ref('')
 
->>>>>>> Stashed changes
 // 文物时期下拉菜单的属性
 interface EraSelectItem {
 	value: string
@@ -1167,8 +793,6 @@ const handleDelete = (index: number) => {
 		.catch(() => { });
 };
 
-<<<<<<< Updated upstream
-=======
 const iconStyle = computed(() => {
 	const marginMap = {
 		large: '8px',
@@ -1233,7 +857,6 @@ const beforeUpload = (file) => {
       // 在上传前可以执行一些操作，例如限制文件类型、大小等
       return true; // 返回true表示继续上传，返回false表示取消上传
 };
->>>>>>> Stashed changes
 
 </script>
 
