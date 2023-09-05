@@ -1,5 +1,6 @@
  <template>
 	<div>
+		<div id="main" style="width: 100%; height: 400px;"></div>
 		<div class="container">
 			<div class="handle-box">
 				<el-select v-model="query.address" placeholder="展厅位置" class="handle-select mr10">
@@ -43,9 +44,9 @@
 						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
 							删除
 						</el-button>	
-						<el-button text :icon="More" @click="goToDetail(scope.row.name)">
+						<!-- <el-button text :icon="More" @click="goToDetail(scope.row.name)">
                             详情
-                        </el-button>
+                        </el-button> -->
 					</template>
 				</el-table-column>
 			</el-table>
@@ -117,12 +118,16 @@
 	</div>
 </template>
 
+
+
 <script setup lang="ts" name="basetable">
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, Sort, More } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios'
+import * as echarts from 'echarts';
+
 
 const fetchData = async () => {
 	try {
@@ -286,12 +291,88 @@ const saveAdd = async () => {
 	await uploadData1(newItem);
 };
 
-// 详情页面跳转
-const router = useRouter();
-const goToDetail = (name:string) => {
-	router.push( {name:'collections',params:{name}} );
-};
+// // 详情页面跳转
+// const router = useRouter();
+// const goToDetail = (name:string) => {
+// 	router.push( {name:'collections',params:{name}} );
+// };
+
+onMounted(() => {
+  // 获取图表容器
+  const chartDom = document.getElementById('main');
+
+  // 使用 ECharts 初始化图表
+  const myChart = echarts.init(chartDom);
+
+  // ECharts 配置选项
+  const option = {
+    series: [
+      {
+        type: 'treemap',
+        clickable: true,
+        data: [
+          {
+            name: 'nodeA',
+            value: 10,
+            children: [
+              {
+                name: 'nodeAa',
+                value: 4,
+              },
+              {
+                name: 'nodeAb',
+                value: 6,
+              },
+            ],
+          },
+          {
+            name: 'nodeB',
+            value: 20,
+            children: [
+              {
+                name: 'nodeBa',
+                value: 20,
+                children: [
+                  {
+                    name: 'nodeBa1',
+                    value: 20,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  // 使用配置选项设置图表
+  myChart.setOption(option);
+
+  // 监听点击事件
+  myChart.on('click', function (params) {
+    // 检查是否点击了有效的图表元素
+	console.log('Click event params:',params.data);
+
+    if (params.data.name === 'nodeBa1') {
+      // 在这里执行路由导航或其他跳转操作
+      // 示例中使用 Vue Router 进行导航
+	 
+      const router = useRouter();
+      router.push({ name: 'collections', params: { nodeName: 'nodeBa1' } });
+    }
+  });
+
+  // 在组件销毁前销毁 ECharts 实例
+  onBeforeUnmount(() => {
+    console.log('Component is unmounted. Disposing ECharts instance.');
+    myChart.dispose();
+  });
+});
+
 </script>
+
+
 
 <style scoped>
 .handle-box {
