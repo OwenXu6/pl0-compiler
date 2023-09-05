@@ -3,18 +3,24 @@
 		<div class="container">
 			<div class="handle-box">
 				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="handlenew">新增</el-button>
+				<el-button type="primary" :icon="Search" @click="handleSearch" v-permiss="15">搜索</el-button>
+				<el-button type="primary" :icon="Plus" @click="handlenew" v-permiss="16">新增</el-button>
 			</div>
 			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="staffId" label="ID" width="170" align="center"></el-table-column>
-				<el-table-column prop="staffName" label="姓名" align="center"></el-table-column>
+				<el-table-column prop="staffName" label="姓名" width="110" align="center">
+					<template v-slot:default="scope">
+    					<el-tooltip :content="scope.row.staffName" placement="top">
+      						<span>{{ scope.row.staffName.length > 4 ? scope.row.staffName.substring(0, 4) + '...' : scope.row.staffName }}</span>
+    						</el-tooltip>
+  					</template>
+				</el-table-column>
 				<el-table-column prop="staffAge" label="年龄" align="center"></el-table-column>
-				<el-table-column prop="staffGender" label="性别" align="center"></el-table-column>
+				<el-table-column prop="staffGender" label="性别" width="120" align="center"></el-table-column>
 				<el-table-column prop="staffPostRank" label="职级" align="center"></el-table-column>
 				<el-table-column prop="staffSalary" label="薪资" align="center"></el-table-column>
-				<el-table-column prop="workType" label="工作方向" align="center"></el-table-column>
-				<el-table-column prop="job" label="工作内容" align="center">
+				<el-table-column prop="workType" label="工作方向" width="120" align="center"></el-table-column>
+				<el-table-column prop="job" label="工作内容" width="120" align="center">
   					<template v-slot:default="scope">
     					<el-tooltip :content="scope.row.job" placement="top">
       						<span>{{ scope.row.job.length > 4 ? scope.row.job.substring(0, 4) + '...' : scope.row.job }}</span>
@@ -22,15 +28,15 @@
   					</template>
 				</el-table-column>
 
-				<el-table-column label="操作" width="350" align="center">
+				<el-table-column label="操作" width="320" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit"  @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
+						<el-button text :icon="Edit"  @click="handleEdit(scope.$index, scope.row)" v-permiss="16">
 							编辑
 						</el-button>
 						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
 							删除
 						</el-button>
-						<el-button text :icon="More"  @click="" v-permiss="16">
+						<el-button text :icon="More"  @click="" v-permiss="15">
 							详细信息
 						</el-button>
 					</template>
@@ -371,24 +377,169 @@ const handleEdit = (index: number, row: any) => {
 
 	form.staffId = row.staffId;
 	form.staffName = row.staffName;          
-	form.staffAge = row.staffAge,
+	form.staffAge = String(row.staffAge),
 	form.staffGender = row.staffGender,
 	form.staffPostRank = row.staffPostRank,
-	form.staffSalary = row.staffSalary,
+	form.staffSalary = String(row.staffSalary),
 	form.workType = row.workType,
 	form.job = row.job,
 	editVisible.value = true;
 };
 
+const testId = () => {
+  // 检查 form.staffId 是否存在以及是否是一个字符串
+  if (!form.staffId || typeof form.staffId !== 'string') {
+    return "ID 不能为空！";
+  }
+  // 去除前后空白，然后检查长度
+  const trimmedId = form.staffId.trim();
+  if (trimmedId.length !== 18) {
+    return "ID 必须是 18 位数字！";
+  }
+  // 使用正则表达式检查是否仅由数字组成
+  const isIdDigits = /^[0-9]+$/.test(trimmedId);
+  if (!isIdDigits) {
+    return "ID 必须仅由数字组成！";
+  }
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+
+const testStaffName = () => {
+  // 首先检查 form.staffName 是否存在以及是否是一个字符串
+  if (!form.staffName || typeof form.staffName !== 'string') {
+    return "姓名不能为空！";
+  }
+  // 去除前后空白，然后检查长度
+  const trimmedName = form.staffName.trim();
+  if (trimmedName.length === 0) {
+    return "姓名不能为空！";
+  }
+  if (trimmedName.length > 15) {
+    return "姓名不能超过 15 个字符！";
+  }
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+const testStaffAge = () => {
+  // 首先检查 form.staffAge 是否存在以及是否是一个字符串
+  if (!form.staffAge || typeof form.staffAge !== 'string') {
+	console.log(typeof form.staffAge);
+    return "年龄不能为空";
+  }
+  // 去除前后空白，然后检查是否为数字和长度
+  const trimmedAge = form.staffAge.trim();
+  if (trimmedAge.length === 0) {
+    return "年龄不能为空";
+  }
+  // 使用正则表达式检查是否仅由数字组成
+  const isAgeDigits = /^[0-9]+$/.test(trimmedAge);
+  if (!isAgeDigits) {
+    return "年龄必须仅由数字组成";
+  }
+  // 检查数字长度是否超过10位
+  if (trimmedAge.length > 10) {
+    return "年龄不能超过 10 位数字";
+  }
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+const testStaffGender = () => {
+  // 首先检查 form.staffGender 是否存在以及是否是一个字符串
+  if (!form.staffGender || typeof form.staffGender !== 'string') {
+    return "性别不能为空";
+  }
+
+  // 去除前后空白，然后检查是否为空
+  const trimmedGender = form.staffGender.trim();
+  if (trimmedGender.length === 0) {
+    return "性别不能为空";
+  }
+
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+const testStaffSalary = () => {
+  // 首先检查 form.staffSalary 是否存在以及是否是一个字符串
+  if (!form.staffSalary || typeof form.staffSalary !== 'string') {
+    return "薪资不能为空";
+  }
+
+  // 去除前后空白，然后检查是否为数字和长度
+  const trimmedSalary = form.staffSalary.trim();
+  if (trimmedSalary.length === 0) {
+    return "薪资不能为空";
+  }
+
+  // 使用正则表达式检查是否仅由数字组成
+  const isSalaryDigits = /^[0-9]+$/.test(trimmedSalary);
+  if (!isSalaryDigits) {
+    return "薪资必须仅由数字组成";
+  }
+
+  // 检查数字长度是否超过10位
+  if (trimmedSalary.length >= 10) {
+    return "薪资不能超过 10 位数字";
+  }
+
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+
+
+const testFieldNotEmpty = (field, fieldName) => {
+  // 首先检查 field 是否存在以及是否是一个字符串
+  if (!field || typeof field !== 'string') {
+    return `${fieldName}不能为空`;
+  }
+
+  // 去除前后空白，然后检查是否为空
+  const trimmedField = field.trim();
+  if (trimmedField.length === 0) {
+    return `${fieldName}不能为空`;
+  }
+
+  // 如果所有条件都满足，返回 true
+  return true;
+};
+
+const testStaffPostRank = () => testFieldNotEmpty(form.staffPostRank, "职级");
+const testWorkType = () => testFieldNotEmpty(form.workType, "工作方向");
+const testJob = () => testFieldNotEmpty(form.job, "工作内容");
+
+
 const saveEdit = () => {
-	const isAllDigits =/^[0-9]+$/.test(form.staffSalary);
-
-	if (!isAllDigits) {
-  		console.error("staffSalary 包含非数字字符");
-		  ElMessage.error('薪資要是數字！！');
-  		return; 
+	
+	let Nametested = testStaffName();
+	if(Nametested != true){
+		ElMessage.error(Nametested);
+		return;
 	}
-
+	let Agetested = testStaffAge();
+	if(Agetested != true){
+		ElMessage.error(Agetested);
+		return;
+	}
+	let Salarytested = testStaffSalary();
+	if(Salarytested != true){
+		ElMessage.error(Salarytested);
+		return;
+	}
+	let Jobtested = testJob();
+	if(Jobtested != true){
+		ElMessage.error(Jobtested);
+		return;
+	}
+	let PostRanktested = testStaffPostRank();
+	if(PostRanktested != true){
+		ElMessage.error(PostRanktested);
+		return;
+	}
+	let WorkTypetested = testWorkType();
+	if(WorkTypetested != true){
+		ElMessage.error(WorkTypetested);
+		return;
+	}
 
 	editVisible.value = false;
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);
@@ -405,25 +556,49 @@ const saveEdit = () => {
 	
 };
 
+
+
+
 const savenew = () => {         //保存新增人员
 
-	const isSalaryDigits =/^[0-9]+$/.test(form.staffSalary);
-	const isIdDigits =/^[0-9]+$/.test(form.staffId);
-	if (!isSalaryDigits) {
-  		console.error("staffSalary 包含非数字字符");
-		  ElMessage.error('薪資和ID要是數字！！');
-  		return; 
+	//检查各项输入值是否符合条件
+	let IDtested = testId();
+	if(IDtested != true){
+		ElMessage.error(IDtested);
+		return;
 	}
-	if (!isIdDigits) {
-  		console.error("staffId 包含非数字字符");
-		  ElMessage.error('薪資和ID要是數字！！');
-  		return; 
+	let Nametested = testStaffName();
+	if(Nametested != true){
+		ElMessage.error(Nametested);
+		return;
 	}
-
+	let Agetested = testStaffAge();
+	if(Agetested != true){
+		ElMessage.error(Agetested);
+		return;
+	}
+	let Salarytested = testStaffSalary();
+	if(Salarytested != true){
+		ElMessage.error(Salarytested);
+		return;
+	}
+	let Jobtested = testJob();
+	if(Jobtested != true){
+		ElMessage.error(Jobtested);
+		return;
+	}
+	let PostRanktested = testStaffPostRank();
+	if(PostRanktested != true){
+		ElMessage.error(PostRanktested);
+		return;
+	}
+	let WorkTypetested = testWorkType();
+	if(WorkTypetested != true){
+		ElMessage.error(WorkTypetested);
+		return;
+	}
 
 	newVisible.value = false;
-
-	
 	ElMessage.success(`添加成功`);
 	console.log(idx,HumantableData);
 	newEmployee.staffId = form.staffId;     
