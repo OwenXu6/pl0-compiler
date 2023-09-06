@@ -53,7 +53,7 @@
 				<el-table-column prop="date" label="日期"></el-table-column>
 				<el-table-column prop="totalTickets" label="总门票"></el-table-column>
 				<el-table-column prop="soldTickets" label="已预约门票"></el-table-column>
-				<el-table-column rop="resTickets" label="剩余门票"></el-table-column>
+				<el-table-column prop="resTickets" label="剩余门票"></el-table-column>
 
 				
 				<el-table-column label="操作" width="300" align="center">
