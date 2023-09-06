@@ -392,11 +392,8 @@ import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, View } from '@element-plus/icons-vue';
 // import { fetchData } from '../api/index';
-import { onMounted } from 'vue'
 import {
-	Iphone,
-	Location,
-	OfficeBuilding,
+
 	Tickets,
 	User,
 } from '@element-plus/icons-vue'
@@ -471,8 +468,6 @@ const tableData = ref<TableItem[]>([]);
 const pageData = ref<TableItem[]>([]);   //
 let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
 
-const pageTotal = ref(0);
-// 获取表格数据
 const getData = () => {
 	fetchData().then(res => {
 
@@ -726,6 +721,7 @@ const uploadData = async () => {
 	try {
 		const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
 		ElMessage.success('数据上传成功');
+		getData();
 	} catch (error) {
 		ElMessage.error('数据上传失败');
 	}
@@ -761,147 +757,12 @@ const saveEdit = async () => {
 	// tableData.value[idx] = updatedData;
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);  //弹出弹窗提示用户修改成功
 	uploadData();
-
 };
 //关闭“查看详细信息”的弹窗
 const closeView = () => {
 	viewVisible.value = false;                    //editVisible.value被用来控制编辑界面或对话框的显示与隐藏
 };
 
-// 文物种类下拉菜单的属性
-interface TypeSelectItem {
-	value: string
-	index: number
-}
-const toSelect = ref<TypeSelectItem[]>([])
-
-//搜索符合条件的选项
-const typeQuerySearch = (queryString: string, cb: any) => {
-	const results = queryString
-		? toSelect.value.filter(typeCreateFilter(queryString))
-		: toSelect.value
-	cb(results)
-}
-const typeCreateFilter = (queryString: string) => {
-	return (restaurant: TypeSelectItem) => {
-		return (
-			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-		)
-	}
-}
-
-//可选择的选项
-const typeLoadAll = () => {
-	return [
-		{ value: '石器', index: 1 },
-		{ value: '陶器', index: 2 },
-		{ value: '石刻、造像', index: 3 },
-		{ value: '骨角器', index: 4 },
-		{ value: '俑', index: 5 },
-		{ value: '铜器', index: 6 },
-		{ value: '铁器', index: 7 },
-		{ value: '银器', index: 8 },
-		{ value: '金器', index: 9 },
-		{ value: '其他金属器（锡、铅等）', index: 10 },
-		{ value: '瓷器', index: 11 },
-		{ value: '玉器', index: 12 },
-		{ value: '宝石', index: 13 },
-		{ value: '珐琅', index: 14 },
-		{ value: '紫砂', index: 15 },
-		{ value: '玻璃器', index: 16 },
-		{ value: '书画', index: 17 },
-		{ value: '图书、文献', index: 18 },
-		{ value: '甲骨、简牍', index: 19 },
-		{ value: '文房用具', index: 20 },
-		{ value: '铭刻、印章、符牌', index: 21 },
-		{ value: '货币、票据', index: 22 },
-		{ value: '织绣', index: 23 },
-		{ value: '竹、木、匏、核、漆器', index: 24 },
-		{ value: '民间艺术品', index: 25 },
-		{ value: '家具', index: 26 },
-		{ value: '仪器、仪表', index: 27 },
-		{ value: '生产机械', index: 28 },
-		{ value: '建筑资料', index: 29 },
-		{ value: '化石', index: 30 },
-		{ value: '其他', index: 31 },
-	]
-}
-//处理选择的项，比如说给一个东西赋值
-const typeHandleSelect = (item: TypeSelectItem) => {
-	console.log(item)
-}
-
-onMounted(() => {
-	toSelect.value = typeLoadAll()
-})
-
-// 文物时期下拉菜单的属性
-interface EraSelectItem {
-	value: string
-	index: number
-}
-const toSelectEra = ref<EraSelectItem[]>([])
-
-//搜索符合条件的选项
-const eraQuerySearch = (queryString: string, cb: any) => {
-	const results = queryString
-		? toSelectEra.value.filter(eraCreateFilter(queryString))
-		: toSelectEra.value
-	cb(results)
-}
-const eraCreateFilter = (queryString: string) => {
-	return (restaurant: TypeSelectItem) => {
-		return (
-			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-		)
-	}
-}
-
-//可选择的选项
-const EraloadAll = () => {
-	return [
-		{ value: '夏朝', index: 1 },
-		{ value: '商朝', index: 2 },
-		{ value: '春秋战国', index: 3 },
-		{ value: '秦朝', index: 4 },
-		{ value: '汉朝', index: 5 },
-		{ value: '三国', index: 6 },
-		{ value: '魏晋南北朝', index: 7 },
-		{ value: '隋朝', index: 8 },
-		{ value: '唐朝', index: 9 },
-		{ value: '五代十国', index: 10 },
-		{ value: '宋朝', index: 11 },
-		{ value: '元朝', index: 12 },
-		{ value: '明朝', index: 13 },
-		{ value: '清朝', index: 14 },
-		{ value: '民国', index: 15 },
-	]
-}
-//处理选择的项，比如说给一个东西赋值
-const eraSelect = (item: EraSelectItem) => {
-	console.log(item)
-}
-
-onMounted(() => {
-	toSelectEra.value = EraloadAll()
-})
-
-//可选择的选项
-const protectLevelLoadAll = () => {
-	return [
-		{ value: '一级', index: 1 },
-		{ value: '两级', index: 2 },
-		{ value: '三级', index: 3 },
-	]
-}
-//处理选择的项，比如说给一个东西赋值
-const protectLevelSelect = (item: EraSelectItem) => {
-	console.log(item)
-}
-
-onMounted(() => {
-	toSelectEra.value = protectLevelLoadAll()
-})
 const size = ref('')
 const iconStyle = computed(() => {
 	const marginMap = {

@@ -72,6 +72,7 @@ const items = [
                 index: '/collection_add',
                 title: '新增藏品',
                 permiss: '21',
+                subs : undefined
             },
             {
                 index: '/collection_search',
