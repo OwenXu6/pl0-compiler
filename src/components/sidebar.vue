@@ -71,22 +71,22 @@ const items = [
             {
                 index: '/collection_add',
                 title: '新增藏品',
-                permiss: '2',
+                permiss: '21',
             },
             {
                 index: '/collection_search',
                 title: '查询藏品',
-                permiss: '2',
+                permiss: '22',
             },
             {
                 index: '/collection_repair',
                 title: '修缮藏品',
-                permiss: '2',
+                permiss: '23',
             },
             {
                 index: '/collection_research4unknown',
                 title: '未知文物研究鉴定',
-                permiss: '2',
+                permiss: '24',
             },
         ],
     },
@@ -100,22 +100,22 @@ const items = [
         icon: 'Calendar',
         index: '1',
         title: '展厅',
-        permiss: '2',
+        permiss: '4',
         subs: [
             {
                 index: '/table',
                 title: '展厅信息',
-                permiss: '2',
+                permiss: '41',
             },
             {
                 index: '/collections',
                 title: '展品详情',
-                permiss: '2',
+                permiss: '42',
             },
             {
                 index: '/activity',
                 title: '活动',
-                permiss: '2',
+                permiss: '43',
             },
         ],
     },
@@ -123,40 +123,40 @@ const items = [
         icon:'Calendar',
         index:'/statistics',
         title:'统计信息',
-        permiss:'3',
+        permiss:'5',
     },
     {
         icon:'Calendar',
         index:'/charts',
         title:'人流信息',
-        permiss:'3',
+        permiss:'6',
     },
     {
         icon:'Calendar',
         index:'/charts',
         title:'系统设置',
-        permiss:'3',
+        permiss:'7',
     },
     {
         icon:"DocumentCopy",
         index:"2",
         title:"运营与合作",
-        permiss:"3",
+        permiss:"8",
         subs:[
         {
                 index: '/feedbacks',
                 title: '反馈信息管理',
-                permiss: '3',
+                permiss: '81',
             },
             {
                 index: '/products',
                 title: '文创产品信息管理',
-                permiss: '3',
+                permiss: '82',
             },
             {
                 index: '/cooperations',
                 title: '合作联名项目',
-                permiss: '3',
+                permiss: '83',
             },
         ]
     },
@@ -164,13 +164,13 @@ const items = [
         icon:"DocumentCopy",
         index:"/ccard",
         title:"藏品编目",
-        permiss:"3",
+        permiss:"9",
     },
     {
         icon:"DocumentCopy",
         index:"/demo",
         title:"demo",
-        permiss:"3",
+        permiss:"10",
     }
 ];
 

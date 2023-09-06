@@ -7,19 +7,19 @@
 				<!--显示一个输入框，用户可以输入名称进行搜索。v-model="query.name"将输入的值绑定到query.name变量上。-->
 				<el-input v-model="query.id" placeholder="文物ID" class="handle-input mr10"></el-input>
 				<br><br>
-				<el-select v-model="query.collectionType" placeholder="文物种类" class="handle-select mr10">
+				<el-select v-model="query.collectionType" placeholder="文物种类" class="handle-select mr10" clearable ="true">
 					<el-option key="1" label="瓷器" value="瓷器"></el-option>
 					<el-option key="2" label="青铜器" value="青铜器"></el-option>
 				</el-select>
-				<el-select v-model="query.era" placeholder="文物年代" class="handle-select mr10">
+				<el-select v-model="query.era" placeholder="文物年代" class="handle-select mr10" clearable ="true">
 					<el-option key="1" label="唐代" value="唐代"></el-option>
 					<el-option key="2" label="清代" value="清代"></el-option>
 				</el-select>
-				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10">
+				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10" clearable ="true">
 					<el-option key="1" label="在库" value="在库"></el-option>
 					<el-option key="2" label="在展" value="在展"></el-option>
 				</el-select>
-				<el-select v-model="query.excavation_site" placeholder="出土地" class="handle-select mr10">
+				<el-select v-model="query.excavation_site" placeholder="出土地" class="handle-select mr10" clearable ="true">
 					<el-option key="1" label="三星堆" value="三星堆"></el-option>
 					<el-option key="2" label="北首岭遗址" value="北首岭遗址"></el-option>
 				</el-select>
@@ -64,7 +64,7 @@
 			</el-table>
 			<div class="pagination"  style="display: flex; align-items: center;">
 				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
-				 size="small" style="width: 100px;" >
+				 size="small" style="width: 100px;" clearable ="true" >
 				 <el-option label="5" value="5"></el-option>
 				 <el-option label="10" value="10"></el-option>
 				 <el-option label="20" value="20"></el-option>
@@ -459,7 +459,7 @@ const query = reactive({
 	excavation_date: '',   //出土日期
 	collectTime: '',	//收藏的时间
 	pageIndex: 1,      //所在页面
-	pageSize: 1,       //一页最多拥有的条目个数
+	pageSize: 10,       //一页最多拥有的条目个数
 	tempPageSize : '', //中间变量，存储用户选择的PageSize
 	storageInfo: {
 		currentStatus: '',
@@ -531,7 +531,12 @@ const handlePageChange = (val: number) => {
 
 //改变页面大小
 const applyPageSize = () =>{
-	query.pageSize = Number(query.tempPageSize);
+	if(query.tempPageSize !=''){
+		query.pageSize = Number(query.tempPageSize);
+	}
+	else{
+		query.pageSize = 10;
+	}
 	console.log(query.pageSize);
 	query.pageIndex = 1;
 	getData();

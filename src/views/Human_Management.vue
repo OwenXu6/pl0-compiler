@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="container">
+		<div class="container" v-permiss = "3">
 			<div class="handle-box">
 				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch" v-permiss="15">搜索</el-button>
@@ -44,7 +44,7 @@
 			</el-table>
 			<div class="pagination" style="display: flex; align-items: center;">
 				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
-				 size="small" style="width: 100px;" >
+				 size="small" style="width: 100px;" clearable ="true" >
 				 <el-option label="5" value="5"></el-option>
 				 <el-option label="10" value="10"></el-option>
 				 <el-option label="20" value="20"></el-option>
@@ -317,7 +317,12 @@ const handlePageChange = (val: number) => {
 
 //改变大小
 const applyPageSize = () =>{
-	query.pageSize = Number(query.tempPageSize);
+	if(query.tempPageSize !=''){
+		query.pageSize = Number(query.tempPageSize);
+	}
+	else{
+		query.pageSize = 1;
+	}
 	console.log(query.pageSize);
 	query.pageIndex = 1;
 	getData();
