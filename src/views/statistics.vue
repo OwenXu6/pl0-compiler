@@ -170,7 +170,8 @@ const query = reactive({
 });
 const fetchData = async () => {
 	try {
-		const response = await axios.get('http://42.192.39.198:5000/api/VisitorStatistics/6');
+		const response = await axios.get('http://42.192.39.198:5000/api/TicketsStatistics');
+		//console.log("zheli",response.data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
