@@ -107,7 +107,7 @@
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, Sort, More } from '@element-plus/icons-vue';
-import { fetchActivityData } from '../api/index';
+import { fetchData } from '../api/index';
 import { useRouter } from 'vue-router';
 
 
@@ -137,7 +137,7 @@ const addedData = ref<TableItem[]>([]); // 保存新增的数据
 
 // 获取表格数据
 const getData = () => {
-	fetchActivityData().then(res => {
+	fetchData().then(res => {
 		let filteredData = res.data.list.concat(addedData.value);
         if (query.address !== '') {
 			if(query.address==='全部'){
