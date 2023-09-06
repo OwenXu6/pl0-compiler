@@ -182,36 +182,37 @@ const pageTotal = ref(0);
 const tableData = ref<TableItem[]>([]);
 const getData = async () => {
 	const data = await fetchData();
-	
-	let arr=[{date:"7.10",inMuseumCount:0,resTickets:500,soldTickets:50,totalTickets:550},
-	{date:"7.9",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
-	{date:"7.8",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
-	{date:"7.7",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
-	{date:"7.6",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
-	{date:"7.5",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
-	{date:"7.4",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
-	{date:"7.3",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
-	{date:"7.2",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
-	{date:"7.1",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
-	{date:"6.30",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
-	{date:"6.29",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
-	{date:"6.28",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
-	{date:"6.27",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
-	{date:"6.26",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
-	];
+	console.log(data); 
+	// let arr=[{date:"7.10",inMuseumCount:0,resTickets:500,soldTickets:50,totalTickets:550},
+	// {date:"7.9",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	// {date:"7.8",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	// {date:"7.7",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	// {date:"7.6",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	// {date:"7.5",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	// {date:"7.4",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	// {date:"7.3",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	// {date:"7.2",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	// {date:"7.1",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	// {date:"6.30",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	// {date:"6.29",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	// {date:"6.28",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	// {date:"6.27",inMuseumCount:0,resTickets:400,soldTickets:40,totalTickets:440},
+	// {date:"6.26",inMuseumCount:100,resTickets:200,soldTickets:150,totalTickets:350},
+	// ];
 	
 	let visTmp = [];
-	// console.log(data); 
-	// tableData.value = data.statisticsList;
+	let dateTmp=[];
+	console.log(data); 
+	tableData.value = data;
 
-	// for(let i=0;i<tableData.value.length;i++)
-	// {
-	// 	tableData.value[i].date = tableData.value[i].date.substring(0,10);
-	// 	tableData.value[i].resTickets = tableData.value[i].totalTickets-tableData.value[i].soldTickets;
-	// }
-	// console.log("tableData.value:")
-	// console.log(tableData.value); 
-	tableData.value = arr;
+	for(let i=0;i<tableData.value.length;i++)
+	{
+		dateTmp.push(tableData.value[i].date);
+		tableData.value[i].date = tableData.value[i].date.substring(0,10);
+		tableData.value[i].resTickets = tableData.value[i].totalTickets-tableData.value[i].soldTickets;
+	}
+	console.log("tableData.value:")
+	console.log(tableData.value); 
 	for(let i=0;i<tableData.value.length;i++)
 	{
 		if(i>=3){
@@ -223,6 +224,8 @@ const getData = async () => {
 		
 	};
 	visArr.value = visTmp;
+	originDate.value = dateTmp;
+	console.log("origindate",originDate.value);
 	//console.log(visArr.value);
 	pageTotal.value = tableData.value.length;
 
@@ -285,8 +288,17 @@ const handleEdit = (index: number, row: any,flag:number) => {
 };
 const uploadData = async () => {
     try {
-        const response = await axios.put('http://42.192.39.198:5000/api/VisitorStatistics/6'+tableData.value[idx].date,tableData.value[idx].resTickets);
-        ElMessage.success('数据上传成功');
+		axios.put(`http://42.192.39.198:5000/api/TicketsStatistics/${originDate.value[idx]}`,{
+  		date:originDate.value[idx],
+  		totalTickets:tableData.value[idx].totalTickets,
+  		soldTickets:tableData.value[idx].soldTickets,
+	}).then(
+  	response => { console.log('成功了' + response.data); },
+  	error => { console.log('失败了' + error); }
+	)
+
+    // const response = await axios.put(`http://42.192.39.198:5000/api/TicketsStatistics/${originDate.value[idx]}`,tableData.value[idx].totalTickets+tableData.value[idx].soldTickets);
+    // 	ElMessage.success('数据上传成功');
     } catch (error) {
         ElMessage.error('数据上传失败');
     }
