@@ -28,7 +28,7 @@ const routes = [
                     title: '新增藏品',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "table" */ '../views/collection_add.vue'),
+                component: () => import('../views/collection_add.vue'),
             },
             {
                 path: '/collection_search',
@@ -37,7 +37,7 @@ const routes = [
                     title: '查询藏品',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "table" */ '../views/collection_search.vue'),
+                component: () => import('../views/collection_search.vue'),
             },
             {
                 path: '/collection_repair',
@@ -46,7 +46,7 @@ const routes = [
                     title: '修缮藏品',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "table" */ '../views/collection_repair.vue'),
+                component: () => import('../views/collection_repair.vue'),
             },
             {
                 path: '/collection_research4unknown',
@@ -55,7 +55,7 @@ const routes = [
                     title: '未知文物研究鉴定',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "table" */ '../views/collection_research4unknown.vue'),
+                component: () => import('../views/collection_research4unknown.vue'),
             },
             {
                 path: '/Human_Management',
@@ -64,7 +64,7 @@ const routes = [
                     title: '人事管理',
                     permiss: '3',
                 },
-                component: () => import(/* webpackChunkName: "table" */ '../views/Human_Management.vue'),
+                component: () => import('../views/Human_Management.vue'),
             },
             {
                 path: '/statistics',
@@ -73,7 +73,7 @@ const routes = [
                     title: '统计信息',
                     permiss: '3',
                 },
-                component: () => import(/* webpackChunkName: "table" */ '../views/statistics.vue'),
+                component: () => import('../views/statistics.vue'),
             },
             {
                 path: '/table',
@@ -82,7 +82,7 @@ const routes = [
                     title: '展厅',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "table" */ '../views/table.vue'),
+                component: () => import('../views/table.vue'),
             },
             {
                 path: '/collections',
@@ -91,7 +91,7 @@ const routes = [
                     title: '展品详情',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "collections" */ '../views/collections.vue'),
+                component: () => import('../views/collections.vue'),
             },
             {
                 path: '/activity',
@@ -100,7 +100,7 @@ const routes = [
                     title: '活动',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "activity" */ '../views/activity.vue'),
+                component: () => import('../views/activity.vue'),
             },
 
             {
@@ -110,7 +110,7 @@ const routes = [
                     title: '反馈列表',
                     permiss: '12',
             },
-            component: () => import(/* webpackChunkName: "feedback" */ '../views/feedbacks.vue'),
+            component: () => import('../views/feedbacks.vue'),
             },
             {
                 path: '/products',
@@ -119,7 +119,7 @@ const routes = [
                     title: '文创产品',
                     permiss: '12',
                 },
-                component: () => import(/* webpackChunkName: "product" */ '../views/products.vue'),
+                component: () => import('../views/products.vue'),
             },
             {
                 path: '/cooperations',
@@ -127,7 +127,7 @@ const routes = [
                 meta: {
                     title: '合作联名项目',
                     permiss: '12',},
-                component: () => import(/* webpackChunkName: "cooperation" */ '../views/cooperations.vue'),
+                component: () => import('../views/cooperations.vue'),
 
             },
             {
@@ -137,7 +137,7 @@ const routes = [
                     title:'文创卡片',
                     permiss:'12',
                 },
-                component:()=>import(/* webpackChunkName: "ccard" */ '../views/ccard.vue'),
+                component:()=>import('../views/ccard.vue'),
             },
             {
                 path: '/demo',
@@ -146,7 +146,7 @@ const routes = [
                     title: '图标实例',
                     permiss: '13',
                 },
-                component: () => import(/* webpackChunkName: "demo" */ '../views/demo.vue'),
+                component: () => import('../views/demo.vue'),
 
             },
         ],
@@ -157,7 +157,7 @@ const routes = [
         meta: {
             title: '登录',
         },
-        component: () => import(/* webpackChunkName: "login" */ '../views/login.vue'),
+        component: () => import('../views/login.vue'),
     },
     {
         path: '/403',
@@ -165,8 +165,16 @@ const routes = [
         meta: {
             title: '没有权限',
         },
-        component: () => import(/* webpackChunkName: "403" */ '../views/403.vue'),
+        component: () => import('../views/403.vue'),
     },
+    {
+        path:'',
+        name:'404',
+        meta:{
+            title:'您要找的页面不存在',
+        },
+        component: ()=>import()
+    }
 ];
 
 const router = createRouter({
