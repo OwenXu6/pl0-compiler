@@ -44,7 +44,7 @@
 			</el-table>
 			<div class="pagination" style="display: flex; align-items: center;">
 				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
-				 size="small" style="width: 100px;" clearable ="true" >
+				 size="small" style="width: 100px;"  clearable  >
 				 <el-option label="5" value="5"></el-option>
 				 <el-option label="10" value="10"></el-option>
 				 <el-option label="20" value="20"></el-option>
