@@ -132,6 +132,7 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, Sort, More, ArrowLeft } from '@element-plus/icons-vue';
 // import { fetchCollectionsData } from '../api/index';
 import { useRoute, useRouter } from 'vue-router';
+import axios from "axios";
 
 
 interface TableItem {
@@ -168,7 +169,8 @@ if (Array.isArray(paramName)) {
 
 // 获取表格数据
 const getData = () => {
-	fetchCollectionsData().then(res => {
+	//fetchCollectionsData()
+    axios.get('/').then(res => {
 		let filteredData = res.data.list.concat(addedData.value);
 		if (query.address !== '') {
 			if(query.address==='全部'){

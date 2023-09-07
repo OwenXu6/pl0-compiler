@@ -29,7 +29,6 @@
 <script setup lang="ts" name="import">
 import { UploadProps } from 'element-plus';
 import { ref, reactive } from 'vue';
-import * as XLSX from 'xlsx';
 
 interface TableItem {
     id: number;
@@ -66,25 +65,25 @@ getData();
 
 const importList = ref<any>([]);
 const beforeUpload: UploadProps['beforeUpload'] = async (rawFile) => {
-    importList.value = await analysisExcel(rawFile);
+    //importList.value = await analysisExcel(rawFile);
     return true;
 };
-const analysisExcel = (file: any) => {
-    return new Promise(function (resolve, reject) {
-        const reader = new FileReader();
-        reader.onload = function (e: any) {
-            const data = e.target.result;
-            let datajson = XLSX.read(data, {
-                type: 'binary',
-            });
-
-            const sheetName = datajson.SheetNames[0];
-            const result = XLSX.utils.sheet_to_json(datajson.Sheets[sheetName]);
-            resolve(result);
-        };
-        reader.readAsBinaryString(file);
-    });
-};
+// const analysisExcel = (file: any) => {
+//     return new Promise(function (resolve, reject) {
+//         const reader = new FileReader();
+//         reader.onload = function (e: any) {
+//             const data = e.target.result;
+//             let datajson = XLSX.read(data, {
+//                 type: 'binary',
+//             });
+//
+//             const sheetName = datajson.SheetNames[0];
+//             const result = XLSX.utils.sheet_to_json(datajson.Sheets[sheetName]);
+//             resolve(result);
+//         };
+//         reader.readAsBinaryString(file);
+//     });
+// };
 
 const handleMany = async () => {
     // 把数据传给服务器后获取最新列表，这里只是示例，不做请求
