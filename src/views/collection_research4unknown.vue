@@ -3,29 +3,8 @@
 		<div class="container">
 			<!-- 查询的部分 -->
 			<div class="handle-box">
-				<el-input v-model="query.name" placeholder="文物名称" class="handle-input mr10"></el-input>
-				<!--显示一个输入框，用户可以输入名称进行搜索。v-model="query.name"将输入的值绑定到query.name变量上。-->
-				<el-input v-model="query.id" placeholder="文物ID" class="handle-input mr10"></el-input>
-				<br><br>
-				<el-select v-model="query.collectionType" placeholder="文物种类" class="handle-select mr10">
-					<el-option key="1" label="瓷器" value="瓷器"></el-option>
-					<el-option key="2" label="青铜器" value="青铜器"></el-option>
-				</el-select>
-				<el-select v-model="query.era" placeholder="文物年代" class="handle-select mr10">
-					<el-option key="1" label="唐代" value="唐代"></el-option>
-					<el-option key="2" label="清代" value="清代"></el-option>
-				</el-select>
-				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10">
-					<el-option key="1" label="在库" value="在库"></el-option>
-					<el-option key="2" label="在展" value="在展"></el-option>
-				</el-select>
-				<el-select v-model="query.excavation_site" placeholder="出土地" class="handle-select mr10">
-					<el-option key="1" label="三星堆" value="三星堆"></el-option>
-					<el-option key="2" label="北首岭遗址" value="北首岭遗址"></el-option>
-				</el-select>
-				<el-input v-model="query.excavation_date" placeholder="出土日期" class="handle-input mr11"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
+				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
+				<el-button type="primary" :icon="Search" @click="handleSearch" v-permiss="15">搜索</el-button>
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
@@ -737,19 +716,35 @@ const query = reactive({
 	storageInfo: {
 		currentStatus: '',
 		protectionLevel: ''
-	}
+	},
+	value:''
 });
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
+let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
+
 // 获取表格数据
 const getData = () => {
 	fetchData().then(res => {
 		console.log(res)
-		// tableData.value = res;
-		//只显示鉴定了的文物
-		tableData.value = res.filter(item => item.storageInfo.currentStatus == '未鉴定');
-		// console.log(tableData.value.length);
+		console.log(res);
+		//过滤掉“未鉴定”的文物
+
+		filteredData.value = res.filter(item => item.storageInfo.currentStatus == '未鉴定');
+		console.log(query);
+		filteredData.value = filteredData.value.filter(item => 
+		String(item.collectionId).includes(query.value)||
+		item.textureType.includes(query.value)||
+		item.era.includes(query.value)||
+		item.storageInfo.currentStatus.includes(query.value)||
+		item.area.includes(query.value)||
+		item.collectInfo.collectTime.includes(query.value)
+		);
+
+
+		tableData.value=filteredData.value;
+		console.log(tableData.value);
 
 		for (var i = 0; i < tableData.value.length; i++) {
 			//对每一个文物截取有效时间显示
