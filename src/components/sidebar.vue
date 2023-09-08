@@ -1,15 +1,11 @@
 <template>
   <div class="sidebar">
-    <el-menu
-        class="sidebar-el-menu"
-        :default-active="onRoutes"
-        :collapse="sidebar.collapse"
-        background-color="#324157"
-        text-color="#bfcbd9"
-        active-text-color="#20a0ff"
-        unique-opened
-        router
-    >
+    <el-menu 
+            class="sidebar-el-menu"
+            :default-active="onRoutes"
+            :collapse="sidebar.collapse"
+            unique-opened
+            router>
       <template v-for="item in items">
         <template v-if="item.subs">
           <el-sub-menu :index="item.index" :key="item.index" v-permiss="item.permiss">
@@ -158,7 +154,7 @@ const items = [
   {
     icon: "DocumentCopy",
     index: "/ccard",
-    title: "藏品编目",
+    title: "个人中心",
     permiss: ["SystemAdmin"],
   },
   {
@@ -198,4 +194,18 @@ const sidebar = useSidebarStore();
 .sidebar > ul {
   height: 100%;
 }
+
+/* 设置一级菜单和二级菜单的背景颜色 */
+.el-sub-menu .el-menu-item {
+  background-color: #f1f3fe !important;
+}
+/* 设置选鼠标指针浮动在一级菜单的设置 */
+.el-menu-item:hover{
+  background-color: #f1f3fe !important;;
+}
+/* 设置当前被选中的一级菜单 */
+.el-menu-item.is-active {  
+  color: #fff !important;  
+  background: #579EF8 !important;  
+}  
 </style>

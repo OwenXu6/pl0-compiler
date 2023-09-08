@@ -47,7 +47,7 @@
   
   </div>
   <div style="text-align: center; margin: 10px;">
-    <el-button type="primary" v-print="'#container'">打印</el-button>
+    <el-button type="primary" @click="handleLogout">退出登录</el-button>
   </div>
   
 </template>
@@ -55,6 +55,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router';
 
 export interface Response {
     area?: string;
@@ -75,7 +76,7 @@ export interface Response {
     name?: string;
     originalName?: string;
     remark?: string;
-    storageId?: null;
+    warehouseId?: null;
     storageInfo?: StorageInfo;
     textureType?: string;
 }
@@ -126,7 +127,11 @@ const getData = async () => {
 
 getData();
 
-
+const router = useRouter();
+const handleLogout = () => {
+		localStorage.removeItem('ms_username');
+		router.push('/login');
+};
 
 </script>
 
