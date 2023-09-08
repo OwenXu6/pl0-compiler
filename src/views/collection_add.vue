@@ -40,8 +40,8 @@
 								藏品图片
 							</div>
 						</template>
-						<el-upload class="upload-demo" action="https://smms.app/api/v2/upload"
-							:headers="{ Authorization: '14ac5499cfdd2bb2859e4476d2e5b1d2bad079bf' }" :on-success="handleSuccess"
+						<el-upload class="upload-demo" action="/foreignImage/upload" name="smfile"
+							:headers="{ Authorization: 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" :on-success="handleSuccess"
 							:on-error="handleError" :before-upload="beforeUpload">
 							<el-button size="small" type="primary">点击上传</el-button>
 						</el-upload>

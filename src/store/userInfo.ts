@@ -12,6 +12,7 @@ export const useUserInfo=defineStore('userInfo',{
             this.userRole = role
         }
     },
+    persist:true,
     state:()=>{
         return {
             userToken:undefined,
