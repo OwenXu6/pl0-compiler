@@ -1,5 +1,5 @@
 <template>
-    <div id="main" :style="{ width: '700px', height: '250px' }"></div>
+    <div id="OnSiteStatistics" :style="{ width: '700px', height: '250px' }"></div>
 </template>
 
 <script lang="ts">
@@ -181,7 +181,7 @@ export default defineComponent({
 
 
         onMounted(() => {
-            let myChart = echarts.init(document.getElementById('main'));
+            let myChart = echarts.init(document.getElementById('OnSiteStatistics'));
             myChart.setOption(option);
             setInterval(function () {
             var nextSource = [[1, props.onSet]];  

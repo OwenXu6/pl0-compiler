@@ -1,8 +1,9 @@
 <template>
-    <div id="myChart" :style="{ width: '1000px', height: '450px' }"></div>
+    <div id="IOStatistics" :style="{ width: '1000px', height: '450px' }"></div>
 </template>
  
 <script lang="ts">
+import { ta } from 'element-plus/es/locale';
 import { defineComponent, onMounted, getCurrentInstance, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
 
@@ -116,7 +117,7 @@ export default defineComponent({
                     type: 'value',
                     scale: true,
                     min:0,
-                    max:10,
+                    max:1000,
                     name: '进/出馆人数',
                     boundaryGap: [0.2, 0.2]
                 },
@@ -124,7 +125,7 @@ export default defineComponent({
                     type: 'value',
                     scale: true,
                     min:0,
-                    max:10,
+                    max:1000,
                     name: '出馆人数',
                     show: false,
                     boundaryGap: [0.2, 0.2]
@@ -133,7 +134,7 @@ export default defineComponent({
                     type: 'value',
                     scale: true,
                     min: 0,
-                    max:10,
+                    max:1000,
                     position: 'right',
                     name: '在馆人数',
                     boundaryGap: [0.2, 0.2]
@@ -167,13 +168,12 @@ export default defineComponent({
             //初始化挂载
             // document.getElementById('myChart')?.removeAttribute('_echarts_instance_')
             // document.getElementById('myChart2')?.removeAttribute('_echarts_instance_')
-            const echarts1 = echarts.init(document.getElementById('myChart'))
+            const echarts1 = echarts.init(document.getElementById('IOStatistics'))
             //添加配置
             echarts1.setOption(option)
             app.count = 11;
             setInterval(function () {
                 let axisData = new Date().toLocaleTimeString().replace(/^\D*/, '');
-
                 data.shift();
                 data.push(props.inData);
                 data2.shift();

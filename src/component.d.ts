@@ -40,9 +40,12 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Header: typeof import('./components/header.vue')['default']
+    IOStatistics: typeof import('./components/IOStatistics.vue')['default']
+    OnSiteStatistics: typeof import('./components/OnSiteStatistics.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./components/sidebar.vue')['default']
     Tags: typeof import('./components/tags.vue')['default']
+    TicketStatistics: typeof import('./components/TicketStatistics.vue')['default']
   }
 }
