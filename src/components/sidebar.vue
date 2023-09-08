@@ -50,6 +50,7 @@
 import {computed} from 'vue';
 import {useSidebarStore} from '../store/sidebar';
 import {useRoute} from 'vue-router';
+
 const items = [
   {
     icon: 'Odometer',
@@ -58,7 +59,7 @@ const items = [
     permiss: []
   },
   {
-    icon: 'Calendar',
+    icon: 'goods',
     index: '1',
     title: '藏品管理',
     permiss: ['CollectionManager',"SystemAdmin"],
@@ -82,13 +83,13 @@ const items = [
     ],
   },
   {
-    icon: 'Calendar',
+    icon:'lock',
     index: '/Human_Management',
     title: '人事管理',
     permiss: ['SystemAdmin','User'],
   },
   {
-    icon: 'Calendar',
+    icon: 'more',
     index: '2',
     title: '展厅',
     permiss: ['SystemAdmin'],
@@ -117,19 +118,19 @@ const items = [
     permiss: ["SystemAdmin"],
   },
   {
-    icon: 'Calendar',
+    icon: 'share',
     index: '/charts',
     title: '人流信息',
     permiss: ["SystemAdmin"],
   },
   {
-    icon: 'Calendar',
+    icon: 'edit',
     index: '/charts',
     title: '系统设置',
     permiss: ["SystemAdmin"],
   },
   {
-    icon: "DocumentCopy",
+    icon: "shop",
     index: "3",
     title: "运营与合作",
     permiss: ["SystemAdmin"],
@@ -152,7 +153,7 @@ const items = [
     ]
   },
   {
-    icon: "DocumentCopy",
+    icon: "rank",
     index: "/ccard",
     title: "个人中心",
     permiss: ["SystemAdmin"],
