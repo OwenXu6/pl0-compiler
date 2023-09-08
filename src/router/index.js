@@ -173,7 +173,7 @@ const routes = [
         meta:{
             title:'您要找的页面不存在',
         },
-        component: ()=>import()
+        component: ()=>import('../views/404.vue')
     }
 ];
 
