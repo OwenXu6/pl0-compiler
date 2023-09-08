@@ -59,7 +59,7 @@
 			</el-table>
 			<div class="pagination"  style="display: flex; align-items: center;">
 				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
-				 size="small" style="width: 100px;" clearable >
+				 size="small" style="width: 100px;" clearable ="true" >
 				 <el-option label="5" value="5"></el-option>
 				 <el-option label="10" value="10"></el-option>
 				 <el-option label="20" value="20"></el-option>
@@ -87,8 +87,12 @@
 					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.exhibitionHallId"
 						class="handle-input mr10"></el-input>
 				</el-form-item>
-				<el-form-item v-if="form.storageInfo.currentStatus === '在库'" label="库房名称">
-					<el-input v-if="form.storageInfo.currentStatus === '在库'" v-model="form.storageId"
+				<el-form-item v-if="form.storageInfo.currentStatus === '在库'" label="库房Id">
+					<el-input v-if="form.storageInfo.currentStatus === '在库'" v-model="form.warehouseId"
+						class="handle-input mr10"></el-input>
+				</el-form-item>
+				<el-form-item v-if="form.storageInfo.currentStatus === '在库'" label="货架Id">
+					<el-input v-if="form.storageInfo.currentStatus === '在库'" v-model="form.containerId"
 						class="handle-input mr10"></el-input>
 				</el-form-item>
 			</el-form>
@@ -99,6 +103,7 @@
 				</span>
 			</template>
 		</el-dialog>
+
 		<!-- 查看的弹出框 -->
 		<el-dialog title="查看" v-model="viewVisible" width="60%">
 			<!-- <div>文物名称：{{ view.name }}</div>
@@ -254,8 +259,8 @@
 							</div>
 						</template>
 						{{ view.storageInfo.currentStatus }}
-						<span v-if="view.storageInfo.currentStatus == '在展'">所在展厅：{{ view.exhibitionHallId }}</span>
-						<span v-if="view.storageInfo.currentStatus == '在库'">所在仓库：{{ view.storageId }}</span>
+						<div v-if="view.storageInfo.currentStatus == '在展'">所在展厅：{{ view.exhibitionHallId }}</div>
+						<div v-if="view.storageInfo.currentStatus == '在库'">所在仓库：{{ view.warehouseId }}  所在货架：{{ view.containerId }}</div>
 					</el-descriptions-item>
 					<!-- 完残程度 -->
 					<el-descriptions-item>
@@ -385,7 +390,6 @@
 import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, View } from '@element-plus/icons-vue';
-import { onMounted } from 'vue'
 // import { fetchData } from '../api/index';
 import {
 
@@ -438,7 +442,8 @@ interface TableItem {
 		traditionalQuantity: string;
 	},
 	exhibitionHallId: string;
-	storageId: string;
+	warehouseId: string;
+	containerId: string;
 }
 //请求数据
 const query = reactive({
@@ -554,13 +559,13 @@ let form = reactive({
 	completeness: '',
 	completenessType: '',
 	dimensionInfo: {
-		collectionId: '',
+		collectionId: null,
 		dimension: '',
 		dimensionUnit: '',
-		weight: '',
+		weight: null,
 		weightUnit: '',
-		realQuantity: '',
-		traditionalQuantity: ''
+		realQuantity: null,
+		traditionalQuantity: null
 	},
 	era: '',
 	identificationComments: '',
@@ -574,8 +579,9 @@ let form = reactive({
 	},
 	originalName: '',
 	textureType: '',
-	exhibitionHallId: '',
-	storageId: '',
+	exhibitionHallId: null,
+	warehouseId: null,
+	containerId: null,
 });
 //查看的内容
 let view = reactive({
@@ -615,8 +621,8 @@ let view = reactive({
 	originalName: '',
 	textureType: '',
 	exhibitionHallId: '',
-	storageId: '',
-
+	warehouseId: '',
+	containerId:'',
 });
 
 //处理编辑操作
@@ -661,7 +667,8 @@ const handleEdit = (index: number, row: any) => {
 	form.originalName = row.originalName;
 	form.textureType = row.textureType;
 	form.exhibitionHallId = row.exhibitionHallId;
-	form.storageId = row.storageId;
+	form.warehouseId = row.warehouseId;
+	form.containerId=row.containerId;
 	editVisible.value = true;
 	idx = index
 };
@@ -706,7 +713,8 @@ const handleDetails = (index: number, row: any) => {
 	view.originalName = row.originalName;
 	view.textureType = row.textureType;
 	view.exhibitionHallId = row.exhibitionHallId;
-	view.storageId = row.storageId;
+	view.warehouseId = row.warehouseId;
+	view.containerId=row.containerId;
 	viewVisible.value = true;
 };
 
@@ -745,7 +753,8 @@ const saveEdit = async () => {
 	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
 	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;
 	tableData.value[idx].exhibitionHallId = form.exhibitionHallId;
-	tableData.value[idx].storageId = form.storageId;
+	tableData.value[idx].warehouseId = form.warehouseId;
+	tableData.value[idx].containerId=form.containerId;
 	console.log(tableData.value);
 
 	// Update frontend table data
@@ -758,6 +767,17 @@ const closeView = () => {
 	viewVisible.value = false;                    //editVisible.value被用来控制编辑界面或对话框的显示与隐藏
 };
 
+const size = ref('')
+const iconStyle = computed(() => {
+	const marginMap = {
+		large: '8px',
+		default: '6px',
+		small: '4px',
+	}
+	return {
+		marginRight: marginMap.default,
+	}
+})
 
 // 文物种类下拉菜单的属性
 interface TypeSelectItem {
@@ -877,18 +897,6 @@ onMounted(() => {
 	toSelectEra.value = EraloadAll()
 })
 
-
-const size = ref('')
-const iconStyle = computed(() => {
-	const marginMap = {
-		large: '8px',
-		default: '6px',
-		small: '4px',
-	}
-	return {
-		marginRight: marginMap.default,
-	}
-})
 </script>
 
 <style scoped>
