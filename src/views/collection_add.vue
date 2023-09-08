@@ -40,37 +40,37 @@
 								藏品图片
 							</div>
 						</template>
-						<el-upload class="upload-demo" action="/foreignImage/upload" name="smfile"
-							:headers="{ Authorization: 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" :on-success="handleSuccess"
+
+						<!--el-upload class="upload-demo" Access-Control-Allow-action="/api/v2/upload"
+							:Access-Control-Allow-headers="{ 'Authorization': 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" 
+							:on-success="handleSuccess"
 							:on-error="handleError" :before-upload="beforeUpload">
+							<el-button size="small" type="primary">点击上传</el-button>
+						</el-upload-->
+						<!-- 显示已上传的图片 -->
+						<!--el-image v-if="form.collectionPhoto" class="CollectionImg" :src="form.collectionPhoto"
+							:z-index="10">
+						</el-image-->
+						<!--template #default="scope">
+							<el-image class="CollectionImg" :src="form.collectionPhoto" :z-index="10">
+							</el-image>
+						</template :on-preview="handlePreview"-->
+
+						<el-upload 
+						v-model:file-list="fileList"
+							class="upload-demo" 
+							multiple="false"
+							action="/foreignImage/upload" name="smfile"
+							:headers="{ Authorization: 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" :on-success="handleSuccess"
+							:on-error="handleError" :before-upload="beforeUpload" 
+    						:limit="1" :on-exceed="handleExceed">
 							<el-button size="small" type="primary">点击上传</el-button>
 						</el-upload>
 						<!-- 显示已上传的图片 -->
 						<el-image v-if="form.collectionPhoto" class="CollectionImg" :src="form.collectionPhoto"
-							:z-index="10">
+							:z-index="10" :height="10">
 						</el-image>
-						<!--el-input v-model="form.collectionPhoto"></el-input-->
-						<!--template #default="scope">
-							<el-image class="CollectionImg" :src="form.collectionPhoto" :z-index="10">
-							</el-image>
-						</template-->
-					</el-descriptions-item>
 
-					<!-- 藏品音频 改一个提交方式：从本地上传-->
-					<el-descriptions-item :span="2">
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Picture />
-								</el-icon>
-								藏品音频
-							</div>
-						</template>
-						<el-input v-model="form.collectionAudio"></el-input>
-						<!--template #default="scope">
-							<el-image class="CollectionImg" :src="form.collectionAudio" :z-index="10">
-							</el-image>
-						</template-->
 					</el-descriptions-item>
 
 					<!-- 名称 -->
@@ -83,7 +83,7 @@
 								名称
 							</div>
 						</template>
-						<el-input v-model="form.name"></el-input>
+						<el-input v-model="form.name" placeholder="请输入文物名称"></el-input>
 					</el-descriptions-item>
 					<!-- 文物原名 -->
 					<el-descriptions-item>
@@ -95,7 +95,7 @@
 								原名
 							</div>
 						</template>
-						<el-input v-model="form.originalName"></el-input>
+						<el-input v-model="form.originalName" placeholder="请输入文物原名"></el-input>
 					</el-descriptions-item>
 					<!-- 文物级别 select没写完-->
 					<el-descriptions-item>
@@ -107,8 +107,8 @@
 								文物级别
 							</div>
 						</template>
-						<el-autocomplete v-model="form.collectInfo.collectionLevel" :fetch-suggestions="eraQuerySearch"
-							clearable class="inline-input w-50" placeholder="请输入文物级别" @select="protectLevelSelect" />
+						<el-autocomplete v-model="form.collectInfo.collectionLevel" :fetch-suggestions="levelQuerySearch"
+							clearable class="inline-input w-50" placeholder="请选择文物级别" @select="levelSelect" />
 					</el-descriptions-item>
 					<!-- 文物类别 -->
 					<el-descriptions-item>
@@ -120,7 +120,8 @@
 								文物类别
 							</div>
 						</template>
-						<el-input v-model="form.collectionType"></el-input>
+						<el-autocomplete v-model="form.collectionType" :fetch-suggestions="typeQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的种类" @select="typeHandleSelect" />
 					</el-descriptions-item>
 					<!-- 质地 -->
 					<el-descriptions-item>
@@ -132,8 +133,8 @@
 								质地
 							</div>
 						</template>
-						<el-autocomplete v-model="form.textureType" :fetch-suggestions="typeQuerySearch" clearable
-							class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
+						<el-autocomplete v-model="form.textureType" :fetch-suggestions="textureQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的质地" @select="textureHandleSelect" />
 					</el-descriptions-item>
 					<!--年代 -->
 					<el-descriptions-item>
@@ -146,7 +147,7 @@
 							</div>
 						</template>
 						<el-autocomplete v-model="form.era" :fetch-suggestions="eraQuerySearch" clearable
-							class="inline-input w-50" placeholder="请输入文物的年代" @select="eraHandleSelect" />
+							class="inline-input w-50" placeholder="请选择文物的年代" @select="eraHandleSelect" />
 					</el-descriptions-item>
 					<!-- 地域 -->
 					<el-descriptions-item>
@@ -158,7 +159,7 @@
 								地域
 							</div>
 						</template>
-						<el-input v-model="form.area"></el-input>
+						<el-input v-model="form.area" placeholder="请输入文物的地域"></el-input>
 					</el-descriptions-item>
 					<!-- 来源 -->
 					<el-descriptions-item>
@@ -170,39 +171,10 @@
 								来源
 							</div>
 						</template>
-						<el-input v-model="form.collectInfo.source"></el-input>
+						<el-autocomplete v-model="form.collectInfo.source" :fetch-suggestions="sourceQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的来源" @select="sourceHandleSelect" />
 					</el-descriptions-item>
-					<!-- 保存状况 就是当前状况吗？-->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Collection />
-								</el-icon>
-								保存状况
-							</div>
-						</template>
-						<!-- <el-input v-model="form.storageInfo.currentStatus"></el-input> -->
-						<el-radio-group v-model="form.storageInfo.currentStatus">
-							<el-radio label="在展">在展</el-radio>
-							<el-radio label="在库">在库</el-radio>
-							<el-radio label="未鉴定">未鉴定</el-radio>
-						</el-radio-group>
-
-					</el-descriptions-item>
-
-					<!-- 完残程度 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Box />
-								</el-icon>
-								完残程度
-							</div>
-						</template>
-						<el-input v-model="form.completeness"></el-input>
-					</el-descriptions-item>
+					
 
 					<!-- 完残程度类别 -->
 					<el-descriptions-item>
@@ -214,8 +186,23 @@
 								完残程度类别
 							</div>
 						</template>
-						<el-input v-model="form.completenessType"></el-input>
+						<el-autocomplete v-model="form.completenessType" :fetch-suggestions="completenessTypeQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的完残程度类别" @select="completenessTypeHandleSelect" />
 					</el-descriptions-item>
+					
+					<!-- 完残程度 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Box />
+								</el-icon>
+								完残程度
+							</div>
+						</template>
+						<el-input v-model="form.completeness" placeholder="请输入文物的完残程度"></el-input>
+					</el-descriptions-item>
+
 
 					<!-- 尺寸 -->
 					<el-descriptions-item>
@@ -227,7 +214,7 @@
 								尺寸
 							</div>
 						</template>
-						<el-input v-model="form.dimensionInfo.dimension"></el-input>
+						<el-input v-model="form.dimensionInfo.dimension" placeholder="请输入文物的尺寸"></el-input>
 					</el-descriptions-item>
 
 					<!-- 尺寸单位 -->
@@ -240,7 +227,9 @@
 								尺寸单位
 							</div>
 						</template>
-						<el-input v-model="form.dimensionInfo.dimensionUnit"></el-input>
+						<el-autocomplete v-model="form.dimensionInfo.dimensionUnit" :fetch-suggestions="dimensionUnitQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的尺寸单位" @select="dimensionUnitHandleSelect" />
+
 					</el-descriptions-item>
 
 					<!-- 质量-->
@@ -253,7 +242,7 @@
 								质量
 							</div>
 						</template>
-						<el-input v-model="form.dimensionInfo.weight"></el-input>
+						<el-input v-model="form.dimensionInfo.weight" placeholder="请输入文物的质量"></el-input>
 					</el-descriptions-item>
 					<!-- 质量单位-->
 					<el-descriptions-item>
@@ -265,7 +254,9 @@
 								质量单位
 							</div>
 						</template>
-						<el-input v-model="form.dimensionInfo.weightUnit"></el-input>
+						<el-autocomplete v-model="form.dimensionInfo.weightUnit" :fetch-suggestions="weightUnitQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的质量单位" @select="weightUnitHandleSelect" />
+					
 					</el-descriptions-item>
 					<!-- 传统数量 -->
 					<el-descriptions-item>
@@ -277,7 +268,7 @@
 								传统数量
 							</div>
 						</template>
-						<el-input v-model="form.dimensionInfo.traditionalQuantity"></el-input>
+						<el-input v-model="form.dimensionInfo.traditionalQuantity" placeholder="请输入文物的实际数量"></el-input>
 					</el-descriptions-item>
 					<!-- 传统数量单位 -->
 					<el-descriptions-item>
@@ -289,7 +280,9 @@
 								传统数量单位
 							</div>
 						</template>
-						<el-input v-model="form.dimensionInfo.traditionalQuantityUnit"></el-input>
+						<el-autocomplete v-model="form.dimensionInfo.traditionalQuantityUnit" :fetch-suggestions="traditionalQuantityUnitQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的传统数量单位" @select="traditionalQuantityUnitHandleSelect" />
+					
 					</el-descriptions-item>
 
 					<!-- 实际数量 -->
@@ -302,7 +295,7 @@
 								实际数量
 							</div>
 						</template>
-						<el-input v-model="form.dimensionInfo.realQuantity"></el-input>
+						<el-input v-model="form.dimensionInfo.realQuantity" placeholder="请输入文物的实际数量"></el-input>
 					</el-descriptions-item>
 
 					<!-- 实际数量单位 -->
@@ -315,7 +308,9 @@
 								实际数量单位
 							</div>
 						</template>
-						<el-input v-model="form.dimensionInfo.realQuantityUnit"></el-input>
+						<el-autocomplete v-model="form.dimensionInfo.realQuantityUnit" :fetch-suggestions="realQuantityUnitQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的实际数量单位" @select="realQuantityUnitHandleSelect" />
+					
 					</el-descriptions-item>
 
 					<!-- 保护等级 -->
@@ -328,8 +323,8 @@
 								保护等级
 							</div>
 						</template>
-						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="eraQuerySearch"
-							clearable class="inline-input w-50" placeholder="请输入文物的保护等级" @select="protectLevelSelect" />
+						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="protectLevelQuerySearch"
+							clearable class="inline-input w-50" placeholder="请选择文物的保护等级" @select="protectLevelSelect" />
 					</el-descriptions-item>
 
 					<!-- 备注 -->
@@ -342,11 +337,67 @@
 								备注
 							</div>
 						</template>
-						<el-input v-model="form.remark"></el-input>
+						<el-input v-model="form.remark" placeholder="请输入备注"></el-input>
 					</el-descriptions-item>
 
+					<!-- 保存状况 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Collection />
+								</el-icon>
+								保存状况
+							</div>
+						</template>
+						<!-- <el-input v-model="form.storageInfo.currentStatus"></el-input> -->
+						
+						{{ form.storageInfo.currentStatus }}
 
-					<!-- 入藏时间 自动给生成？-->
+					</el-descriptions-item>
+					
+					<div>
+					<el-descriptions-item v-if="form.storageInfo.currentStatus==='在展' ">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Collection />
+								</el-icon>
+								展厅编号
+							</div>
+						</template>
+						<el-input v-model="form.exhibitionHallId"></el-input>
+
+					</el-descriptions-item>
+
+					<el-descriptions-item v-if="form.storageInfo.currentStatus==='在库' ">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Collection />
+								</el-icon>
+								仓库编号
+							</div>
+						</template>
+						<el-input v-model="form.warehouseId"></el-input>
+
+					</el-descriptions-item>
+
+					<el-descriptions-item v-if="form.storageInfo.currentStatus==='在库' ">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Collection />
+								</el-icon>
+								货架
+							</div>
+						</template>
+						<el-input v-model="form.containerId"></el-input>
+
+					</el-descriptions-item>
+				</div>
+
+					<!-- 入藏时间 自动生成 感觉没必要显示它了-->
 					<el-descriptions-item>
 						<template #label>
 							<div class="cell-item">
@@ -393,6 +444,38 @@ import axios from 'axios';
 import type { FormInstance, FormRules } from 'element-plus'
 
 
+async function upload(path) {
+  try {
+    const authToken = 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk';
+    const url = '/pic/api/v2/upload';
+
+    // 创建一个FormData对象，用于包含文件
+    const formData = new FormData();
+    formData.append('smfile', path);
+
+    // 设置请求头
+    const headers = new Headers({
+      'Authorization': `Bearer ${authToken}`
+    });
+
+    // 发起POST请求
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: formData
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(JSON.stringify(data, null, 4));
+    } else {
+      console.error(`HTTP Error: ${response.status} ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 
 let tmp = ({
 	location: "",
@@ -411,7 +494,6 @@ interface TableItem {
 	completenessType: string,  //完残程度类别：完、残、缺、失
 
 	collectionPhoto: string,   //图片
-	collectionAudio: string,   //音频
 
 	collectInfo: {             //收藏组
 		collectionId: number,  //ID
@@ -457,7 +539,6 @@ let newCollection: TableItem = {
 	completeness: "string",
 	completenessType: "string",
 	collectionPhoto: "string",
-	collectionAudio: "string",
 	collectInfo: {
 		collectionId: 99,
 		source: "string",
@@ -492,9 +573,9 @@ let newCollection: TableItem = {
 };
 
 const form = reactive({
-	collectionId: 777,
+	collectionId: null,
 	originalName: "",
-	name: "",
+	name: "未定",
 	collectionType: "",
 	era: "",
 	area: "",
@@ -502,37 +583,77 @@ const form = reactive({
 	completeness: "",
 	completenessType: "",
 	collectionPhoto: "",
-	collectionAudio: "",
 	collectInfo: {
-		collectionId: 777,
+		collectionId: null,
 		source: "",
-		collectMuseum: "苏州博物馆",
-		collectTime: "2023-09-03T00:00:00",//这里要么就是 yyyy-mm-ddT+时间(**:**:**)，要么就是只有日期yyyy-mm-dd
+		collectMuseum: "博数博物馆",
+		collectTime: "",//这里要么就是 yyyy-mm-ddT+时间(**:**:**)，要么就是只有日期yyyy-mm-dd
 		collectionLevel: ""
 	},
 	dimensionInfo: {
-		collectionId: 777,
+		collectionId: null,
 		dimension: "",
-		dimensionUnit: "",
+		dimensionUnit: "毫米",
 		weight: null,
-		weightUnit: "",
+		weightUnit: "克",
 		realQuantity: null,
-		realQuantityUnit: "",
+		realQuantityUnit: "件",
 		traditionalQuantity: null,
-		traditionalQuantityUnit: ""
+		traditionalQuantityUnit: "件"
 	},
 	storageInfo: {
-		collectionId: 777,
-		currentStatus: "",
+		collectionId: null,
+		currentStatus: "未鉴定",
 		protectionLevel: ""
 	},
 	exhibitionHallId: null,
 	warehouseId: null,
 	containerId: null,
-	identificationStaffName: "焦骜",
-	identificationComments: "string",
-	identificationDate: "2023-09-03T07:46:58",
+	identificationStaffName: null,
+	identificationComments: null,
+	identificationDate: null,
 	remark: ""
+
+	/*collectionId: 99,
+	originalName: "string",
+	name: "string",
+	collectionType: "12",
+	era: "string",
+	area: "string",
+	textureType: "string",
+	completeness: "string",
+	completenessType: "string",
+	collectionPhoto: "string",
+	collectInfo: {
+		collectionId: 99,
+		source: "string",
+		collectMuseum: "string",
+		collectTime: "2023-09-03T00:00:00",
+		collectionLevel: "string"
+	},
+	dimensionInfo: {
+		collectionId: 99,
+		dimension: "string",
+		dimensionUnit: "string",
+		weight: 0,
+		weightUnit: "string",
+		realQuantity: 0,
+		realQuantityUnit: "string",
+		traditionalQuantity: 0,
+		traditionalQuantityUnit: "string"
+	},
+	storageInfo: {
+		collectionId: 99,
+		currentStatus: "未鉴定",
+		protectionLevel: "string"
+	},
+	exhibitionHallId: null,
+	warehouseId: null,
+	containerId: null,
+	identificationStaffName: null,
+	identificationComments: null,
+	identificationDate: null,
+	remark: "string" */
 
 });
 
@@ -582,7 +703,14 @@ const rules = {
 const submitForm = async (newCollection: TableItem) => {
 	try {
 		console.log(newCollection);
-		const response = await axios.post('http://42.192.39.198:5000/api/Collections', newCollection);
+
+		const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiamlhb2FvIiwianRpIjoiNDZkNWU5MTAtZjg3Ny00YTM2LWJhMGEtMDFiNTgyZDE3ZGUzIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIkNvbGxlY3Rpb25NYW5hZ2VyIiwiQXJjaGFlb2xvZ2lzdCIsIkNvbGxlY3Rpb25SZXNlYXJjaGVyIiwiVXNlciIsIlN5c3RlbUFkbWluIiwiUHJvZHVjdEFkbWluIl0sImV4cCI6MTY5MzkzODk2OCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjAwIn0.-ApklH2AXId5CKfIyeQMGtNMnJcdtjNoccfu_Lhr_zk";
+
+		const headers = {
+			'Authorization': `Bearer ${token}`
+		};
+
+		const response = await axios.post('http://42.192.39.198:5000/api/Collections', newCollection, { headers });
 		ElMessage.success('数据上传成功');
 	} catch (error) {
 		ElMessage.error('数据上传失败');
@@ -611,7 +739,13 @@ const pageTotal = ref(0);
 //获取后端数据库的数据
 const fetchData = async () => {
 	try {
-		const response = await axios.get(' http://42.192.39.198:5000/api/Collections');
+		/*const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiamlhb2FvIiwianRpIjoiNDZkNWU5MTAtZjg3Ny00YTM2LWJhMGEtMDFiNTgyZDE3ZGUzIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIkNvbGxlY3Rpb25NYW5hZ2VyIiwiQXJjaGFlb2xvZ2lzdCIsIkNvbGxlY3Rpb25SZXNlYXJjaGVyIiwiVXNlciIsIlN5c3RlbUFkbWluIiwiUHJvZHVjdEFkbWluIl0sImV4cCI6MTY5MzkzODk2OCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjAwIn0.-ApklH2AXId5CKfIyeQMGtNMnJcdtjNoccfu_Lhr_zk";
+
+		const headers = {
+			'Authorization': `Bearer ${token}`
+		};*/
+
+		const response = await axios.get(' http://42.192.39.198:5000/api/Collections'/*, {headers}*/);
 		console.log(response.data);
 		console.log("数据库连接成功！");
 		return response.data;
@@ -637,13 +771,13 @@ interface TypeSelectItem {
 	value: string
 	index: number
 }
-const toSelect = ref<TypeSelectItem[]>([])
+const toSelectType = ref<TypeSelectItem[]>([])
 
 //搜索符合条件的选项
 const typeQuerySearch = (queryString: string, cb: any) => {
 	const results = queryString
-		? toSelect.value.filter(typeCreateFilter(queryString))
-		: toSelect.value
+		? toSelectType.value.filter(typeCreateFilter(queryString))
+		: toSelectType.value
 	cb(results)
 }
 const typeCreateFilter = (queryString: string) => {
@@ -696,22 +830,86 @@ const typeHandleSelect = (item: TypeSelectItem) => {
 	console.log(item)
 }
 
+onMounted(() => {
+	toSelectType.value = typeLoadAll()
+})
+
+interface protectLevelSelectItem {
+	value: string
+	index: number
+}
+const toSelectprotectLevel = ref<protectLevelSelectItem[]>([])
+
+//搜索符合条件的选项
+const protectLevelQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectprotectLevel.value.filter(protectLevelCreateFilter(queryString))
+		: toSelectprotectLevel.value
+	cb(results)
+}
+const protectLevelCreateFilter = (queryString: string) => {
+	return (restaurant: protectLevelSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
 
 //可选择的选项
 const protectLevelLoadAll = () => {
 	return [
 		{ value: '一级', index: 1 },
-		{ value: '两级', index: 2 },
+		{ value: '二级', index: 2 },
 		{ value: '三级', index: 3 },
 	]
 }
 //处理选择的项，比如说给一个东西赋值
-const protectLevelSelect = (item: EraSelectItem) => {
+const protectLevelSelect = (item: protectLevelSelectItem) => {
 	console.log(item)
 }
 
 onMounted(() => {
-	toSelect.value = typeLoadAll()
+	toSelectprotectLevel.value = protectLevelLoadAll()
+})
+
+
+
+interface levelSelectItem {
+	value: string
+	index: number
+}
+const toSelectlevel = ref<levelSelectItem[]>([])
+
+//搜索符合条件的选项
+const levelQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectlevel.value.filter(levelCreateFilter(queryString))
+		: toSelectlevel.value
+	cb(results)
+}
+const levelCreateFilter = (queryString: string) => {
+	return (restaurant: levelSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const levelLoadAll = () => {
+	return [
+		{ value: '一级', index: 1 },
+		{ value: '二级', index: 2 },
+		{ value: '三级', index: 3 },
+	]
+}
+//处理选择的项，比如说给一个东西赋值
+const levelSelect = (item: levelSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectlevel.value = levelLoadAll()
 })
 
 
@@ -759,6 +957,7 @@ const EraloadAll = () => {
 		{ value: '民国', index: 15 },
 	]
 }
+
 //处理选择的项，比如说给一个东西赋值
 const eraHandleSelect = (item: EraSelectItem) => {
 	console.log(item)
@@ -768,6 +967,301 @@ onMounted(() => {
 	toSelectEra.value = EraloadAll()
 })
 
+interface textureSelectItem {
+	value: string
+	index: number
+}
+const toSelecttexture = ref<textureSelectItem[]>([])
+
+//搜索符合条件的选项
+const textureQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelecttexture.value.filter(textureCreateFilter(queryString))
+		: toSelecttexture.value
+	cb(results)
+}
+const textureCreateFilter = (queryString: string) => {
+	return (restaurant: textureSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const textureloadAll = () => {
+	return [
+		{ value: '无机质类', index: 1 },
+		{ value: '有机质类', index: 2 },
+		{ value: '复合材料类', index: 3 },
+		{ value: '组合材料类', index: 4 },
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const textureHandleSelect = (item: textureSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelecttexture.value = textureloadAll()
+})
+
+interface weightUnitSelectItem {
+	value: string
+	index: number
+}
+const toSelectweightUnit = ref<weightUnitSelectItem[]>([])
+
+//搜索符合条件的选项
+const weightUnitQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectweightUnit.value.filter(weightUnitCreateFilter(queryString))
+		: toSelectweightUnit.value
+	cb(results)
+}
+const weightUnitCreateFilter = (queryString: string) => {
+	return (restaurant: weightUnitSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const weightUnitloadAll = () => {
+	return [
+		{ value: '克', index: 1 },
+		{ value: '千克', index: 2 },
+		{ value: '两', index: 3 },
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const weightUnitHandleSelect = (item: weightUnitSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectweightUnit.value = weightUnitloadAll()
+})
+
+
+interface sourceSelectItem {
+	value: string
+	index: number
+}
+const toSelectsource = ref<sourceSelectItem[]>([])
+
+//搜索符合条件的选项
+const sourceQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectsource.value.filter(sourceCreateFilter(queryString))
+		: toSelectsource.value
+	cb(results)
+}
+const sourceCreateFilter = (queryString: string) => {
+	return (restaurant: sourceSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const sourceloadAll = () => {
+	return [
+	{ value: '旧藏', index: 1 },
+  	{ value: '拨交', index: 2 },
+  	{ value: '移交', index: 3 },
+  	{ value: '交换', index: 4 },
+  	{ value: '拣选', index: 5 },
+  	{ value: '捐赠', index: 6 },
+  	{ value: '收购', index: 7 },
+  	{ value: '征集', index: 8 },
+  	{ value: '采集', index: 9 },
+  	{ value: '发掘', index: 10 },
+  	{ value: '寄存', index: 11 },
+  	{ value: '制作', index: 12 },
+  	{ value: '其他', index: 13 }
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const sourceHandleSelect = (item: sourceSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectsource.value = sourceloadAll()
+})
+
+interface completenessTypeSelectItem {
+	value: string
+	index: number
+}
+const toSelectcompletenessType = ref<completenessTypeSelectItem[]>([])
+
+//搜索符合条件的选项
+const completenessTypeQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectcompletenessType.value.filter(completenessTypeCreateFilter(queryString))
+		: toSelectcompletenessType.value
+	cb(results)
+}
+const completenessTypeCreateFilter = (queryString: string) => {
+	return (restaurant: completenessTypeSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const completenessTypeloadAll = () => {
+	return [
+	{ value: '完', index: 1 },
+  	{ value: '残', index: 2 },
+  	{ value: '缺', index: 3 },
+  	{ value: '失', index: 4 },
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const completenessTypeHandleSelect = (item: sourceSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectcompletenessType.value = completenessTypeloadAll()
+})
+
+interface traditionalQuantityUnitSelectItem {
+	value: string
+	index: number
+}
+const toSelecttraditionalQuantityUnit = ref<traditionalQuantityUnitSelectItem[]>([])
+
+//搜索符合条件的选项
+const traditionalQuantityUnitQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelecttraditionalQuantityUnit.value.filter(traditionalQuantityUnitCreateFilter(queryString))
+		: toSelecttraditionalQuantityUnit.value
+	cb(results)
+}
+const traditionalQuantityUnitCreateFilter = (queryString: string) => {
+	return (restaurant: traditionalQuantityUnitSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const traditionalQuantityUnitloadAll = () => {
+	return [
+    { value: '个', index: 1 },
+    { value: '副', index: 2 },
+    { value: '套', index: 3 },
+    { value: '对', index: 4 },
+    { value: '封', index: 5 },
+    { value: '只', index: 6 },
+    { value: '件', index: 7 }, //默认
+	{ value: '双', index: 8}
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const traditionalQuantityUnitHandleSelect = (item: sourceSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelecttraditionalQuantityUnit.value = traditionalQuantityUnitloadAll()
+})
+
+interface realQuantityUnitSelectItem {
+	value: string
+	index: number
+}
+const toSelectrealQuantityUnit = ref<realQuantityUnitSelectItem[]>([])
+
+//搜索符合条件的选项
+const realQuantityUnitQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectrealQuantityUnit.value.filter(realQuantityUnitCreateFilter(queryString))
+		: toSelectrealQuantityUnit.value
+	cb(results)
+}
+const realQuantityUnitCreateFilter = (queryString: string) => {
+	return (restaurant: realQuantityUnitSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const realQuantityUnitloadAll = () => {
+	return [
+    { value: '个', index: 1 },
+    { value: '副', index: 2 },
+    { value: '套', index: 3 },
+    { value: '对', index: 4 },
+    { value: '封', index: 5 },
+    { value: '只', index: 6 },
+    { value: '件', index: 7 }, //默认
+	{ value: '双', index: 8}
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const realQuantityUnitHandleSelect = (item: sourceSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectrealQuantityUnit.value = realQuantityUnitloadAll()
+})
+
+interface dimensionUnitSelectItem {
+	value: string
+	index: number
+}
+const toSelectdimensionUnit = ref<dimensionUnitSelectItem[]>([])
+
+//搜索符合条件的选项
+const dimensionUnitQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectdimensionUnit.value.filter(dimensionUnitCreateFilter(queryString))
+		: toSelectdimensionUnit.value
+	cb(results)
+}
+const dimensionUnitCreateFilter = (queryString: string) => {
+	return (restaurant: dimensionUnitSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const dimensionUnitloadAll = () => {
+	return [
+    { value: '毫米', index: 1 },//默认
+    { value: '厘米', index: 2 },
+    { value: '米', index: 3 },
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const dimensionUnitHandleSelect = (item: sourceSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectdimensionUnit.value = dimensionUnitloadAll()
+})
 
 // 查询操作
 const handleSearch = () => {
@@ -854,9 +1348,29 @@ const handleError = (err) => {
       console.error('上传失败', err);
 };
 const beforeUpload = (file) => {
-      // 在上传前可以执行一些操作，例如限制文件类型、大小等
+
       return true; // 返回true表示继续上传，返回false表示取消上传
 };
+
+import type { UploadProps, UploadUserFile } from 'element-plus'
+
+const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
+  console.log(uploadFile)
+}
+
+
+const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
+  ElMessage.warning(
+    `The limit is 1, you selected ${files.length} files this time, add up to ${
+      files.length + uploadFiles.length
+    } totally`
+  )
+}
+
+
+const fileList = ref<UploadUserFile[]>([
+  
+])
 
 </script>
 
