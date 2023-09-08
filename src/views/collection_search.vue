@@ -80,7 +80,6 @@
 					<el-select v-model="form.storageInfo.currentStatus" placeholder="藏品状态" class="handle-select mr10">
 						<el-option key="1" label="在展" value="在展"></el-option>
 						<el-option key="2" label="在库" value="在库"></el-option>
-						<el-option key="3" label="修缮中" value="修缮中"></el-option>
 						<el-option key="4" label="未鉴定" value="未鉴定"></el-option>
 					</el-select>
 				</el-form-item>
