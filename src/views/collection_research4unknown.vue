@@ -709,18 +709,19 @@ const query = reactive({
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
+let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
+
 // 获取表格数据
 const getData = () => {
 	fetchData().then(res => {
-		console.log(res)
-		// tableData.value = res;
-		//只显示鉴定了的文物
-		tableData.value = res.filter(item => item.storageInfo.currentStatus == '未鉴定');
-		// console.log(tableData.value.length);
+		console.log(res);
+		//过滤掉“未鉴定”的文物
 
-		for (var i = 0; i < tableData.value.length; i++) {
+		filteredData.value = res.filter(item => item.storageInfo.currentStatus == '未鉴定');
+
+		for (var i = 0; i < filteredData.value.length; i++) {
 			//对每一个文物截取有效时间显示
-			var T = tableData.value[i].collectInfo.collectTime;
+			var T = filteredData.value[i].collectInfo.collectTime;
 			var dest = '';
 			console.log(T)
 			for (var j = 0; j < T.length; j++) {
@@ -728,10 +729,23 @@ const getData = () => {
 					break;
 				dest += T[j];
 			}
-			tableData.value[i].collectInfo.collectTime = dest;
+			filteredData.value[i].collectInfo.collectTime = dest;
 			//检查文物的名字是否已知，如果是已知的则直接显示，如果是未知的就显示
 		}
 
+		filteredData.value = filteredData.value.filter(item => 
+		String(item.collectionId).includes(query.value)||
+		item.collectionType.includes(query.value)||
+		item.era.includes(query.value)||
+		item.storageInfo.currentStatus.includes(query.value)||
+		item.collectInfo.collectTime.includes(query.value)
+		);
+
+
+		tableData.value=filteredData.value;
+		console.log(tableData.value);
+
+		
 		// console.log(res[0].collectionId);
 		// pageTotal.value = res.data.pageTotal || 50;
 	});
