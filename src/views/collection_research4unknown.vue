@@ -3,8 +3,29 @@
 		<div class="container">
 			<!-- 查询的部分 -->
 			<div class="handle-box">
-				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch" v-permiss="15">搜索</el-button>
+				<el-input v-model="query.name" placeholder="文物名称" class="handle-input mr10"></el-input>
+				<!--显示一个输入框，用户可以输入名称进行搜索。v-model="query.name"将输入的值绑定到query.name变量上。-->
+				<el-input v-model="query.id" placeholder="文物ID" class="handle-input mr10"></el-input>
+				<br><br>
+				<el-select v-model="query.collectionType" placeholder="文物种类" class="handle-select mr10">
+					<el-option key="1" label="瓷器" value="瓷器"></el-option>
+					<el-option key="2" label="青铜器" value="青铜器"></el-option>
+				</el-select>
+				<el-select v-model="query.era" placeholder="文物年代" class="handle-select mr10">
+					<el-option key="1" label="唐代" value="唐代"></el-option>
+					<el-option key="2" label="清代" value="清代"></el-option>
+				</el-select>
+				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10">
+					<el-option key="1" label="在库" value="在库"></el-option>
+					<el-option key="2" label="在展" value="在展"></el-option>
+				</el-select>
+				<el-select v-model="query.excavation_site" placeholder="出土地" class="handle-select mr10">
+					<el-option key="1" label="三星堆" value="三星堆"></el-option>
+					<el-option key="2" label="北首岭遗址" value="北首岭遗址"></el-option>
+				</el-select>
+				<el-input v-model="query.excavation_date" placeholder="出土日期" class="handle-input mr11"></el-input>
+				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
+				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
@@ -53,33 +74,6 @@
 		<!-- 编辑的弹出框 -->
 		<el-dialog title="编辑" v-model="editVisible" width="60%">
 			<el-form label-width="70px">
-				<!-- 文物名称 -->
-				<!-- <el-form-item label="文物名称">
-					<el-input v-model="form.name"></el-input>
-				</el-form-item> -->
-				<!-- 通过模糊搜索来输入文物的种类 -->
-				<!-- <el-form-item label="文物种类">
-					<el-autocomplete v-model="form.collectionType" :fetch-suggestions="typeQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
-				</el-form-item>
-				<el-form-item label="文物年代">
-					<el-autocomplete v-model="form.era" :fetch-suggestions="eraQuerySearch" clearable
-						class="inline-input w-50" placeholder="请输入文物的年代" @select="eraHandleSelect" />
-				</el-form-item>
-				<el-form-item label="藏品状态">
-					<el-select v-model="form.storageInfo.currentStatus" placeholder="藏品状态" class="handle-select mr10">
-						<el-option key="1" label="在展" value="在展"></el-option>
-						<el-option key="2" label="在库" value="在库"></el-option>
-						<el-option key="3" label="修缮中" value="修缮中"></el-option>
-					</el-select>
-				</el-form-item> -->
-				<!-- <el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
-					<el-input v-if="form.storageInfo.currentStatus === '在展'" v-model="form.hall_name"
-						class="handle-input mr10"></el-input>
-				</el-form-item> -->
-				<!-- <el-form-item v-if="form.status === '在库'" label="库房名称">
-					<el-input v-if="form.status === '在库'" v-model="form.storage_name" class="handle-input mr10"></el-input>
-				</el-form-item> -->
 
 				<el-descriptions class="margin-top" :column="2" :size="size" border>
 					<!-- 收藏单位 -->
@@ -236,7 +230,16 @@
 							<el-radio :label="2">在库</el-radio>
 							<el-radio :label="3">未鉴定</el-radio>
 						</el-radio-group>
-
+						<div v-if="radio == 1">
+							<span>请输入展厅Id: </span><el-input v-model="form.exhibitionHallId" class="handle-input mr10"></el-input>
+						</div>
+						<div v-if="radio == 2">
+							<span>请输入库房Id: </span><el-input v-model="form.warehouseId" class="handle-input mr10"></el-input>
+						</div>
+						<div v-if="radio == 2">
+							<span>请输入货架Id: </span><el-input v-model="form.containerId"
+								class="handle-input mr10"></el-input>
+						</div>
 					</el-descriptions-item>
 					<!-- 完残程度 -->
 					<el-descriptions-item>
@@ -335,8 +338,8 @@
 							</div>
 						</template>
 						<!-- {{ form.identificationComments }} -->
-						<el-input v-model="form.identificationComments" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
-							placeholder="请输入鉴定意见" />
+						<el-input v-model="form.identificationComments" :autosize="{ minRows: 2, maxRows: 4 }"
+							type="textarea" placeholder="请输入鉴定意见" />
 						<div style="margin-top: 10px">鉴定人：{{ form.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
 							form.identificationDate }}</div>
 					</el-descriptions-item>
@@ -350,7 +353,8 @@
 								备注
 							</div>
 						</template>
-						{{ form.remark }}
+						<el-input v-model="form.remark" :autosize="{ minRows: 2, maxRows: 4 }"
+							type="textarea" placeholder="请输入备注" />
 					</el-descriptions-item>
 				</el-descriptions>
 			</el-form>
@@ -699,7 +703,11 @@ interface TableItem {
 		realQuantity: string;
 		traditionalQuantity: string;
 	},
-	identificationComments:string;
+	identificationComments: string;
+	exhibitionHallId: string;
+	warehouseId: string;
+	containerId: string;
+	remark: string;
 }
 //请求数据
 const query = reactive({
@@ -716,35 +724,19 @@ const query = reactive({
 	storageInfo: {
 		currentStatus: '',
 		protectionLevel: ''
-	},
-	value:''
+	}
 });
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
-let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
-
 // 获取表格数据
 const getData = () => {
 	fetchData().then(res => {
 		console.log(res)
-		console.log(res);
-		//过滤掉“未鉴定”的文物
-
-		filteredData.value = res.filter(item => item.storageInfo.currentStatus == '未鉴定');
-		console.log(query);
-		filteredData.value = filteredData.value.filter(item => 
-		String(item.collectionId).includes(query.value)||
-		item.textureType.includes(query.value)||
-		item.era.includes(query.value)||
-		item.storageInfo.currentStatus.includes(query.value)||
-		item.area.includes(query.value)||
-		item.collectInfo.collectTime.includes(query.value)
-		);
-
-
-		tableData.value=filteredData.value;
-		console.log(tableData.value);
+		// tableData.value = res;
+		//只显示鉴定了的文物
+		tableData.value = res.filter(item => item.storageInfo.currentStatus == '未鉴定');
+		// console.log(tableData.value.length);
 
 		for (var i = 0; i < tableData.value.length; i++) {
 			//对每一个文物截取有效时间显示
@@ -841,7 +833,10 @@ let form = reactive({
 		protectionLevel: ''
 	},
 	originalName: '',
-	textureType: ''
+	textureType: '',
+	exhibitionHallId: '',
+	warehouseId: '',
+	containerId: ''
 });
 //查看的内容
 let view = reactive({
@@ -884,9 +879,16 @@ let view = reactive({
 
 //处理编辑操作
 let idx: number = -1;
-
+//获取当前系统时间 
+let time: string = "";
 //打开编辑框
 const handleEdit = (index: number, row: any) => {
+	// 获取当前时间
+	const currentTime = new Date();
+
+	// 将时间格式化为你想要的格式（例如 "yyyy-MM-dd HH:mm:ss"）
+	time = currentTime.toLocaleString();
+
 	//将目前表格中的内容先同步到编辑框内
 	form.area = row.area;
 	form.collectInfo = {
@@ -913,7 +915,7 @@ const handleEdit = (index: number, row: any) => {
 	};
 	form.era = row.era;
 	form.identificationComments = row.identificationComments;
-	form.identificationDate = row.identificationDate;
+	form.identificationDate = time;
 	form.identificationStaffName = row.identificationStaffName;
 	form.name = row.name;
 	form.remark = row.remark;
@@ -994,13 +996,18 @@ const saveEdit = async () => {
 	tableData.value[idx].era = form.era;          //将修改的文物的朝代同步到表格当中
 	// tableData.value[idx].status = form.status;      //将修改的文物的状态同步到表格当中
 	// tableData.value[idx].hall_name = form.hall_name;      //将修改的文物的展厅名称同步到表格当中
-	if(radio.value==1)
+	if (radio.value == 1) {
 		tableData.value[idx].storageInfo.currentStatus = "在展";
-	else if(radio.value==2)
-		tableData.value[idx].storageInfo.currentStatus="在库";
-	else if(radio.value==3)
-	    tableData.value[idx].storageInfo.currentStatus="未鉴定";
-	radio.value=3;
+		tableData.value[idx].exhibitionHallId = form.exhibitionHallId;
+	}
+	else if (radio.value == 2) {
+		tableData.value[idx].storageInfo.currentStatus = "在库";
+		tableData.value[idx].warehouseId = form.warehouseId;
+		tableData.value[idx].containerId = form.containerId;
+	}
+	else if (radio.value == 3)
+		tableData.value[idx].storageInfo.currentStatus = "未鉴定";
+	radio.value = 3;
 
 	tableData.value[idx].storageInfo.protectionLevel = form.storageInfo.protectionLevel;
 	tableData.value[idx].textureType = form.textureType;
@@ -1011,7 +1018,8 @@ const saveEdit = async () => {
 	tableData.value[idx].dimensionInfo.weight = form.dimensionInfo.weight;
 	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
 	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;
-	tableData.value[idx].identificationComments=form.identificationComments
+	tableData.value[idx].identificationComments = form.identificationComments
+	tableData.value[idx].remark=form.remark
 	console.log(tableData.value);
 
 	// Update frontend table data
@@ -1229,4 +1237,5 @@ const iconStyle = computed(() => {
 	height: 130px;
 	margin: 10px;
 
-}</style>
+}
+</style>
