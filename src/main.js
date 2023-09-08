@@ -7,6 +7,8 @@ import router from './router/index.js'
 import { createPinia } from "pinia";
 import { useUserInfo } from './store/userInfo'
 import piniaPluginPersistedState from 'pinia-plugin-persistedstate'
+import '../theme/index.css'
+
 const app = createApp(App)
 app.use(router)
 const pinia = createPinia()
