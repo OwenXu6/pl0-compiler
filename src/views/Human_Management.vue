@@ -7,7 +7,7 @@
 				<el-button type="primary" :icon="Plus" @click="handlenew" v-permiss="16">新增</el-button>
 			</div>
 			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="staffId" label="ID" width="170" align="center"></el-table-column>
+				<el-table-column prop="staffId" label="职工ID" width="170" align="center"></el-table-column>
 				<el-table-column prop="staffName" label="姓名" width="110" align="center">
 					<template v-slot:default="scope">
     					<el-tooltip :content="scope.row.staffName" placement="top">
@@ -27,6 +27,7 @@
     						</el-tooltip>
   					</template>
 				</el-table-column>
+				<el-table-column prop="user.id" label="用户Id" width="120" align="center"></el-table-column>
 
 				<el-table-column label="操作" width="320" align="center">
 					<template #default="scope">
@@ -36,9 +37,9 @@
 						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
 							删除
 						</el-button>
-						<el-button text :icon="More"  @click="" v-permiss="15">
+						<!--<el-button text :icon="More"  @click="" v-permiss="15">
 							详细信息
-						</el-button>
+						</el-button>-->
 					</template>
 				</el-table-column>
 			</el-table>
@@ -94,12 +95,13 @@
 					<el-select v-model="form.workType" placeholder="请选择工作方向"  class="full-width-select">
 						<el-option label="大领导" value="大领导"></el-option>
 						<el-option label="全能神" value="全能神"></el-option>
-						<el-option label="藏品管理员" value="藏品管理员"></el-option>
+						<el-option label="藏品管理员" value="CollectionManager"></el-option>
 						<el-option label="库房管理员" value="库房管理员"></el-option>
-						<el-option label="系统管理员" value="系统管理员"></el-option>
+						<el-option label="系统管理员" value="SystemAdmin"></el-option>
 						<el-option label="导览人员" value="导览人员"></el-option>
-						<el-option label="考古人员" value="考古人员"></el-option>
+						<el-option label="考古人员" value="Archaeologist"></el-option>
 						<el-option label="安保人员" value="安保人员"></el-option>
+						<el-option label="藏品鉴定人员" value="CollectionResearcher"></el-option>
 						<el-option label="其他工作人员" value="其他工作人员"></el-option>
 					</el-select>
 				</el-form-item>
@@ -149,17 +151,21 @@
 					<el-select v-model="form.workType" placeholder="请选择工作方向"  class="full-width-select">
 						<el-option label="大领导" value="大领导"></el-option>
 						<el-option label="全能神" value="全能神"></el-option>
-						<el-option label="藏品管理员" value="藏品管理员"></el-option>
+						<el-option label="藏品管理员" value="CollectionManager"></el-option>
 						<el-option label="库房管理员" value="库房管理员"></el-option>
-						<el-option label="系统管理员" value="系统管理员"></el-option>
+						<el-option label="系统管理员" value="SystemAdmin"></el-option>
 						<el-option label="导览人员" value="导览人员"></el-option>
-						<el-option label="考古人员" value="考古人员"></el-option>
+						<el-option label="考古人员" value="Archaeologist"></el-option>
 						<el-option label="安保人员" value="安保人员"></el-option>
+						<el-option label="藏品鉴定人员" value="CollectionResearcher"></el-option>
 						<el-option label="其他工作人员" value="其他工作人员"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="工作内容">
 					<el-input v-model="form.job"></el-input>
+				</el-form-item>
+				<el-form-item label="用户Id">
+					<el-input v-model="form.userId"></el-input>
 				</el-form-item>
 			</el-form>
 			<template #footer>
@@ -200,9 +206,12 @@ interface TableItem {
 	staffSalary: number;
 	workType: string;
 	job: string;
+	user:{
+		id:string
+	}
 }
 
-let newEmployee: TableItem = {
+let newEmployee = reactive ({
 	staffId: '',
 	staffName: '',
 	staffAge: '',
@@ -210,8 +219,10 @@ let newEmployee: TableItem = {
 	staffPostRank: '',
 	staffSalary: 0,
 	workType: '',
-	job: ''
-	};
+	job: '',
+	userId: '',
+	userPassword:'',
+});
 
 const query = reactive({
 	value : '',
@@ -225,6 +236,7 @@ const query = reactive({
 	job: '',
 	pageIndex: 1,
 	pageSize: 10,
+	userId: '',
 	tempPageSize : ''
 });
 const HumantableData = ref<TableItem[]>([]);
@@ -281,8 +293,20 @@ const editData = async () => {
         ElMessage.error('数据修改失败');
     }
 };
+let admin = {
+  "userName": "jiaoao",
+  "password": "Bestjiaoao0!"
+}
 
-const uploadData = async (newEmployee:TableItem) => {
+const gettoken = async ()=>{
+	try{
+		const response = await axios.post('http://42.192.39.198:5000/api/Authenticate/Login/',admin);
+		return response.data.token;
+	}catch(error){
+		ElMessage.error('token获取失败');
+	}
+}
+const uploadData = async (newEmployee) => {
     try {
 		console.log(newEmployee);
         const response = await axios.post('http://42.192.39.198:5000/api/Staffs',newEmployee);
@@ -304,6 +328,18 @@ const deleteData = async () => {
     }
 };
 
+const grant = async(WorkType)=>{
+	// 设置请求头，包括 Bearer Token
+	let token = gettoken();
+	const config = {
+    headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+    	},
+    };
+	console.log(token);
+	const response = await axios.post('http://42.192.39.198:5000/api/Authenticate/Grant'+ WorkType, WorkType, config);
+}
 // 查询操作
 const handleSearch = () => {
 	query.pageIndex = 1;
@@ -375,6 +411,7 @@ let form = reactive({
 	staffSalary: '',
 	workType: '',
 	job: '',
+	userId: '',
 });
 let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
@@ -558,11 +595,21 @@ const saveEdit = () => {
 	pageData.value[idx].workType = form.workType;
 	pageData.value[idx].job = form.job; //应该要至后端修改之
 	editData();
-	
+	grant(form.workType);
 };
 
 
-
+const generatePassword = () =>{
+      const length = 10;
+      const charset =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~';
+      let retVal = '';
+      for (let i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+      }
+      let password = retVal;
+	  return password;
+};
 
 const savenew = () => {         //保存新增人员
 
@@ -614,7 +661,10 @@ const savenew = () => {         //保存新增人员
 	newEmployee.staffSalary = Number(form.staffSalary);
 	newEmployee.workType = form.workType;
 	newEmployee.job = form.job; 
+	newEmployee.userId = form.userId;
+	newEmployee.userPassword = generatePassword();
 	uploadData(newEmployee);             //上传
+	grant(form.workType);
 };
 </script>
 
