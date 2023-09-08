@@ -577,18 +577,18 @@ const form = reactive({
 	originalName: "",
 	name: "未定",
 	collectionType: "",
-	era: "",
+	era: "待鉴定",
 	area: "",
 	textureType: "",
 	completeness: "",
-	completenessType: "",
+	completenessType: "待鉴定",
 	collectionPhoto: "",
 	collectInfo: {
 		collectionId: null,
 		source: "",
 		collectMuseum: "博数博物馆",
 		collectTime: "",//这里要么就是 yyyy-mm-ddT+时间(**:**:**)，要么就是只有日期yyyy-mm-dd
-		collectionLevel: ""
+		collectionLevel: "待鉴定"
 	},
 	dimensionInfo: {
 		collectionId: null,
@@ -604,7 +604,7 @@ const form = reactive({
 	storageInfo: {
 		collectionId: null,
 		currentStatus: "未鉴定",
-		protectionLevel: ""
+		protectionLevel: "待鉴定"
 	},
 	exhibitionHallId: null,
 	warehouseId: null,
