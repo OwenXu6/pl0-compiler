@@ -23,8 +23,8 @@
 				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->
-			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="collectionId" label="ID" width="110" align="center"></el-table-column>
+			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header" >
+				<el-table-column prop="collectionId" label="ID" width="110" align="center" sortable></el-table-column>
 				<el-table-column prop="name" label="文物名称" align="center"></el-table-column>
 				<el-table-column label="文物图片(查看大图)" align="center">
 					<template #default="scope">
@@ -44,7 +44,7 @@
 						</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="collectInfo.collectTime" label="入藏时间" align="center"></el-table-column>
+				<el-table-column prop="collectInfo.collectTime" label="入藏时间" align="center" sortable></el-table-column>
 				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
 				<el-table-column label="操作" width="350" align="center">
 					<template #default="scope">
