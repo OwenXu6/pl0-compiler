@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useSidebarStore } from '../store/sidebar';
+import { useSidebarStore } from '@/store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
 import {ArrowDown, Expand, Fold} from "@element-plus/icons-vue";

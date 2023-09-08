@@ -7,8 +7,10 @@ import router from './router/index.js'
 import { createPinia } from "pinia";
 import { useUserInfo } from './store/userInfo'
 import piniaPluginPersistedState from 'pinia-plugin-persistedstate'
+import Print from 'vue3-print-nb'
 const app = createApp(App)
 app.use(router)
+app.use(Print)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedState)
 app.use(pinia)
