@@ -10,16 +10,15 @@ import {ElementPlusResolver} from "unplugin-vue-components/resolvers";
 const pathSrc = path.resolve(__dirname,'src')
 // https://vitejs.dev/config/
 export default defineConfig({
-  proxy:{
-    "/api":{
-      target:"https://42.192.39.198:5000",
-      changeOrigin:true,
+  server: {
+    proxy: {
+      "/foreignImage": {
+        target:"https://smms.app/api/v2",
+        rewrite:(path)=>path.replace(/^\/foreignImage/,""),
+        changeOrigin: true,
+
+      }
     },
-    "/foreignImage":{
-      target:"https://sm.ms/api/v2",
-      changeOrigin:true,
-      rewrite:(path)=>path.replace("/^\/foreignImage/","/api")
-    }
   },
   plugins: [
     vue(),
