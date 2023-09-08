@@ -21,8 +21,10 @@ app.directive('permiss', {
         let flag = false;
         if (!Array.isArray(binding.value) || binding.value.length === 0)
             flag = true
+
         if (Array.isArray(role)) {
             role.forEach(element => {
+
                 if (binding.value.includes(element)) {
                     flag = true;
                 }

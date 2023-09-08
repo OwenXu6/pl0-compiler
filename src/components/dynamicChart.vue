@@ -3,7 +3,6 @@
 </template>
  
 <script lang="ts">
-import { ta } from 'element-plus/es/locale';
 import { defineComponent, onMounted, getCurrentInstance, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
 

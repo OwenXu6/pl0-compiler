@@ -20,7 +20,7 @@ const login = () => {
         userInfo.updateToken(response.data.token)
         userInfo.updateExpireTime(Date(response.data.expiration))
         alert(response.data)
-        userInfo.updateRole(response.data)
+        userInfo.updateRole(response.data.role)
         router.push('/');
       })
       .catch(function (error) {
