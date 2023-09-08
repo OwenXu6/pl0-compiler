@@ -4,21 +4,24 @@ import {useBaseUrl} from "@/store/baseUrl";
 import axios from "axios";
 import {useUserInfo} from "@/store/userInfo";
 import {ref} from "vue";
+import router from '../router';
 
 const baseUrl = useBaseUrl().baseUrl
 const userInfo = useUserInfo()
 const user_name = ref("")
 const user_password = ref("")
 const login = () => {
-  const hashDigest = sha256(user_name.value + user_password.value)+'*'+'U';
   const LoginModel = {
     "userName":user_name.value,
-    "password":hashDigest
+    "password":user_password.value
   }
   axios.post(baseUrl + '/api/Authenticate/Login', LoginModel)
       .then(function (response) {
-        userInfo.updateToken(response.data.token())
-        alert(response)
+        userInfo.updateToken(response.data.token)
+        userInfo.updateExpireTime(Date(response.data.expiration))
+        alert(response.data)
+        userInfo.updateRole(response.data)
+        router.push('/');
       })
       .catch(function (error) {
         if (error.response) {
@@ -40,8 +43,7 @@ const login = () => {
 }
 </script>
 <template>
-  <p>{{baseUrl + '/api/Authenticate/Login'}}</p>
   <el-input v-model="user_name" placeholder="请输入用户名"/>
   <el-input v-model="user_password" placeholder="请输入密码"/>
-  <el-button @click="login"/>
+  <el-button @click="login">登录</el-button>
 </template>

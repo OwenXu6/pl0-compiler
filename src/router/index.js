@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../views/home.vue';
+import { useUserInfo } from '../store/userInfo';
 
 
 const routes = [
@@ -17,7 +18,7 @@ const routes = [
                 name: 'dashboard',
                 meta: {
                     title: '系统首页',
-                    permiss: '1',
+                    permiss: []
                 },
                 component: () => import('../views/dashboard.vue'),
             },
@@ -26,7 +27,7 @@ const routes = [
                 name: 'basetable7',
                 meta: {
                     title: '新增藏品',
-                    permiss: '2',
+                    permiss: [],
                 },
                 component: () => import('../views/collection_add.vue'),
             },
@@ -35,25 +36,16 @@ const routes = [
                 name: 'basetable1',
                 meta: {
                     title: '查询藏品',
-                    permiss: '2',
+                    permiss: [],
                 },
                 component: () => import('../views/collection_search.vue'),
-            },
-            {
-                path: '/collection_repair',
-                name: 'basetable2',
-                meta: {
-                    title: '修缮藏品',
-                    permiss: '2',
-                },
-                component: () => import('../views/collection_repair.vue'),
             },
             {
                 path: '/collection_research4unknown',
                 name: 'basetable8',
                 meta: {
                     title: '未知文物研究鉴定',
-                    permiss: '2',
+                    permiss: [],
                 },
                 component: () => import('../views/collection_research4unknown.vue'),
             },
@@ -62,7 +54,7 @@ const routes = [
                 name: 'basetable4',
                 meta: {
                     title: '人事管理',
-                    permiss: '3',
+                    permiss: [],
                 },
                 component: () => import('../views/Human_Management.vue'),
             },
@@ -167,19 +159,50 @@ const routes = [
         },
         component: () => import('../views/403.vue'),
     },
-    {
-        path:'',
-        name:'404',
-        meta:{
-            title:'您要找的页面不存在',
-        },
-        component: ()=>import('../views/404.vue')
-    }
+    // {
+    //     path:'',
+    //     name:'404',
+    //     meta:{
+    //         title:'您要找的页面不存在',
+    //     },
+    //     component: ()=>import('../views/404.vue')
+    // }
 ];
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes,
 });
-
+router.beforeEach((to,from,next)=>{
+    const userInfo = useUserInfo()
+    if(
+        (!userInfo.expireTime||
+        userInfo.expireTime<new Date())&&
+        to.path!=='/login'
+    )
+    {
+        next('/login');
+    }
+    else{
+        next()
+        let flag = false;
+        if (!Array.isArray(to.meta.permiss) || to.meta.permiss.length === 0)
+            flag = true;
+        if (Array.isArray(role)) {
+            role.forEach(element => {
+                if (to.meta.permiss.includes(element)) {
+                    flag = true;
+                }
+            });
+        }
+        if(flag === false)
+        {
+            next('/403');
+        }
+        else
+        {
+            next();
+        }
+    }
+})
 export default router;

@@ -60,34 +60,29 @@ const items = [
     icon: 'Odometer',
     index: '/dashboard',
     title: '系统首页',
-    permiss: '1',
+    permiss: []
   },
   {
     icon: 'Calendar',
     index: '1',
     title: '藏品管理',
-    permiss: '2',
+    permiss: ['CollectionManager',"SystemAdmin"],
     subs: [
       {
         index: '/collection_add',
         title: '新增藏品',
-        permiss: '21',
+        permiss: ['SystemAdmin'],
         subs: undefined
       },
       {
         index: '/collection_search',
         title: '查询藏品',
-        permiss: '22',
-      },
-      {
-        index: '/collection_repair',
-        title: '修缮藏品',
-        permiss: '23',
+        permiss: ['SystemAdmin'],
       },
       {
         index: '/collection_research4unknown',
         title: '未知文物研究鉴定',
-        permiss: '24',
+        permiss: ['SystemAdmin'],
       },
     ],
   },
@@ -95,28 +90,28 @@ const items = [
     icon: 'Calendar',
     index: '/Human_Management',
     title: '人事管理',
-    permiss: '3',
+    permiss: ['SystemAdmin','User'],
   },
   {
     icon: 'Calendar',
     index: '1',
     title: '展厅',
-    permiss: '4',
+    permiss: ['SystemAdmin'],
     subs: [
       {
         index: '/table',
         title: '展厅信息',
-        permiss: '41',
+        permiss: ['SystemAdmin'],
       },
       {
         index: '/collections',
         title: '展品详情',
-        permiss: '42',
+        permiss: ["SystemAdmin"],
       },
       {
         index: '/activity',
         title: '活动',
-        permiss: '43',
+        permiss: ["SystemAdmin"],
       },
     ],
   },
@@ -124,40 +119,40 @@ const items = [
     icon: 'Calendar',
     index: '/statistics',
     title: '统计信息',
-    permiss: '5',
+    permiss: ["SystemAdmin"],
   },
   {
     icon: 'Calendar',
     index: '/charts',
     title: '人流信息',
-    permiss: '6',
+    permiss: ["SystemAdmin"],
   },
   {
     icon: 'Calendar',
     index: '/charts',
     title: '系统设置',
-    permiss: '7',
+    permiss: ["SystemAdmin"],
   },
   {
     icon: "DocumentCopy",
     index: "2",
     title: "运营与合作",
-    permiss: "8",
+    permiss: ["SystemAdmin"],
     subs: [
       {
         index: '/feedbacks',
         title: '反馈信息管理',
-        permiss: '81',
+        permiss: ["SystemAdmin"],
       },
       {
         index: '/products',
         title: '文创产品信息管理',
-        permiss: '82',
+        permiss: ["SystemAdmin"],
       },
       {
         index: '/cooperations',
         title: '合作联名项目',
-        permiss: '83',
+        permiss: ["SystemAdmin"],
       },
     ]
   },
@@ -165,13 +160,13 @@ const items = [
     icon: "DocumentCopy",
     index: "/ccard",
     title: "藏品编目",
-    permiss: "9",
+    permiss: ["SystemAdmin"],
   },
   {
     icon: "DocumentCopy",
     index: "/demo",
     title: "demo",
-    permiss: "10",
+    permiss: ["SystemAdmin"],
   }
 ];
 
