@@ -54,7 +54,6 @@
 import {computed} from 'vue';
 import {useSidebarStore} from '../store/sidebar';
 import {useRoute} from 'vue-router';
-
 const items = [
   {
     icon: 'Odometer',
@@ -94,7 +93,7 @@ const items = [
   },
   {
     icon: 'Calendar',
-    index: '1',
+    index: '2',
     title: '展厅',
     permiss: ['SystemAdmin'],
     subs: [
@@ -135,7 +134,7 @@ const items = [
   },
   {
     icon: "DocumentCopy",
-    index: "2",
+    index: "3",
     title: "运营与合作",
     permiss: ["SystemAdmin"],
     subs: [

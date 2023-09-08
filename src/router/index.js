@@ -131,16 +131,6 @@ const routes = [
                 },
                 component:()=>import('../views/ccard.vue'),
             },
-            {
-                path: '/demo',
-                name: 'demo',
-                meta: {
-                    title: '图标实例',
-                    permiss: '13',
-                },
-                component: () => import('../views/demo.vue'),
-
-            },
         ],
     },
     {
