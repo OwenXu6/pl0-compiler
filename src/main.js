@@ -7,8 +7,11 @@ import router from './router/index.js'
 import { createPinia } from "pinia";
 import { useUserInfo } from './store/userInfo'
 import piniaPluginPersistedState from 'pinia-plugin-persistedstate'
+
 import Print from 'vue3-print-nb'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import '../theme/index.css'
+
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)

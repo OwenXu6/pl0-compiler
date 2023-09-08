@@ -15,6 +15,17 @@
 		<div class="header-right">
 			<!-- 用户中心 -->
 			<div class="header-user-con">
+				<!-- 消息中心 -->
+				<div class="btn-bell" @click="router.push('/tabs')">
+					<el-tooltip
+						effect="dark"
+						:content="message ? `有${message}条未读消息` : `消息中心`"
+						placement="bottom"
+					>
+						<i class="el-icon-lx-notice"></i>
+					</el-tooltip>
+					<span class="btn-bell-badge" v-if="message"></span>
+				</div>
 				<!-- 用户头像 -->
 				<el-avatar class="user-avator" :size="30" :src="imgurl" />
 				<!-- 用户名下拉菜单 -->
@@ -46,8 +57,6 @@ import { onMounted } from 'vue';
 import { useSidebarStore } from '@/store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
-import {ArrowDown, Expand, Fold} from "@element-plus/icons-vue";
-import {useUserInfo} from "@/store/userInfo";
 
 const username: string | null = localStorage.getItem('ms_username');
 // 未读消息数量
@@ -69,8 +78,7 @@ onMounted(() => {
 const router = useRouter();
 const handleCommand = (command: string) => {
 	if (command == 'loginout') {
-		const userInfo = useUserInfo()
-    userInfo.updateExpireTime(new Date(0))
+		localStorage.removeItem('ms_username');
 		router.push('/login');
 	} else if (command == 'user') {
 		router.push('/user');
@@ -85,6 +93,7 @@ const handleCommand = (command: string) => {
 	height: 70px;
 	font-size: 22px;
 	color: #fff;
+	background-color: rgb(92, 94, 117);
 }
 .collapse-btn {
 	display: flex;
@@ -97,8 +106,12 @@ const handleCommand = (command: string) => {
 }
 .header .logo {
 	float: left;
+	/* text-align: center; */
 	width: 250px;
 	line-height: 70px;
+}
+.logo{
+	text-align: center;
 }
 .header-right {
 	float: right;

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-row gutter="20">
-			<el-col :span="8">
+			<!-- <el-col :span="8">
 				<el-card shadow="hover" class="mgb20" style=" height: 220px">
 					<div class="user-info">
 						<el-avatar :size="100" :src="imgurl" />
@@ -19,155 +19,107 @@
 						<span>深圳</span>
 					</div>
 				</el-card>
-			</el-col>
-			<el-col :span="16"><capacity :onSet="inAndOut.onSet"></capacity></el-col>
-				
+			</el-col> -->
+			<el-col :span="8"><onsitestatistics :onSet="IOInfo.inMuseumCount - IOInfo.outMuseumCount"></onsitestatistics></el-col>
+			<el-col :span="8"><ticketsstatistics :total-tickets="TicketsInfo.totalTickets" :sold-tickets="TicketsInfo.soldTickets"></ticketsstatistics></el-col>
 		</el-row>
-			<!-- <el-col :span="16"> -->
-				<!-- <el-row :gutter="20" class="mgb20">
-					<el-col :span="8">
-						<el-card shadow="hover" :body-style="{ padding: '0px' }">
-							<div class="grid-content grid-con-1">
-								<el-icon class="grid-con-icon">
-									<User />
-								</el-icon>
-								<div class="grid-cont-right">
-									<div class="grid-num">{{ inAndOut.inData - inAndOut.outData }}/ {{ inAndOut.maxPeople }}
-									</div>
-									<div>在馆人数</div>
-								</div>
-							</div>
-						</el-card>
-					</el-col>
-					<el-col :span="8">
-						<el-card shadow="hover" :body-style="{ padding: '0px' }">
-							<div class="grid-content grid-con-2">
-								<el-icon class="grid-con-icon">
-									<ChatDotRound />
-								</el-icon>
-								<div class="grid-cont-right">
-									<div class="grid-num">{{ inAndOut.inData }}</div>
-									<div>进馆人数</div>
-								</div>
-							</div>
-						</el-card>
-					</el-col>
-					<el-col :span="8">
-						<el-card shadow="hover" :body-style="{ padding: '0px' }">
-							<div class="grid-content grid-con-3">
-								<el-icon class="grid-con-icon">
-									<Goods />
-								</el-icon>
-								<div class="grid-cont-right">
-									<div class="grid-num">{{ inAndOut.outData }}</div>
-									<div>出馆人数</div>
-								</div>
-							</div>
-						</el-card>
-					</el-col>
-				</el-row> -->
-				<!-- <el-card shadow="hover" style="height: 403px">
-					<template #header>
-						<div class="clearfix">
-							<span>待办事项</span>
-							<el-button style="float: right; padding: 3px 0" text @click="addTodo">添加</el-button>
-						</div>
-					</template>
-					<el-table :show-header="false" :data="todoList" style="width: 100%">
-						<el-table-column width="40">
-							<template #default="scope">
-								<el-checkbox v-model="scope.row.status"></el-checkbox>
-							</template>
-						</el-table-column>
-						<el-table-column>
-							<template #default="scope">
-								<div class="todo-item" :class="{
-									'todo-item-del': scope.row.status
-								}">
-									{{ scope.row.title }}
-								</div>
-							</template>
-						</el-table-column>
-					</el-table>
-				</el-card> -->
-			<!-- </el-col> -->	
+		<el-row><iostatistics :inData="IOInfo.inMuseumCount" :outData="IOInfo.outMuseumCount"></iostatistics></el-row>
 		
-		<el-row><dynamicChart :inData="inAndOut.inData" :outData="inAndOut.outData"></dynamicChart></el-row>
-
 	</div>
 </template>
 
 <script setup lang="ts" name="dashboard">
-import { reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import imgurl from '../assets/img/img.jpg';
 import { CENTERED_ALIGNMENT } from 'element-plus/es/components/virtual-list/src/defaults';
-import dynamicChart from '../components/dynamicChart.vue'
-import capacity from '../components/capacity.vue'
-
-const viewTodo = (todo) => {
-	// 在这里处理查看待办事项的逻辑，你可以在控制台输出待办事项内容
-	console.log('查看待办事项:', todo);
-};
-
+import iostatistics from '../components/IOStatistics.vue';
+import onsitestatistics from '../components/OnSiteStatistics.vue';
+import ticketsstatistics from '../components/TicketStatistics.vue';
+import axios from 'axios';
 
 
 const name = localStorage.getItem('ms_username');
 const role: string = name === 'admin' ? '超级管理员' : '普通用户';
 
-const inAndOut = reactive({
-	inData: 0,
-	outData: 0,
-	onSet:0,
-});
-let inCount = 0;
-let outCount = 0;
-const stiIn = function () {
-	return 5 + Math.round(Math.random() * 5);
-};
-const stiOut = function () {
-	return Math.round(Math.random() * 5);
-};
 
-setInterval(() => {
-	inAndOut.inData = stiIn();
-	inAndOut.outData = stiOut();
-	inAndOut.onSet += inAndOut.inData - inAndOut.outData;
-}, 1000);
 
-const todoList = reactive([
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要写100行代码加几个bug吧',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: true
-	},
-	{
-		title: '今天要写100行代码加几个bug吧',
-		status: true
+const fetchData = async (date) => {
+	try {
+		const response = await axios.get('http://42.192.39.198:5000/api/IOStatistics/' + date);
+		//console.log(response.data); 
+		return response.data;
+	} catch (error) {
+		console.error(error);
 	}
-]);
+};
+const fetchTicketsData = async (date)=> {
+	try{
+		const response = await axios.get('http://42.192.39.198:5000/api/TicketsStatistics/' + date);
+		return response.data;
+	}catch(error){
+		console.error(error);
+	}
+}
+/**
+ * IOStatistics
+ */
+interface IO {
+    date?: Date;
+    inMuseumCount?: number;
+    outMuseumCount?: number;
+}
+interface Ticktes{
+	date?:Date;
+	totalTickets?:number;
+	soldTickets?:number;
+}
+
+const IOInfo = ref<IO>({
+	date: new Date(),
+	inMuseumCount: 0,
+	outMuseumCount: 0,
+});
+
+const TicketsInfo = ref<Ticktes>({
+	date: new Date(),
+	totalTickets: 0,
+	soldTickets: 0,
+});  // 这个一定要命名为小驼峰！
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so add 1 and pad with leading zero if necessary
+  const day = String(currentDate.getDate()).padStart(2, '0');
+
+  const formattedDate = `${year}-${month}-${day}T00:00:00`;
+  return formattedDate;
+};
+
+
+const getData = async () => {
+  const currentDate = getCurrentDate();
+  fetchData(currentDate).then(res => {
+    IOInfo.value = res;
+	//console.log("人流信息", IOInfo.value);
+  });
+};
+const getTicketsData = ()=> {
+	const currentDate = getCurrentDate();
+	fetchTicketsData(currentDate).then(res => {
+		TicketsInfo.value = res;
+		//console.log("门票信息", TicketsInfo.value);
+	});
+};
+onMounted( () => {
+	setInterval(() => {
+	getTicketsData();
+	getData();
+	}, 3000) });
+
 </script>
 
 <style scoped>
 
-.todo-list-container {
-  max-height: 300px; /* 设置合适的高度 */
-  overflow-y: auto; /* 启用纵向滚动 */
-}
 
 .el-row {
 	margin-bottom: 20px;
