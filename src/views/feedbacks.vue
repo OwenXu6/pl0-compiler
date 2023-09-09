@@ -48,12 +48,12 @@
 						</el-table-column>
 						<el-table-column width="120">
 							<template #default="scope">
-								<el-button type="danger" @click="handleDel(scope.$index)">删除</el-button>
+								<div style="display: inline-block;margin:10px;"><el-button type="danger" @click="handleDel(scope.$index)">删除</el-button></div>
 							</template>
 						</el-table-column>
 					</el-table>
 					<div class="handle-row">
-						<el-button type="danger">删除全部</el-button>
+						<div style="display: inline-block;margin:10px;"><el-button type="danger">删除全部</el-button></div>
 					</div>
 				</template>
 			</el-tab-pane>
@@ -70,8 +70,8 @@
 						<el-table-column width="160">
 							<template #default="scope">
 								<div class="button-group">
-									<el-button @click="handleRestore(scope.$index)">还原</el-button>
-									<el-button type="danger" @click="handleRecycleDelete(scope.$index)">删除</el-button>
+									<div style="display: inline-block;margin:10px;"><el-button @click="handleRestore(scope.$index)">还原</el-button></div>
+									<div style="display: inline-block;margin:10px;"><el-button type="danger" @click="handleRecycleDelete(scope.$index)">删除</el-button></div>
 								</div>
 							</template>
 						</el-table-column>
@@ -88,7 +88,7 @@
 						:style="{ width: '300px', height: '100px' }"></el-input>
 				</el-form-item>
 			</el-form>
-			<el-button @click="saveReply">保存</el-button>
+			<div style="display: inline-block;margin:10px;"><el-button @click="saveReply">保存</el-button></div>
 		</el-dialog>
 	</div>
 </template>
@@ -203,9 +203,12 @@ const handleReply = (index: number) => {
 const handleView = (index: number) => {
 	const feedback = state.unread[index];
 	ElMessageBox.alert(
-		`<div>用户ID: ${feedback.userId}</div><div>反馈内容: ${feedback.feedbackContent}</div>`,
+		`<div>
+      <div>用户ID: ${feedback.userId}</div>
+      <div>反馈内容: ${feedback.feedbackContent}</div>
+    </div>`,
 		'反馈详情',
-		{ dangerouslyUseHTMLString: true } // This is important to allow HTML
+		{ dangerouslyUseHTMLString: true,customClass: 'my-message-box' } // This is important to allow HTML
 	);
 }
 
@@ -286,4 +289,13 @@ const query = reactive({
 	display: flex;
 	gap: 8px;
 }
+
+.my-message-box {
+  /* 自定义样式 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 </style>
