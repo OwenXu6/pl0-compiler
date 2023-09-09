@@ -229,7 +229,7 @@ const saveReply = async () => {
 			if (item.replyContent) {
 				const data = {
 					feedbackID: item.feedbackID,
-					replyContent: item.replyContent,
+					
 					isReply: item.isReply,
 					userId: item.userId,
 					feedbackTitle: item.feedbackTitle,
