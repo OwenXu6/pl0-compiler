@@ -68,8 +68,8 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-				<div style="display: inline-block;margin:10px;"><el-button @click="editCreativeVisible = false">取 消</el-button></div>
-				<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
+	          <el-button @click="editCreativeVisible = false">取 消</el-button>
+	          <el-button type="primary" @click="saveEdit">确 定</el-button>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -95,8 +95,8 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-				<div style="display: inline-block;margin:10px;"><el-button @click="editCreativeVisible = false">取 消</el-button></div>
-				<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
+	          <el-button @click="editCreativeVisible = false">取 消</el-button>
+	          <el-button type="primary" @click="saveEdit">确 定</el-button>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -113,7 +113,7 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-				<div style="display: inline-block;margin:10px;"><el-button @click="viewVisible = false">关闭</el-button></div>
+	          <el-button @click="viewVisible = false">关闭</el-button>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -139,8 +139,8 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-				<div style="display: inline-block;margin:10px;"><el-button @click="addVisible = false">取 消</el-button></div>
-				<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveAdd">确 定</el-button></div>
+	          <el-button @click="addVisible = false">取 消</el-button>
+	          <el-button type="primary" @click="saveAdd">确 定</el-button>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -148,365 +148,368 @@
 	  </div>
 	</template>
 	  
-	<script setup lang="ts" productName="basetable">
-	import { ref, reactive } from 'vue';
-	import { ElMessage, ElMessageBox } from 'element-plus';
-	import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-	
-	import axios from 'axios'
-	
-	function getToken() {
-	  // 替换为获取token的逻辑
-	  return ("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiamlhb2FvIiwianRpIjoiOTg0ZGQwZTMtYTMyOC00NThhLWJlZDMtZjRhOTNjY2VkZjk1IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIlVzZXIiLCJTeXN0ZW1BZG1pbiIsIlByb2R1Y3RBZG1pbiJdLCJleHAiOjE2OTM5MDg5OTcsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMCIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIwMCJ9.RIFvf6s7rFB-cNCvLmq0MgbzreXoRjfdevzsWz7MqVY")
+<script setup lang="ts" productName="basetable">
+import { ref, reactive } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
+
+import axios from 'axios'
+import { useUserInfo } from '../store/userInfo';
+
+function getToken() {
+	// 替换为获取token的逻辑
+	const UserInfo = useUserInfo();
+	return UserInfo.userToken;
+
 	}
-	
-	// 创建一个具有默认头的Axios实例
-	const axiosInstance = axios.create({
-	  baseURL: 'http://42.192.39.198:5000/api',
-	});
-	
-	// 拦截器：将token添加到每个请求中
-	axiosInstance.interceptors.request.use((config) => {
-	  const token = getToken();
-	
-	  if (token) {
-	    if (config.headers) {
-	      config.headers.Authorization = `Bearer ${token}`;
-	    } else {
-	      config.headers = {
-	        Authorization: `Bearer ${token}`,
-	      };
-	    }
-	  }
-	
-	  return config;
-	}, (error) => {
-	  return Promise.reject(error);
-	});
-	
-	interface TableItem {
-	  productId: number;
-	  productName: string;
-	  price: number;
-	  monthlySale: number;
-	  isRelated: boolean; // 修改为boolean类型
+
+// 创建一个具有默认头的Axios实例
+const axiosInstance = axios.create({
+	baseURL: 'http://42.192.39.198:5000/api',
+});
+
+// 拦截器：将token添加到每个请求中
+axiosInstance.interceptors.request.use((config) => {
+	const token = getToken();
+
+	if (token) {
+		if (config.headers) {
+			config.headers.Authorization = `Bearer ${token}`;
+		} else {
+			config.headers = {
+				Authorization: `Bearer ${token}`,
+			};
+		}
 	}
-	
-	const query = reactive({
-	  isRelated: 'all', // 默认值为 'all' 表示全部产品
-	  productName: '',
-	  pageIndex: 1,
-	  pageSize: 10
-	});
-	
-	const tableData = ref<TableItem[]>([]);
-	const pageTotal = ref(0);
-	
-	const selectedCategory = ref('all');
-	// 获取表格数据
-	const getAllProducts = async () => {
-	 try {
-	  const response = await axiosInstance.get('/Products');
-	  const data = response.data;
-	
-	  // 根据查询条件过滤产品列表
-	  const filteredData = data
-	   .filter((item: any) => {
-	    const isRelatedFilter = query.isRelated === 'all' ? true : item.isRelated === (query.isRelated === 'true');
-	    const productNameFilter = query.productName ? item.productName.includes(query.productName) : true;
-	    return isRelatedFilter && productNameFilter;
-	   })
-	   .map((item: any) => ({
-	    productId: item.productId,
-	    productName: item.productName,
-	    price: item.price,
-	    monthlySale: item.monthlySale,
-	    isRelated: item.isRelated,
-	   }));
-	
-	  // 计算总页数
-	  const totalItems = filteredData.length;
-	  pageTotal.value = totalItems;
-	
-	  // 根据当前页码和每页显示数量切片数据
-	  const startIndex = (query.pageIndex - 1) * query.pageSize;
-	  const endIndex = startIndex + query.pageSize;
-	  tableData.value = filteredData.slice(startIndex, endIndex);
-	 } catch (error) {
-	  console.error(error);
-	 }
-	};
-	
+
+	return config;
+}, (error) => {
+	return Promise.reject(error);
+});
+
+interface TableItem {
+	productId: number;
+	productName: string;
+	price: number;
+	monthlySale: number;
+	isRelated: boolean; // 修改为boolean类型
+}
+
+const query = reactive({
+	isRelated: 'all', // 默认值为 'all' 表示全部产品
+	productName: '',
+	pageIndex: 1,
+	pageSize: 10
+});
+
+const tableData = ref<TableItem[]>([]);
+const pageTotal = ref(0);
+
+const selectedCategory = ref('all');
+// 获取表格数据
+const getAllProducts = async () => {
+	try {
+		const response = await axiosInstance.get('/Products');
+		const data = response.data;
+
+		// 根据查询条件过滤产品列表
+		const filteredData = data
+			.filter((item: any) => {
+				const isRelatedFilter = query.isRelated === 'all' ? true : item.isRelated === (query.isRelated === 'true');
+				const productNameFilter = query.productName ? item.productName.includes(query.productName) : true;
+				return isRelatedFilter && productNameFilter;
+			})
+			.map((item: any) => ({
+				productId: item.productId,
+				productName: item.productName,
+				price: item.price,
+				monthlySale: item.monthlySale,
+				isRelated: item.isRelated,
+			}));
+
+		// 计算总页数
+		const totalItems = filteredData.length;
+		pageTotal.value = totalItems;
+
+		// 根据当前页码和每页显示数量切片数据
+		const startIndex = (query.pageIndex - 1) * query.pageSize;
+		const endIndex = startIndex + query.pageSize;
+		tableData.value = filteredData.slice(startIndex, endIndex);
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+getAllProducts();
+
+// 查询操作
+const handleSearch = () => {
+	query.pageIndex = 1;
 	getAllProducts();
-	
-	// 查询操作
-	const handleSearch = () => {
-	  query.pageIndex = 1;
-	  getAllProducts();
-	};
-	// 分页导航
-	const handlePageChange = (val: number) => {
-	 query.pageIndex = val;
-	 getAllProducts();
-	 query.pageIndex = val;
-	};
-	
-	// 上传普通商品信息
-	const uploadNormalData = async () => {
-	  try {
-	    const response = await axiosInstance.put(`/Products/${tableData.value[idx].productId}`, {
-	      productId: tableData.value[idx].productId,
-	      productName: form.productName,
-	      price: form.price,
-	      monthlySale: form.monthlySale,
-	      isRelated: false
-	    });
-	    ElMessage.success('数据上传成功');
-	  } catch (error) {
-	    ElMessage.error('数据上传失败');
-	  }
-	};
-	
-	// 上传文创产品信息
-	const uploadCreativeData = async () => {
-	  try {
-	    const response = await axiosInstance.put(`/CulturalProducts/${tableData.value[idx].productId}`, {
-	      designIdea: form.designIdea,
-	      relatedCollectionId: form.relatedCollectionId,
-	      relatedProduct: {
-	        productId: tableData.value[idx].productId,
-	        productName: form.productName,
-	        price: form.price,
-	        monthlySale: form.monthlySale,
-	        isRelated: true
-	      }
-	    });
-	    ElMessage.success('数据上传成功');
-	  } catch (error) {
-	    ElMessage.error('数据上传失败');
-	  }
-	};
-	
-	const viewVisible = ref(false);
-	let viewForm = reactive({
-	  relatedCollectionId: 0,
-	  designIdea: '',
-	  isRelated: 0
-	});
-	const viewCreativeProduct = async (index: number) => {
-	  if (tableData.value[index].isRelated) {
-	    try {
-	      const productId = tableData.value[index].productId;
-	      const response = await axiosInstance.get(`/CulturalProducts/${productId}`);
-	      const data = response.data;
-	      viewForm.relatedCollectionId = data.relatedCollectionId || 0;
-	      viewForm.designIdea = data.designIdea || '';
-	      viewVisible.value = true;
-	    } catch (error) {
-	      console.error(error);
-	    }
-	  }
-	};
-	
-	// 删除操作
-	const handleDelete = (index: number) => {
-	  // 二次确认删除
-	  ElMessageBox.confirm('确定要删除吗？', '提示', {
-	    type: 'warning'
-	  })
-	    .then(() => {
-	      ElMessage.success('删除成功');
-	      // 在这里调用 saveDelete 并传递要删除的数据索引
-	      saveDelete(index);
-	      tableData.value.splice(index, 1);
-	    })
-	    .catch(() => { });
-	};
-	
-	const saveDelete = async (index: number) => {
-	  try {
-	    const deletedItemId = tableData.value[index].productId;
-	    await axiosInstance.delete(`/Products/${deletedItemId}`);
-	    ElMessage.success('数据删除成功');
-	  } catch (error) {
-	    ElMessage.error('数据删除失败');
-	  }
-	};
-	
-	// 表格编辑时弹窗和保存
-	const editNormalVisible = ref(false);
-	const editCreativeVisible = ref(false);
-	let form = reactive({
-	  productName: '',
-	  price: 0,
-	  monthlySale: 0,
-	  designIdea: '',
-	  isRelated: false,
-	  relatedCollectionId: 0
-	});
-	let idx: number = -1;
-	// 编辑普通商品
-	const handleEditNormal = (index: number, row: any) => {
-	  idx = index;
-	  form.productName = row.productName;
-	  form.price = row.price;
-	  form.monthlySale = row.monthlySale;
-	  form.isRelated = false;
-	  editNormalVisible.value = true; // 打开编辑普通商品的弹出框
-	};
-	
-	// 编辑文创产品
-	const handleEditCreative = async (index: number, row: any) => {
-	  idx = index;
-	  form.productName = row.productName;
-	  form.price = row.price;
-	  form.monthlySale = row.monthlySale;
-	  form.isRelated = row.isRelated;
-	  form.relatedCollectionId = row.relatedCollectionId || 0;
-	
-	  if (form.isRelated) {
-	    try {
-	      // 获取文创产品的信息
-	      const productId = row.productId;
-	      const response = await axiosInstance.get(`/CulturalProducts/${productId}`);
-	      const data = response.data;
-	
-	      // 填充文创产品的信息到编辑表单
-	      form.designIdea = data.designIdea || '';
-	      form.relatedCollectionId = data.relatedCollectionId || 0;
-	      editCreativeVisible.value = true; // 打开编辑文创产品的弹出框
-	    } catch (error) {
-	      console.error(error);
-	      // 处理错误情况
-	    }
-	  }
-	};
-	
-	// 保存编辑
-	const saveEdit = () => {
-	  if (form.isRelated) {
-	    // 编辑文创产品信息
-	    uploadCreativeData();
-	    editCreativeVisible.value = false;
-	  } else {
-	    // 编辑普通商品信息
-	    uploadNormalData();
-	    editNormalVisible.value = false;
-	  }
-	
-	  ElMessage.success(`修改成功`);
-	  getAllProducts();
-	
-	};
-	
-	// 新增弹窗和保存
-	const addVisible = ref(false);
-	let addForm = reactive({
-	  productName: '',
-	  price: 0,
-	  monthlySale: 0,
-	  designIdea: '',
-	  isRelated: false, // 默认选择非文创产品
-	  relatedCollectionId: 0
-	});
-	
-	const resetAddForm = () => {
-	  // 重置新增表单的属性为初始状态
-	  addForm.productName = '';
-	  addForm.price = 0;
-	  addForm.monthlySale = 0;
-	  addForm.designIdea = '';
-	  addForm.isRelated = false;
-	  addForm.relatedCollectionId = 0;
-	};
-	
-	const handleAddNormal = () => {
-	  resetAddForm(); // 在点击新增普通商品时调用恢复函数
-	  addForm.isRelated = false;
-	  addVisible.value = true;
-	};
-	
-	const handleAddCreative = () => {
-	  resetAddForm(); // 在点击新增文创产品时调用恢复函数
-	  addForm.isRelated = true;
-	  addVisible.value = true;
-	};
-	
-	// 保存新增数据
-	const saveAdd = async () => {
-	  addVisible.value = false;
-	
-	  if (addForm.isRelated) {
-	    // 新增文创产品
-	    try {
-	      const response = await axiosInstance.post('/CulturalProducts/', {
-	        designIdea: addForm.designIdea,
-	        relatedCollectionId: addForm.relatedCollectionId,
-	        relatedProduct: {
-	          productId: tableData.value.length + 1,
-	          productName: addForm.productName,
-	          price: addForm.price,
-	          monthlySale: addForm.monthlySale,
-	          isRelated: true
-	        }
-	      });
-	      ElMessage.success('新增文创产品成功');
-	      // 刷新文创产品数据或其他操作
-	    } catch (error) {
-	      ElMessage.error('新增文创产品失败');
-	    }
-	  } else {
-	    // 新增普通商品
-	    try {
-	      const response = await axiosInstance.post('/Products/', {
-	        productId: tableData.value.length + 1,
-	        productName: addForm.productName,
-	        price: addForm.price,
-	        monthlySale: addForm.monthlySale,
-	        isRelated: false
-	      });
-	      ElMessage.success('新增普通商品成功');
-	      // 刷新普通商品数据或其他操作
-	    } catch (error) {
-	      ElMessage.error('新增普通商品失败');
-	    }
-	  }
-	  getAllProducts();
-	};
-	
-	</script>
+};
+// 分页导航
+const handlePageChange = (val: number) => {
+	query.pageIndex = val;
+	getAllProducts();
+	query.pageIndex = val;
+};
+
+// 上传普通商品信息
+const uploadNormalData = async () => {
+	try {
+		const response = await axiosInstance.put(`/Products/${tableData.value[idx].productId}`, {
+			productId: tableData.value[idx].productId,
+			productName: form.productName,
+			price: form.price,
+			monthlySale: form.monthlySale,
+			isRelated: false
+		});
+		ElMessage.success('数据上传成功');
+	} catch (error) {
+		ElMessage.error('数据上传失败');
+	}
+};
+
+// 上传文创产品信息
+const uploadCreativeData = async () => {
+	try {
+		const response = await axiosInstance.put(`/CulturalProducts/${tableData.value[idx].productId}`, {
+			designIdea: form.designIdea,
+			relatedCollectionId: form.relatedCollectionId,
+			relatedProduct: {
+				productId: tableData.value[idx].productId,
+				productName: form.productName,
+				price: form.price,
+				monthlySale: form.monthlySale,
+				isRelated: true
+			}
+		});
+		ElMessage.success('数据上传成功');
+	} catch (error) {
+		ElMessage.error('数据上传失败');
+	}
+};
+
+const viewVisible = ref(false);
+let viewForm = reactive({
+	relatedCollectionId: 0,
+	designIdea: '',
+	isRelated: 0
+});
+const viewCreativeProduct = async (index: number) => {
+	if (tableData.value[index].isRelated) {
+		try {
+			const productId = tableData.value[index].productId;
+			const response = await axiosInstance.get(`/CulturalProducts/${productId}`);
+			const data = response.data;
+			viewForm.relatedCollectionId = data.relatedCollectionId || 0;
+			viewForm.designIdea = data.designIdea || '';
+			viewVisible.value = true;
+		} catch (error) {
+			console.error(error);
+		}
+	}
+};
+
+// 删除操作
+const handleDelete = (index: number) => {
+	// 二次确认删除
+	ElMessageBox.confirm('确定要删除吗？', '提示', {
+		type: 'warning'
+	})
+		.then(() => {
+			ElMessage.success('删除成功');
+			// 在这里调用 saveDelete 并传递要删除的数据索引
+			saveDelete(index);
+			tableData.value.splice(index, 1);
+		})
+		.catch(() => { });
+};
+
+const saveDelete = async (index: number) => {
+	try {
+		const deletedItemId = tableData.value[index].productId;
+		await axiosInstance.delete(`/Products/${deletedItemId}`);
+		ElMessage.success('数据删除成功');
+	} catch (error) {
+		ElMessage.error('数据删除失败');
+	}
+};
+
+// 表格编辑时弹窗和保存
+const editNormalVisible = ref(false);
+const editCreativeVisible = ref(false);
+let form = reactive({
+	productName: '',
+	price: 0,
+	monthlySale: 0,
+	designIdea: '',
+	isRelated: false,
+	relatedCollectionId: 0
+});
+let idx: number = -1;
+// 编辑普通商品
+const handleEditNormal = (index: number, row: any) => {
+	idx = index;
+	form.productName = row.productName;
+	form.price = row.price;
+	form.monthlySale = row.monthlySale;
+	form.isRelated = false;
+	editNormalVisible.value = true; // 打开编辑普通商品的弹出框
+};
+
+// 编辑文创产品
+const handleEditCreative = async (index: number, row: any) => {
+	idx = index;
+	form.productName = row.productName;
+	form.price = row.price;
+	form.monthlySale = row.monthlySale;
+	form.isRelated = row.isRelated;
+	form.relatedCollectionId = row.relatedCollectionId || 0;
+
+	if (form.isRelated) {
+		try {
+			// 获取文创产品的信息
+			const productId = row.productId;
+			const response = await axiosInstance.get(`/CulturalProducts/${productId}`);
+			const data = response.data;
+
+			// 填充文创产品的信息到编辑表单
+			form.designIdea = data.designIdea || '';
+			form.relatedCollectionId = data.relatedCollectionId || 0;
+			editCreativeVisible.value = true; // 打开编辑文创产品的弹出框
+		} catch (error) {
+			console.error(error);
+			// 处理错误情况
+		}
+	}
+};
+
+// 保存编辑
+const saveEdit = () => {
+	if (form.isRelated) {
+		// 编辑文创产品信息
+		uploadCreativeData();
+		editCreativeVisible.value = false;
+	} else {
+		// 编辑普通商品信息
+		uploadNormalData();
+		editNormalVisible.value = false;
+	}
+
+	ElMessage.success(`修改成功`);
+	getAllProducts();
+
+};
+
+// 新增弹窗和保存
+const addVisible = ref(false);
+let addForm = reactive({
+	productName: '',
+	price: 0,
+	monthlySale: 0,
+	designIdea: '',
+	isRelated: false, // 默认选择非文创产品
+	relatedCollectionId: 0
+});
+
+const resetAddForm = () => {
+	// 重置新增表单的属性为初始状态
+	addForm.productName = '';
+	addForm.price = 0;
+	addForm.monthlySale = 0;
+	addForm.designIdea = '';
+	addForm.isRelated = false;
+	addForm.relatedCollectionId = 0;
+};
+
+const handleAddNormal = () => {
+	resetAddForm(); // 在点击新增普通商品时调用恢复函数
+	addForm.isRelated = false;
+	addVisible.value = true;
+};
+
+const handleAddCreative = () => {
+	resetAddForm(); // 在点击新增文创产品时调用恢复函数
+	addForm.isRelated = true;
+	addVisible.value = true;
+};
+
+// 保存新增数据
+const saveAdd = async () => {
+	addVisible.value = false;
+
+	if (addForm.isRelated) {
+		// 新增文创产品
+		try {
+			const response = await axiosInstance.post('/CulturalProducts/', {
+				designIdea: addForm.designIdea,
+				relatedCollectionId: addForm.relatedCollectionId,
+				relatedProduct: {
+					productId: tableData.value.length + 1,
+					productName: addForm.productName,
+					price: addForm.price,
+					monthlySale: addForm.monthlySale,
+					isRelated: true
+				}
+			});
+			ElMessage.success('新增文创产品成功');
+			// 刷新文创产品数据或其他操作
+		} catch (error) {
+			ElMessage.error('新增文创产品失败');
+		}
+	} else {
+		// 新增普通商品
+		try {
+			const response = await axiosInstance.post('/Products/', {
+				productId: tableData.value.length + 1,
+				productName: addForm.productName,
+				price: addForm.price,
+				monthlySale: addForm.monthlySale,
+				isRelated: false
+			});
+			ElMessage.success('新增普通商品成功');
+			// 刷新普通商品数据或其他操作
+		} catch (error) {
+			ElMessage.error('新增普通商品失败');
+		}
+	}
+	getAllProducts();
+};
+
+</script>
 	  
-	<style scoped>
-	.handle-box {
-	  margin-bottom: 20px;
-	}
-	
-	.handle-select {
-	  width: 120px;
-	}
-	
-	.handle-input {
-	  width: 300px;
-	}
-	
-	.table {
-	  width: 100%;
-	  font-size: 14px;
-	}
-	
-	.red {
-	  color: #F56C6C;
-	}
-	
-	.mr10 {
-	  margin-right: 10px;
-	}
-	
-	.table-td-thumb {
-	  display: block;
-	  margin: auto;
-	  width: 40px;
-	  height: 40px;
-	}
-	</style>
+<style scoped>
+.handle-box {
+	margin-bottom: 20px;
+}
+
+.handle-select {
+	width: 120px;
+}
+
+.handle-input {
+	width: 300px;
+}
+
+.table {
+	width: 100%;
+	font-size: 14px;
+}
+
+.red {
+	color: #F56C6C;
+}
+
+.mr10 {
+	margin-right: 10px;
+}
+
+.table-td-thumb {
+	display: block;
+	margin: auto;
+	width: 40px;
+	height: 40px;
+}
+</style>
 	

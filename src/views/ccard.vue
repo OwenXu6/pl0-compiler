@@ -42,6 +42,9 @@
 </template>
 
 <script setup lang="ts">
+
+import { computed, ref, onMounted } from 'vue'
+import axios from 'axios'
 import { useRouter } from 'vue-router';
 import { useUserInfo } from '../store/userInfo';
 import { ref, reactive, computed } from 'vue';
@@ -49,6 +52,12 @@ import { ref, reactive, computed } from 'vue';
 import imgurl from '../assets/img/img.jpg';
 
 const router = useRouter();
+
+
+onMounted(() => {
+  const userInfo = useUserInfo();
+  console.log(userInfo.staffInfo);
+});
 const handleLogout = () => {
   const userInfo = useUserInfo();
   userInfo.updateStaffInfo(undefined);
