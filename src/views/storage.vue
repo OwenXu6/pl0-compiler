@@ -4,8 +4,8 @@
 			<div class="handle-box">
 				<el-input v-model="query.name" placeholder="库房名称" class="handle-input mr10"></el-input>
 				<el-input v-model="query.address" placeholder="库房地址" class="handle-input mr10"></el-input>
-				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
-				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Plus" @click="handleAdd">新增仓库</el-button></div>
+				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
+				<el-button type="primary" :icon="Plus" @click="handleAdd">新增仓库</el-button>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column type="expand">
@@ -48,7 +48,8 @@
 							<el-table-column prop="containerSize" label="货柜大小" />
 							<el-table-column label="操作" width="220" align="center">
 								<template #default="scope">
-									<el-button text :icon="Edit" @click="ctHandleEdit(props.$index, scope.$index, scope.row)">
+									<el-button text :icon="Edit"
+										@click="ctHandleEdit(props.$index, scope.$index, scope.row)" v-permiss="15">
 										编辑
 									</el-button>
 								</template>
@@ -67,10 +68,10 @@
 				<el-table-column prop="warehouseCapacity" label="库房容量"></el-table-column>
 				<el-table-column label="操作" width="220" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)">
+						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" >
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
 							删除
 						</el-button>
 					</template>
@@ -164,10 +165,46 @@ import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import axios from 'axios';
+import { useUserInfo } from "@/store/userInfo";
+
+function getToken() {
+	// 替换为获取token的逻辑
+	const UserInfo = useUserInfo();
+	return UserInfo.userToken;
+
+	}
+
+// 创建一个具有默认头的Axios实例
+const axiosInstance = axios.create({
+	baseURL: 'http://42.192.39.198:5000/api',
+});
+
+// 拦截器：将token添加到每个请求中
+axiosInstance.interceptors.request.use((config) => {
+	const token = getToken();
+
+	console.log(token);
+
+	if (token) {
+		if (config.headers) {
+			config.headers.Authorization = `Bearer ${token}`;
+		} else {
+			config.headers = {
+				Authorization: `Bearer ${token}`,
+			};
+		}
+	}
+
+	return config;
+}, (error) => {
+	return Promise.reject(error);
+});
 
 const fetchData = async () => {
 	try {
-		const response = await axios.get('http://42.192.39.198:5000/api/WareHouses');
+		const response = await axiosInstance.get('/WareHouses');
+		console.log("打印仓库信息");
+		console.log(response.data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -268,7 +305,7 @@ getData();
 const editData = async () => {
 	try {
 		console.log(idx, tableData.value[idx].warehouseId, tableData.value[idx]);
-		const response = await axios.put('http://42.192.39.198:5000/api/WareHouses/' + tableData.value[idx].warehouseId, tableData.value[idx]);
+		const response = await axiosInstance.put('/WareHouses/' + tableData.value[idx].warehouseId, tableData.value[idx]);
 		ElMessage.success('数据上传成功');
 	} catch (error) {
 		ElMessage.error('数据上传失败');
@@ -278,7 +315,7 @@ const editData = async () => {
 const uploadData = async () => {
 	try {
 		console.log(tableData.value[tableData.value.length - 1]);
-		const response = await axios.post('http://42.192.39.198:5000/api/WareHouses', tableData.value[tableData.value.length - 1]);
+		const response = await axiosInstance.post('/WareHouses', tableData.value[tableData.value.length - 1]);
 		ElMessage.success('数据上传成功');
 	} catch (error) {
 		ElMessage.error('数据上传失败');
@@ -288,7 +325,7 @@ const uploadData = async () => {
 const deleteData = async () => {
 	try {
 		console.log(idx, tableData.value[idx]);
-		const response = await axios.delete('http://42.192.39.198:5000/api/WareHouses/' + tableData.value[idx].warehouseId);
+		const response = await axiosInstance.delete('/WareHouses/' + tableData.value[idx].warehouseId);
 		ElMessage.success('删除成功');
 		ElMessage.success('数据上传成功');
 		getData();
