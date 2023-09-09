@@ -1,14 +1,16 @@
 <template>
-  <v-header />
-  <v-sidebar />
-  <div class="content-box" :class="{ 'content-collapse': sidebar.collapse }">
-    <v-tags></v-tags>
+  <Header />
+  <Sidebar />
+  <div class="content-box" :class="{ 'content-collapse': sidebarStatus.collapse }">
+    <Tags/>
     <div class="content">
       <router-view v-slot="{ Component }">
         <transition name="move" mode="out-in">
-          <keep-alive :include="tags.nameList">
-            <component :is="Component"></component>
-          </keep-alive>
+          <!--<keep-alive :include="tags.nameList">-->
+            <div :key="$route.path">
+              <component :is="Component"></component>
+            </div>
+          <!--</keep-alive>-->
         </transition>
       </router-view>
     </div>
@@ -17,10 +19,10 @@
 <script setup lang="ts">
 import { useSidebarStore } from '../store/sidebar';
 import { useTagsStore } from '../store/tags';
-import vHeader from '../components/header.vue';
-import vSidebar from '../components/sidebar.vue';
-import vTags from '../components/tags.vue';
+import Header from '../components/header.vue';
+import Sidebar from '../components/sidebar.vue';
+import Tags from '../components/tags.vue';
 
-const sidebar = useSidebarStore();
-const tags = useTagsStore();
+const sidebarStatus = useSidebarStore();
+const tagsStatus = useTagsStore();
 </script>

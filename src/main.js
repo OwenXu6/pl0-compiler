@@ -24,13 +24,13 @@ app.use(pinia)
 app.use(ElementPlus, {
     locale: zhCn
 })
-const role = useUserInfo().userRole
-app.directive('permiss', {
-    mounted(el, binding) {
+
+app.directive('permiss',
+    (el, binding) =>{
+        const role = useUserInfo().userRole
         let flag = false;
         if (!Array.isArray(binding.value) || binding.value.length === 0)
             flag = true
-        console.log(binding.value)
         if (Array.isArray(role)&&Array.isArray(binding.value)) {
             role.forEach(element => {
                 if (binding.value.includes(element)) {
@@ -38,10 +38,9 @@ app.directive('permiss', {
                 }
             });
         }
-        console.log(flag)
         if (flag === false) {
             el['hidden'] = true;
         }
     }
-})
+)
 app.mount("#app")

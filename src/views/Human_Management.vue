@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<div class="container" v-permiss = "3">
+		<div class="container">
 			<div class="handle-box">
 				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch" v-permiss="15">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="handlenew" v-permiss="16">新增</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Plus" @click="handlenew" v-permiss="16">新增</el-button></div>
 			</div>
 			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="staffId" label="职工ID" width="170" align="center"></el-table-column>
@@ -31,13 +31,13 @@
 
 				<el-table-column label="操作" width="320" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit"  @click="handleEdit(scope.$index, scope.row)" v-permiss="16">
+						<el-button text :icon="Edit"  @click="handleEdit(scope.$index, scope.row)" >
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)">
 							删除
 						</el-button>
-						<!--<el-button text :icon="More"  @click="" v-permiss="15">
+						<!--<el-button text :icon="More"  @click="" >
 							详细信息
 						</el-button>-->
 					</template>
@@ -111,8 +111,8 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click="editVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveEdit">确 定</el-button>
+					<div style="display: inline-block;margin:10px;"><el-button @click="editVisible = false">取 消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
 				</span>
 			</template>
 		</el-dialog>
@@ -170,8 +170,8 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click="newVisible = false">取 消</el-button>
-					<el-button type="primary" @click="savenew">确 定</el-button>
+					<div style="display: inline-block;margin:10px;"><el-button @click="newVisible = false">取 消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="savenew">确 定</el-button></div>
 				</span>
 			</template>
 		</el-dialog>
@@ -343,10 +343,30 @@ const grant = async(WorkType,userId)=>{
 	}
 	console.log(token);
 	console.log(WorkType,userId);
-	const response = await axios.post('http://42.192.39.198:5000/api/Authenticate/Grant'+ WorkType, username, config);
+	const response = await axios.post('http://42.192.39.198:5000/api/Authenticate/Grant/'+ WorkType, username, config);
 	}catch (error) {
         console.error("Error in grant:", error);
     }
+}
+const grantByAspNetUserPk = async(WorkType,userId)=>{
+  try{
+    // 设置请求头，包括 Bearer Token
+    let token = await gettoken();
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const username = {
+      "username" : userId,
+    }
+    console.log(token);
+    console.log(WorkType,userId);
+    const response = await axios.post('http://42.192.39.198:5000/api/Authenticate/GrantByAspNetUserPk/'+ WorkType, username, config);
+  }catch (error) {
+    console.error("Error in grant:", error);
+  }
 }
 // 查询操作
 const handleSearch = () => {
@@ -603,7 +623,7 @@ const saveEdit = () => {
 	pageData.value[idx].workType = form.workType;
 	pageData.value[idx].job = form.job; //应该要至后端修改之
 	editData();
-	grant(form.workType,pageData.value[idx].userId);     //需要真实的userId,这里只有aspUserId
+	grantByAspNetUserPk(form.workType,pageData.value[idx].userId);     //需要真实的userId,这里只有aspUserId
 };
 
 

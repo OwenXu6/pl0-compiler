@@ -378,6 +378,39 @@ import {
 import { useRouter, useRoute } from 'vue-router';// 导入useRouter
 import axios from 'axios'
 import * as echarts from 'echarts';
+import { useUserInfo } from '../store/userInfo';
+
+
+function getToken() {
+	// 替换为获取token的逻辑
+	const UserInfo = useUserInfo();
+	return UserInfo.userToken;
+
+	}
+
+// 创建一个具有默认头的Axios实例
+const axiosInstance = axios.create({
+	baseURL: 'http://42.192.39.198:5000/api',
+});
+
+// 拦截器：将token添加到每个请求中
+axiosInstance.interceptors.request.use((config) => {
+	const token = getToken();
+
+	if (token) {
+		if (config.headers) {
+			config.headers.Authorization = `Bearer ${token}`;
+		} else {
+			config.headers = {
+				Authorization: `Bearer ${token}`,
+			};
+		}
+	}
+
+	return config;
+}, (error) => {
+	return Promise.reject(error);
+});
 
 const hallId = ref(0); // 初始化 hallId 为 0，或者根据您的需求选择其他默认值
 let temperature:string="0";
@@ -409,7 +442,7 @@ const goToExhibitionHall = () => {
 //获取后端数据库的数据
 const fetchData = async () => {
 	try {
-		const response = await axios.get(' http://42.192.39.198:5000/api/ExhibitionHall');
+		const response = await axiosInstance.get('/ExhibitionHall');
 		console.log(response.data);
 		console.log("数据库连接成功！");
 		return response.data;
@@ -662,8 +695,6 @@ onMounted(async () => {
     // 使用 ECharts 初始化图表
     const myChart = echarts.init(chartDom);
 
-    // 获取展厅温度数据
-    await getData(); // 等待数据获取完成
 
     // ECharts 配置选项
     const option = {

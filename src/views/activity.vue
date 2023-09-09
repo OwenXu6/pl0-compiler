@@ -7,8 +7,8 @@
           placeholder="活动名称"
           class="handle-input mr10"
         ></el-input>
-        <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-        <el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
+        <div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button></div>
       </div>
       <el-table
         :data="tableData"
@@ -37,7 +37,6 @@
               text
               :icon="Edit"
               @click="handleEdit(scope.$index, scope.row)"
-              v-permiss="15"
             >
               编辑
             </el-button>
@@ -46,7 +45,7 @@
               :icon="Delete"
               class="red"
               @click="handleDelete(scope.$index)"
-              v-permiss="16"
+
             >
               删除
             </el-button>
@@ -125,8 +124,8 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="editVisible = false">取 消</el-button>
-          <el-button type="primary" @click="saveEdit">确 定</el-button>
+          <div style="display: inline-block;margin:10px;"><el-button @click="editVisible = false">取 消</el-button></div>
+          <div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
         </span>
       </template>
     </el-dialog>
@@ -202,8 +201,8 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="addVisible = false">取 消</el-button>
-          <el-button type="primary" @click="saveAdd">确 定</el-button>
+          <div style="display: inline-block;margin:10px;"><el-button @click="addVisible = false">取 消</el-button></div>
+          <div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveAdd">确 定</el-button></div>
         </span>
       </template>
     </el-dialog>

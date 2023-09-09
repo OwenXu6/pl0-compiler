@@ -16,7 +16,7 @@
 			<!-- 用户中心 -->
 			<div class="header-user-con">
 				<!-- 消息中心 -->
-				<!-- <div class="btn-bell" @click="router.push('/tabs')">
+				<div class="btn-bell" @click="router.push('/tabs')">
 					<el-tooltip
 						effect="dark"
 						:content="message ? `有${message}条未读消息` : `消息中心`"
@@ -25,19 +25,19 @@
 						<i class="el-icon-lx-notice"></i>
 					</el-tooltip>
 					<span class="btn-bell-badge" v-if="message"></span>
-				</div> -->
+				</div>
 				<!-- 用户头像 -->
 				<el-avatar class="user-avator" :size="30" :src="imgurl" />
 				<!-- 用户名下拉菜单 -->
-				<!-- <el-dropdown class="user-name" trigger="click" @command="handleCommand">
+				<el-dropdown class="user-name" trigger="click" @command="handleCommand">
 					<span class="el-dropdown-link">
 						{{ username }}
 						<el-icon class="el-icon--right">
 							<arrow-down />
 						</el-icon>
 					</span>
-					下拉菜单的内容 -->
-					<!-- <template #dropdown>
+					<!-- 下拉菜单的内容 -->
+					<template #dropdown>
 						<el-dropdown-menu>
 							<a href="https://github.com/Tj-jiaoao/DBMS_museum" target="_blank">
 								<el-dropdown-item>项目仓库</el-dropdown-item>
@@ -46,7 +46,7 @@
 							<el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
 						</el-dropdown-menu>
 					</template>
-				</el-dropdown> -->
+				</el-dropdown>
 			</div>
 		</div>
 	</div>
@@ -54,39 +54,11 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { ref, reactive, computed } from 'vue';
 import { useSidebarStore } from '@/store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
-import axios from 'axios'
 
-//获取后端数据库的数据
-const fetchData = async () => {
-	try {
-		const response = await axios.get(' http://42.192.39.198:5000/api/Authenticate/Login');
-		console.log(response.data);
-		console.log("数据库连接成功！");
-		return response.data;
-	} catch (error) {
-		console.error(error);
-	}
-};
-let username=ref('');
-const getData = () => {
-	fetchData().then(res => {
-
-		console.log(res);
-		//过滤掉“未鉴定”的文物
-		username=res.username;
-	});
-
-};
-
-getData();
-
-
-
-// const username: string | null = localStorage.getItem('ms_username');
+//const username: string | null = localStorage.getItem('ms_username');
 // 未读消息数量
 const message: number = 2;
 
