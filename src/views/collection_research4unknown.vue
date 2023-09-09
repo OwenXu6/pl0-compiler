@@ -1098,7 +1098,7 @@ const uploadData = async () => {
 	console.log(tableData.value[idx])
 	try {
 		
-		const response= await axiosInstance.put('/Collections' + tableData.value[idx].collectionId, tableData.value[idx]);
+		const response= await axiosInstance.put('/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
 		//const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
 		ElMessage.success('数据上传成功');
 		getData();
