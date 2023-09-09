@@ -41,21 +41,6 @@
 							</div>
 						</template>
 
-						<!--el-upload class="upload-demo" Access-Control-Allow-action="/api/v2/upload"
-							:Access-Control-Allow-headers="{ 'Authorization': 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" 
-							:on-success="handleSuccess"
-							:on-error="handleError" :before-upload="beforeUpload">
-							<el-button size="small" type="primary">点击上传</el-button>
-						</el-upload-->
-						<!-- 显示已上传的图片 -->
-						<!--el-image v-if="form.collectionPhoto" class="CollectionImg" :src="form.collectionPhoto"
-							:z-index="10">
-						</el-image-->
-						<!--template #default="scope">
-							<el-image class="CollectionImg" :src="form.collectionPhoto" :z-index="10">
-							</el-image>
-						</template :on-preview="handlePreview"-->
-
 						<el-upload v-model:file-list="fileList" class="upload-demo" multiple="false"
 							action="/foreignImage/upload" name="smfile"
 							:headers="{ Authorization: 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" :on-success="handleSuccess"

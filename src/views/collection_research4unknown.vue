@@ -891,7 +891,7 @@ const handlePageChange = (val: number) => {
 const saveDelete = async (index: number) => {
 	try {
 		const deletedItemId = tableData.value[index].collectionId;
-		await axios.delete(`http://42.192.39.198:5000/api/Collections/${deletedItemId}`);
+		await axiosInstance.delete(`http://42.192.39.198:5000/api/Collections/${deletedItemId}`);
 		ElMessage.success('数据删除成功');
 	} catch (error) {
 		ElMessage.error('数据删除失败');
