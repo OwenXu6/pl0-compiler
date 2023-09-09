@@ -4,7 +4,8 @@
 			<!-- 查询的部分 -->
 			<div class="handle-box">
 				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
-				<div style="display: inline-block;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
+				<div style="display: inline-block;"><el-button type="primary" :icon="Search"
+						@click="handleSearch">搜索</el-button></div>
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
@@ -425,8 +426,10 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<div style="display: inline-block;margin:10px;"><el-button type="danger" @click="editVisible = false">取 消</el-button></div>
-					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="danger" @click="editVisible = false">取
+							消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确
+							定</el-button></div>
 				</span>
 			</template>
 		</el-dialog>
@@ -730,7 +733,7 @@ function getToken() {
 	const UserInfo = useUserInfo();
 	return UserInfo.userToken;
 
-	}
+}
 
 // 创建一个具有默认头的Axios实例
 const axiosInstance = axios.create({
@@ -763,8 +766,8 @@ axiosInstance.interceptors.request.use((config) => {
 //获取后端数据库的数据
 const fetchData = async () => {
 	try {
-		
-		const response= await axiosInstance.get('/Collections');
+
+		const response = await axiosInstance.get('/Collections');
 		//const response = await axios.get(' http://42.192.39.198:5000/api/Collections');
 		console.log(response.data);
 		console.log("数据库连接成功！");
@@ -896,17 +899,17 @@ const saveDelete = async (index: number) => {
 };
 // 处理删除操作
 const handleDelete = (index: number) => {
-	// 二次确认删除
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning',customClass: 'my-message-box'
-	})
-		.then(() => {
-			ElMessage.success('删除成功');
-			// 在这里调用 saveDelete 并传递要删除的数据索引
-			saveDelete(index);
-			tableData.value.splice(index, 1);
-		})
-		.catch(() => { });
+	const result = window.confirm('确定要删除吗？');
+	if (result) {
+		// 用户点击了确定按钮
+		ElMessage.success('删除成功');
+		// 在这里调用 saveDelete 并传递要删除的数据索引
+		saveDelete(index);
+		tableData.value.splice(index, 1);
+	} else {
+		// 用户点击了取消按钮
+		// 可以在这里添加逻辑处理
+	}
 };
 
 // 表格编辑时弹窗和保存
@@ -1091,8 +1094,8 @@ const handleDetails = (index: number, row: any) => {
 const uploadData = async () => {
 	console.log(tableData.value[idx])
 	try {
-		
-		const response= await axiosInstance.put('/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
+
+		const response = await axiosInstance.put('/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
 		//const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
 		ElMessage.success('数据上传成功');
 		getData();
@@ -1128,7 +1131,7 @@ const saveEdit = async () => {
 		tableData.value[idx].storageInfo.currentStatus = "未鉴定";
 	else if (radio.value == 4)
 		tableData.value[idx].storageInfo.currentStatus = "修缮中";
-	
+
 	radio.value = 3;
 
 	tableData.value[idx].storageInfo.protectionLevel = form.storageInfo.protectionLevel;
@@ -1328,25 +1331,25 @@ const eraCreateFilter = (queryString: string) => {
 
 //可选择的选项
 const EraloadAll = () => {
-  return [
-    { value: '史前文明', index: 1 },
-    { value: '夏代', index: 2 },
-    { value: '商代', index: 3 },
-    { value: '周代', index: 4 },
-    { value: '春秋战国', index: 5 },
-    { value: '秦代', index: 6 },
-    { value: '汉代', index: 7 },
-    { value: '三国', index: 8 },
-    { value: '魏晋南北朝', index: 9 },
-    { value: '隋代', index: 10 },
-    { value: '唐代', index: 11 },
-    { value: '五代十国', index: 12 },
-    { value: '宋代', index: 13 },
-    { value: '元代', index: 14 },
-    { value: '明代', index: 15 },
-    { value: '清代', index: 16 },
-    { value: '民国', index: 17 },
-  ];
+	return [
+		{ value: '史前文明', index: 1 },
+		{ value: '夏代', index: 2 },
+		{ value: '商代', index: 3 },
+		{ value: '周代', index: 4 },
+		{ value: '春秋战国', index: 5 },
+		{ value: '秦代', index: 6 },
+		{ value: '汉代', index: 7 },
+		{ value: '三国', index: 8 },
+		{ value: '魏晋南北朝', index: 9 },
+		{ value: '隋代', index: 10 },
+		{ value: '唐代', index: 11 },
+		{ value: '五代十国', index: 12 },
+		{ value: '宋代', index: 13 },
+		{ value: '元代', index: 14 },
+		{ value: '明代', index: 15 },
+		{ value: '清代', index: 16 },
+		{ value: '民国', index: 17 },
+	];
 };
 
 //处理选择的项，比如说给一个东西赋值
@@ -1727,11 +1730,11 @@ const iconStyle = computed(() => {
 	margin: 10px;
 
 }
+
 .my-message-box {
-  /* 自定义样式 */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-</style>
+	/* 自定义样式 */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}</style>
