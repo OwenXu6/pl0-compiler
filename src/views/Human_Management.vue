@@ -83,11 +83,6 @@
           <el-select v-model="form.staffGender" placeholder="请选择性别" class="full-width-select">
             <el-option label="男" value="男"></el-option>
             <el-option label="女" value="女"></el-option>
-            <el-option label="双性人" value="双性人"></el-option>
-            <el-option label="跨性别男性" value="跨性别男性"></el-option>
-            <el-option label="跨性别女性" value="跨性别女性"></el-option>
-            <el-option label="非二元性别" value="非二元性别"></el-option>
-            <el-option label="性别流动" value="性别流动"></el-option>
             <el-option label="其他" value="其他"></el-option>
           </el-select>
         </el-form-item>
@@ -139,11 +134,6 @@
           <el-select v-model="form.staffGender" placeholder="请选择性别" class="full-width-select">
             <el-option label="男" value="男"></el-option>
             <el-option label="女" value="女"></el-option>
-            <el-option label="双性人" value="双性人"></el-option>
-            <el-option label="跨性别男性" value="跨性别男性"></el-option>
-            <el-option label="跨性别女性" value="跨性别女性"></el-option>
-            <el-option label="非二元性别" value="非二元性别"></el-option>
-            <el-option label="性别流动" value="性别流动"></el-option>
             <el-option label="其他" value="其他"></el-option>
           </el-select>
         </el-form-item>
@@ -426,7 +416,7 @@ const handleDelete = (index: number) => {
   // 二次确认删除
   idx = index;
   ElMessageBox.confirm('确定要删除吗？', '提示', {
-    type: 'warning'
+    type: 'warning',customClass: 'my-message-box'
   })
       .then(() => {
         deleteData();
@@ -647,7 +637,7 @@ const saveEdit = () => {
   pageData.value[idx].workType = form.workType;
   pageData.value[idx].job = form.job; //应该要至后端修改之
   editData();
-  grantByAspNetUserPk(form.workType, pageData.value[idx].aspNetUserPk);     //需要真实的userId,这里只有aspUserId
+  grantByAspNetUserPk(form.workType, pageData.value[idx].aspNetUserPk);    
 };
 
 
@@ -756,5 +746,12 @@ const savenew = () => {         //保存新增人员
 .full-width-select {
   width: 100%;
 }
-
+.my-message-box {
+  /* 自定义样式 */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+}
 </style>
