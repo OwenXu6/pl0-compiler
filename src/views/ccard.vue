@@ -1,6 +1,5 @@
 <template>
-
-  <div class="cardContainer" id="container">
+  <!-- <div class="cardContainer" id="container">
     
     <div class="ccard">
     <el-descriptions 
@@ -45,107 +44,132 @@
   </el-descriptions>
   </div>
   
-  </div>
+  </div> -->
+
+  <!-- 显示个人信息 -->
+  <el-card shadow="always" style=" height: 250px;">
+    <template #header>
+      <div class="card-header">
+        <span>个人信息</span>
+      </div>
+    </template>
+    <!-- 显示头像 -->
+    <el-col :span="4">
+      <el-image style="width: 150px; height: 150px;border-radius: 75px;" :src="imgurl" />
+    </el-col>
+    <!-- 显示个人信息 -->
+    <el-col :span="4">
+      <div style="margin:25px;">用户名：deidei</div>
+      <div style="margin:25px;">性别：男</div>
+    </el-col>
+    <!-- 显示个人信息 -->
+    <el-col :span="4">
+      <div style="margin:25px;">年龄：22</div>
+      <div style="margin:25px;">职级：藏品管理员</div>
+    </el-col>
+  </el-card>
+
+  <!-- 退出按钮 -->
   <div style="text-align: center; margin: 10px;">
-    <el-button type="primary" @click="handleLogout">退出登录</el-button>
+    <el-button type="danger" @click="handleLogout">退出登录</el-button>
   </div>
-  
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router';
+import imgurl from '../assets/img/img.jpg';
 
 export interface Response {
-    area?: string;
-    collectInfo?: CollectInfo;
-    collectionAudio?: string;
-    collectionId?: number;
-    collectionPhoto?: string;
-    collectionType?: string;
-    completeness?: string;
-    completenessType?: string;
-    dimensionInfo?: DimensionInfo;
-    era?: string;
-    exhibitionHallId?: null;
-    identificationComments?: string;
-    identificationDate?: string;
-    identificationStaffName?: string;
-    museumId?: number;
-    name?: string;
-    originalName?: string;
-    remark?: string;
-    warehouseId?: null;
-    storageInfo?: StorageInfo;
-    textureType?: string;
+  area?: string;
+  collectInfo?: CollectInfo;
+  collectionAudio?: string;
+  collectionId?: number;
+  collectionPhoto?: string;
+  collectionType?: string;
+  completeness?: string;
+  completenessType?: string;
+  dimensionInfo?: DimensionInfo;
+  era?: string;
+  exhibitionHallId?: null;
+  identificationComments?: string;
+  identificationDate?: string;
+  identificationStaffName?: string;
+  museumId?: number;
+  name?: string;
+  originalName?: string;
+  remark?: string;
+  warehouseId?: null;
+  storageInfo?: StorageInfo;
+  textureType?: string;
 }
 
 export interface CollectInfo {
-    collectionId: number;
-    collectionLevel: string;
-    collectMuseum: string;
-    collectTime: string;
-    generalRegistrationId: string;
-    source: string;
+  collectionId: number;
+  collectionLevel: string;
+  collectMuseum: string;
+  collectTime: string;
+  generalRegistrationId: string;
+  source: string;
 }
 
 export interface DimensionInfo {
-    collectionId: number;
-    dimension: string;
-    dimensionUnit: string;
-    realQuantity: number;
-    realQuantityUnit: string;
-    traditionalQuantity: number;
-    weight: number;
-    weightUnit: string;
+  collectionId: number;
+  dimension: string;
+  dimensionUnit: string;
+  realQuantity: number;
+  realQuantityUnit: string;
+  traditionalQuantity: number;
+  weight: number;
+  weightUnit: string;
 }
 
 export interface StorageInfo {
-    collectionId: number;
-    currentStatus: string;
-    protectionLevel: string;
+  collectionId: number;
+  currentStatus: string;
+  protectionLevel: string;
 }
 
 
 const tableData = ref<Response>();
 const fetchData = async () => {
-	try {
-		const response = await axios.get('http://42.192.39.198:5000/api/Collections/13');
-		console.log(response.data); 
-		return response.data;
-	} catch (error) {
-		console.error(error);
-	}
+  try {
+    const response = await axios.get('http://42.192.39.198:5000/api/Collections/13');
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
 };
 // 获取表格数据
 const getData = async () => {
-	const res = await fetchData();
-	tableData.value = res;
-	console.log(tableData.value); 
+  const res = await fetchData();
+  tableData.value = res;
+  console.log(tableData.value);
 };
 
 getData();
 
 const router = useRouter();
 const handleLogout = () => {
-		localStorage.removeItem('ms_username');
-		router.push('/login');
+  localStorage.removeItem('ms_username');
+  router.push('/login');
 };
 
 </script>
 
 <style scoped>
-
-.CollectionImg{
-  float:left;
+.CollectionImg {
+  float: left;
   width: 200px;
   height: 130px;
   margin: 10px;
- 
+
 }
-.ccard{
-  margin:0 auto;
+
+.ccard {
+  margin: 0 auto;
   width: 700px;
 }
 </style>
