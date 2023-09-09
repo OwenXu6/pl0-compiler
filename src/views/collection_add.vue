@@ -445,13 +445,7 @@
 					</el-dialog>
 				</el-form-item-->
 
-				<el-form-item>
-					<el-upload class="upload-demo" multiple="false" action="/foreignImage/upload" name="smfile"
-						:headers="{ Authorization: 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" :on-success="handleSuccess"
-						:on-error="handleError" :before-upload="beforeUpload" :limit="1" :on-exceed="handleExceed">
-						<el-button size="small" type="primary">点击上传</el-button>
-					</el-upload>
-				</el-form-item>
+				
 
 			</el-form>
 
