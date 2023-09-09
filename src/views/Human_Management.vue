@@ -647,7 +647,7 @@ const saveEdit = () => {
   pageData.value[idx].workType = form.workType;
   pageData.value[idx].job = form.job; //应该要至后端修改之
   editData();
-  grantByAspNetUserPk(form.workType, pageData.value[idx].aspNetUserPk);     //需要真实的userId,这里只有aspUserId
+  grantByAspNetUserPk(form.workType, pageData.value[idx].aspNetUserPk);    
 };
 
 
