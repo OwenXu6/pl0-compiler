@@ -19,10 +19,12 @@ const login = () => {
     .then(function (response) {
       userInfo.updateToken(response.data.token)
       userInfo.updateExpireTime(Date(response.data.expiration))
-      alert(response.data)
+      alert("登录成功！")
       userInfo.updateRole(response.data.role)
       userInfo.updateStaffInfo(response.data.staffInfo)
-      router.push('/');
+      router.push(
+          {path:'/', params:{refresh:true}}
+      );
     })
     .catch(function (error) {
       if (error.response) {
