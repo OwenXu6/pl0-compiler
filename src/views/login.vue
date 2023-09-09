@@ -12,7 +12,7 @@ const user_name = ref("")
 const user_password = ref("")
 const login = () => {
   const LoginModel = {
-    "userName": user_name.value,
+    "userId": user_name.value,
     "password": user_password.value
   }
   axios.post(baseUrl + '/api/Authenticate/Login', LoginModel)

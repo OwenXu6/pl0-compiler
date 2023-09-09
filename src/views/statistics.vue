@@ -19,12 +19,12 @@
 				
 				<el-table-column label="操作" width="300" align="center">
 					<template #default="scope">
-						<el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
-							<button  :icon="Edit" class="btnSty green"></button>
+						<el-button text :icon="Edit" class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
+							
 							修改剩余门票
 						</el-button>
-						<el-button text class="gray" @click="handleEdit(scope.$index, scope.row,1)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="15" disabled>
-							<button :icon="Edit" class="btnSty gray" ></button>
+						<el-button text :icon="Edit" class="gray" @click="handleEdit(scope.$index, scope.row,1)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="15" disabled>
+							
 							修改剩余门票
 						</el-button>
 						<!-- <el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
@@ -77,8 +77,8 @@
 				</span>
 			</template>
 		</el-dialog>
-		<!-- <button @click="postData1">post数据</button>
-		<button @click="putData">put数据</button> -->
+		<!-- <button @click="postData1">post数据</button> -->
+		<!-- <button @click="putData">put数据</button> -->
 	</div>
 </template>
 
@@ -193,7 +193,7 @@ const getData = async () => {
 
 	for(let i=0;i<tableData.value.length;i++)
 	{
-		if(i>=3){
+		if(i>=5){
 			visTmp.push(0);
 		}
 		else{
@@ -271,9 +271,9 @@ const postData1 = async () => {
 		const response = await axios({
                 method: 'post',//请求方法
                 data: {
-					date:'2023-08-12T00:00:00',
-  					totalTickets:50986,
-  					soldTickets:49518,
+					date:'2023-09-14T00:00:00',
+  					totalTickets:43986,
+  					soldTickets:42506,
 				},
                 url: 'http://42.192.39.198:5000/api/TicketsStatistics/',
             }).then(response => {

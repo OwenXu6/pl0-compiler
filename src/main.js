@@ -30,7 +30,6 @@ app.directive('permiss', {
         let flag = false;
         if (!Array.isArray(binding.value) || binding.value.length === 0)
             flag = true
-        console.log(binding.value)
         if (Array.isArray(role)&&Array.isArray(binding.value)) {
             role.forEach(element => {
                 if (binding.value.includes(element)) {
@@ -38,7 +37,6 @@ app.directive('permiss', {
                 }
             });
         }
-        console.log(flag)
         if (flag === false) {
             el['hidden'] = true;
         }

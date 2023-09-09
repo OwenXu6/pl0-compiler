@@ -97,6 +97,7 @@
 import { ref, reactive } from 'vue';
 import axios from 'axios';
 import { ElMessageBox, ElMessage } from 'element-plus';
+import { useUserInfo } from '../store/userInfo';
 interface Message {
 	feedbackID: number;
 	feedbackTitle: string;
@@ -117,8 +118,40 @@ const state = reactive({
 	recycle: [] as Message[]
 });
 
+function getToken() {
+	// 替换为获取token的逻辑
+	const UserInfo = useUserInfo();
+	return UserInfo.userToken;
+
+	}
+
+// 创建一个具有默认头的Axios实例
+const axiosInstance = axios.create({
+	baseURL: 'http://42.192.39.198:5000/api',
+});
+
+// 拦截器：将token添加到每个请求中
+axiosInstance.interceptors.request.use((config) => {
+	const token = getToken();
+
+	if (token) {
+		if (config.headers) {
+			config.headers.Authorization = `Bearer ${token}`;
+		} else {
+			config.headers = {
+				Authorization: `Bearer ${token}`,
+			};
+		}
+	}
+
+	return config;
+}, (error) => {
+	return Promise.reject(error);
+});
+
+
 // 获取数据
-axios.get('http://42.192.39.198:5000/api/Feedback')
+axiosInstance.get('/Feedback')
 	.then(response => {
 		state.unread = [];
 		state.read = [];
@@ -209,7 +242,7 @@ const saveReply = async () => {
 				// Update the replyContent of the corresponding item in state.unread
 				state.unread[index].replyContent = currentReply.value; // Update the replyContent with the edited content
 
-				const response = await axios.put(`http://42.192.39.198:5000/api/Feedback/${item.feedbackID}`, data);
+				const response = await axiosInstance.put(`/Feedback/${item.feedbackID}`, data);
 			}
 		}
 		ElMessage.success('数据上传成功');
@@ -222,7 +255,7 @@ const saveReply = async () => {
 const handleRecycleDelete = async (index: number) => {
 	try {
 		const item = state.recycle[index];
-		await axios.delete(`http://42.192.39.198:5000/api/Feedback/${item.feedbackID}`);
+		await axiosInstance.delete(`/Feedback/${item.feedbackID}`);
 		state.recycle.splice(index, 1);
 		ElMessage.success('删除成功');
 	} catch (error) {
