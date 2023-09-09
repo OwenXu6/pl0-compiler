@@ -4,7 +4,7 @@
 			<!-- 查询的部分 -->
 			<div class="handle-box">
 				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch" v-permiss="15">搜索</el-button>
+				<div style="display: inline-block;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
@@ -128,8 +128,8 @@
 								文物级别
 							</div>
 						</template>
-						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="eraQuerySearch"
-							clearable class="inline-input w-50" placeholder="请输入文物的保护等级" @select="protectLevelSelect" />
+						<el-autocomplete v-model="form.collectInfo.collectionLevel" :fetch-suggestions="levelQuerySearch"
+							clearable class="inline-input w-50" placeholder="请选择文物级别" @select="levelSelect" />
 					</el-descriptions-item>
 					<!-- 文物类别 -->
 					<el-descriptions-item>
@@ -141,7 +141,8 @@
 								文物类别
 							</div>
 						</template>
-						<el-input v-model="form.collectionType"></el-input>
+						<el-autocomplete v-model="form.collectionType" :fetch-suggestions="typeQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的类别" @select="typeHandleSelect" />
 					</el-descriptions-item>
 					<!-- 质地 -->
 					<el-descriptions-item>
@@ -153,8 +154,8 @@
 								质地
 							</div>
 						</template>
-						<el-autocomplete v-model="form.textureType" :fetch-suggestions="typeQuerySearch" clearable
-							class="inline-input w-50" placeholder="请输入文物的种类" @select="typeHandleSelect" />
+						<el-autocomplete v-model="form.textureType" :fetch-suggestions="textureQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的质地" @select="textureHandleSelect" />
 					</el-descriptions-item>
 					<!--年代 -->
 					<el-descriptions-item>
@@ -167,7 +168,7 @@
 							</div>
 						</template>
 						<el-autocomplete v-model="form.era" :fetch-suggestions="eraQuerySearch" clearable
-							class="inline-input w-50" placeholder="请输入文物的年代" @select="eraSelect" />
+							class="inline-input w-50" placeholder="请选择文物的年代" @select="eraHandleSelect" />
 					</el-descriptions-item>
 					<!-- 地域 -->
 					<el-descriptions-item>
@@ -191,7 +192,8 @@
 								来源
 							</div>
 						</template>
-						<el-input v-model="form.collectInfo.source"></el-input>
+						<el-autocomplete v-model="form.collectInfo.source" :fetch-suggestions="sourceQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的来源" @select="sourceHandleSelect" />
 					</el-descriptions-item>
 					<!-- 保存状况 -->
 					<el-descriptions-item>
@@ -210,16 +212,33 @@
 							<el-radio :label="3">未鉴定</el-radio>
 						</el-radio-group>
 						<div v-if="radio == 1">
-							<span>请输入展厅Id: </span><el-input v-model="form.exhibitionHallId" class="handle-input mr10"></el-input>
+							<span>请输入展厅Id: </span><el-input v-model="form.exhibitionHallId"
+								class="handle-input mr10"></el-input>
 						</div>
 						<div v-if="radio == 2">
 							<span>请输入库房Id: </span><el-input v-model="form.warehouseId" class="handle-input mr10"></el-input>
 						</div>
 						<div v-if="radio == 2">
-							<span>请输入货架Id: </span><el-input v-model="form.containerId"
-								class="handle-input mr10"></el-input>
+							<span>请输入货架Id: </span><el-input v-model="form.containerId" class="handle-input mr10"></el-input>
 						</div>
 					</el-descriptions-item>
+
+
+					<!-- 完残程度类别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Box />
+								</el-icon>
+								完残程度类别*
+							</div>
+						</template>
+						<el-autocomplete v-model="form.completenessType" :fetch-suggestions="completenessTypeQuerySearch"
+							clearable class="inline-input w-50" placeholder="请选择文物的完残程度类别"
+							@select="completenessTypeHandleSelect" />
+					</el-descriptions-item>
+
 					<!-- 完残程度 -->
 					<el-descriptions-item>
 						<template #label>
@@ -244,6 +263,23 @@
 						</template>
 						<el-input v-model="form.dimensionInfo.dimension"></el-input>
 					</el-descriptions-item>
+
+					<!-- 尺寸单位 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<FullScreen />
+								</el-icon>
+								尺寸单位
+							</div>
+						</template>
+						<el-autocomplete v-model="form.dimensionInfo.dimensionUnit"
+							:fetch-suggestions="dimensionUnitQuerySearch" clearable class="inline-input w-50"
+							placeholder="请选择文物的尺寸单位" @select="dimensionUnitHandleSelect" />
+
+					</el-descriptions-item>
+
 					<!-- 质量-->
 					<el-descriptions-item>
 						<template #label>
@@ -256,6 +292,23 @@
 						</template>
 						<el-input v-model="form.dimensionInfo.weight"></el-input>
 					</el-descriptions-item>
+
+
+					<!-- 质量单位-->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Coin />
+								</el-icon>
+								质量单位
+							</div>
+						</template>
+						<el-autocomplete v-model="form.dimensionInfo.weightUnit" :fetch-suggestions="weightUnitQuerySearch"
+							clearable class="inline-input w-50" placeholder="请选择文物的质量单位" @select="weightUnitHandleSelect" />
+
+					</el-descriptions-item>
+
 					<!-- 传统数量 -->
 					<el-descriptions-item>
 						<template #label>
@@ -267,6 +320,23 @@
 							</div>
 						</template>
 						<el-input v-model="form.dimensionInfo.traditionalQuantity"></el-input>
+
+						<!-- 传统数量单位 -->
+						<el-descriptions-item>
+							<template #label>
+								<div class="cell-item">
+									<el-icon :style="iconStyle">
+										<Histogram />
+									</el-icon>
+									传统数量单位*
+								</div>
+							</template>
+							<el-autocomplete v-model="form.dimensionInfo.traditionalQuantityUnit"
+								:fetch-suggestions="traditionalQuantityUnitQuerySearch" clearable class="inline-input w-50"
+								placeholder="请选择文物的传统数量单位" @select="traditionalQuantityUnitHandleSelect" />
+
+						</el-descriptions-item>
+
 					</el-descriptions-item>
 					<!-- 实际数量 -->
 					<el-descriptions-item>
@@ -279,6 +349,23 @@
 							</div>
 						</template>
 						<el-input v-model="form.dimensionInfo.realQuantity"></el-input>
+
+						<!-- 实际数量单位 -->
+						<el-descriptions-item>
+							<template #label>
+								<div class="cell-item">
+									<el-icon :style="iconStyle">
+										<Histogram />
+									</el-icon>
+									实际数量单位*
+								</div>
+							</template>
+							<el-autocomplete v-model="form.dimensionInfo.realQuantityUnit"
+								:fetch-suggestions="realQuantityUnitQuerySearch" clearable class="inline-input w-50"
+								placeholder="请选择文物的实际数量单位" @select="realQuantityUnitHandleSelect" />
+
+						</el-descriptions-item>
+
 
 					</el-descriptions-item>
 					<!-- 入藏时间 -->
@@ -303,8 +390,9 @@
 								保护等级
 							</div>
 						</template>
-						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="eraQuerySearch"
-							clearable class="inline-input w-50" placeholder="请输入文物的保护等级" @select="protectLevelSelect" />
+						<el-autocomplete v-model="form.storageInfo.protectionLevel"
+							:fetch-suggestions="protectLevelQuerySearch" clearable class="inline-input w-50"
+							placeholder="请选择文物的保护等级" @select="protectLevelSelect" />
 					</el-descriptions-item>
 					<!-- 鉴定意见 -->
 					<el-descriptions-item :span="2">
@@ -332,8 +420,8 @@
 								备注
 							</div>
 						</template>
-						<el-input v-model="form.remark" :autosize="{ minRows: 2, maxRows: 4 }"
-							type="textarea" placeholder="请输入备注" />
+						<el-input v-model="form.remark" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
+							placeholder="请输入备注" />
 					</el-descriptions-item>
 				</el-descriptions>
 			</el-form>
@@ -704,7 +792,7 @@ const query = reactive({
 		currentStatus: '',
 		protectionLevel: ''
 	},
-	value:'',
+	value: '',
 });
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
@@ -733,19 +821,19 @@ const getData = () => {
 			//检查文物的名字是否已知，如果是已知的则直接显示，如果是未知的就显示
 		}
 
-		filteredData.value = filteredData.value.filter(item => 
-		String(item.collectionId).includes(query.value)||
-		item.collectionType.includes(query.value)||
-		item.era.includes(query.value)||
-		item.storageInfo.currentStatus.includes(query.value)||
-		item.collectInfo.collectTime.includes(query.value)
+		filteredData.value = filteredData.value.filter(item =>
+			String(item.collectionId).includes(query.value) ||
+			item.collectionType.includes(query.value) ||
+			item.era.includes(query.value) ||
+			item.storageInfo.currentStatus.includes(query.value) ||
+			item.collectInfo.collectTime.includes(query.value)
 		);
 
 
-		tableData.value=filteredData.value;
+		tableData.value = filteredData.value;
 		console.log(tableData.value);
 
-		
+
 		// console.log(res[0].collectionId);
 		// pageTotal.value = res.data.pageTotal || 50;
 	});
@@ -1014,7 +1102,7 @@ const saveEdit = async () => {
 	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
 	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;
 	tableData.value[idx].identificationComments = form.identificationComments
-	tableData.value[idx].remark=form.remark
+	tableData.value[idx].remark = form.remark
 	console.log(tableData.value);
 
 	// Update frontend table data
@@ -1033,13 +1121,13 @@ interface TypeSelectItem {
 	value: string
 	index: number
 }
-const toSelect = ref<TypeSelectItem[]>([])
+const toSelectType = ref<TypeSelectItem[]>([])
 
 //搜索符合条件的选项
 const typeQuerySearch = (queryString: string, cb: any) => {
 	const results = queryString
-		? toSelect.value.filter(typeCreateFilter(queryString))
-		: toSelect.value
+		? toSelectType.value.filter(typeCreateFilter(queryString))
+		: toSelectType.value
 	cb(results)
 }
 const typeCreateFilter = (queryString: string) => {
@@ -1086,14 +1174,96 @@ const typeLoadAll = () => {
 		{ value: '其他', index: 31 },
 	]
 }
+
 //处理选择的项，比如说给一个东西赋值
 const typeHandleSelect = (item: TypeSelectItem) => {
 	console.log(item)
 }
 
 onMounted(() => {
-	toSelect.value = typeLoadAll()
+	toSelectType.value = typeLoadAll()
 })
+
+interface protectLevelSelectItem {
+	value: string
+	index: number
+}
+const toSelectprotectLevel = ref<protectLevelSelectItem[]>([])
+
+//搜索符合条件的选项
+const protectLevelQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectprotectLevel.value.filter(protectLevelCreateFilter(queryString))
+		: toSelectprotectLevel.value
+	cb(results)
+}
+const protectLevelCreateFilter = (queryString: string) => {
+	return (restaurant: protectLevelSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const protectLevelLoadAll = () => {
+	return [
+		{ value: '一级', index: 1 },
+		{ value: '二级', index: 2 },
+		{ value: '三级', index: 3 },
+	]
+}
+//处理选择的项，比如说给一个东西赋值
+const protectLevelSelect = (item: protectLevelSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectprotectLevel.value = protectLevelLoadAll()
+})
+
+
+
+interface levelSelectItem {
+	value: string
+	index: number
+}
+const toSelectlevel = ref<levelSelectItem[]>([])
+
+//搜索符合条件的选项
+const levelQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectlevel.value.filter(levelCreateFilter(queryString))
+		: toSelectlevel.value
+	cb(results)
+}
+const levelCreateFilter = (queryString: string) => {
+	return (restaurant: levelSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const levelLoadAll = () => {
+	return [
+		{ value: '一级', index: 1 },
+		{ value: '二级', index: 2 },
+		{ value: '三级', index: 3 },
+	]
+}
+//处理选择的项，比如说给一个东西赋值
+const levelSelect = (item: levelSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectlevel.value = levelLoadAll()
+})
+
+
+const size = ref('')
 
 // 文物时期下拉菜单的属性
 interface EraSelectItem {
@@ -1137,8 +1307,9 @@ const EraloadAll = () => {
 		{ value: '民国', index: 15 },
 	]
 }
+
 //处理选择的项，比如说给一个东西赋值
-const eraSelect = (item: EraSelectItem) => {
+const eraHandleSelect = (item: EraSelectItem) => {
 	console.log(item)
 }
 
@@ -1146,23 +1317,304 @@ onMounted(() => {
 	toSelectEra.value = EraloadAll()
 })
 
+interface textureSelectItem {
+	value: string
+	index: number
+}
+const toSelecttexture = ref<textureSelectItem[]>([])
+
+//搜索符合条件的选项
+const textureQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelecttexture.value.filter(textureCreateFilter(queryString))
+		: toSelecttexture.value
+	cb(results)
+}
+const textureCreateFilter = (queryString: string) => {
+	return (restaurant: textureSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
 //可选择的选项
-const protectLevelLoadAll = () => {
+const textureloadAll = () => {
 	return [
-		{ value: '一级', index: 1 },
-		{ value: '两级', index: 2 },
-		{ value: '三级', index: 3 },
+		{ value: '无机质类', index: 1 },
+		{ value: '有机质类', index: 2 },
+		{ value: '复合材料类', index: 3 },
+		{ value: '组合材料类', index: 4 },
 	]
 }
+
 //处理选择的项，比如说给一个东西赋值
-const protectLevelSelect = (item: EraSelectItem) => {
+const textureHandleSelect = (item: textureSelectItem) => {
 	console.log(item)
 }
 
 onMounted(() => {
-	toSelectEra.value = protectLevelLoadAll()
+	toSelecttexture.value = textureloadAll()
 })
-const size = ref('')
+
+interface weightUnitSelectItem {
+	value: string
+	index: number
+}
+const toSelectweightUnit = ref<weightUnitSelectItem[]>([])
+
+//搜索符合条件的选项
+const weightUnitQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectweightUnit.value.filter(weightUnitCreateFilter(queryString))
+		: toSelectweightUnit.value
+	cb(results)
+}
+const weightUnitCreateFilter = (queryString: string) => {
+	return (restaurant: weightUnitSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const weightUnitloadAll = () => {
+	return [
+		{ value: '克', index: 1 },
+		{ value: '千克', index: 2 },
+		{ value: '两', index: 3 },
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const weightUnitHandleSelect = (item: weightUnitSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectweightUnit.value = weightUnitloadAll()
+})
+
+
+interface sourceSelectItem {
+	value: string
+	index: number
+}
+const toSelectsource = ref<sourceSelectItem[]>([])
+
+//搜索符合条件的选项
+const sourceQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectsource.value.filter(sourceCreateFilter(queryString))
+		: toSelectsource.value
+	cb(results)
+}
+const sourceCreateFilter = (queryString: string) => {
+	return (restaurant: sourceSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const sourceloadAll = () => {
+	return [
+		{ value: '旧藏', index: 1 },
+		{ value: '拨交', index: 2 },
+		{ value: '移交', index: 3 },
+		{ value: '交换', index: 4 },
+		{ value: '拣选', index: 5 },
+		{ value: '捐赠', index: 6 },
+		{ value: '收购', index: 7 },
+		{ value: '征集', index: 8 },
+		{ value: '采集', index: 9 },
+		{ value: '发掘', index: 10 },
+		{ value: '寄存', index: 11 },
+		{ value: '制作', index: 12 },
+		{ value: '其他', index: 13 }
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const sourceHandleSelect = (item: sourceSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectsource.value = sourceloadAll()
+})
+
+interface completenessTypeSelectItem {
+	value: string
+	index: number
+}
+const toSelectcompletenessType = ref<completenessTypeSelectItem[]>([])
+
+//搜索符合条件的选项
+const completenessTypeQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectcompletenessType.value.filter(completenessTypeCreateFilter(queryString))
+		: toSelectcompletenessType.value
+	cb(results)
+}
+const completenessTypeCreateFilter = (queryString: string) => {
+	return (restaurant: completenessTypeSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const completenessTypeloadAll = () => {
+	return [
+		{ value: '完', index: 1 },
+		{ value: '残', index: 2 },
+		{ value: '缺', index: 3 },
+		{ value: '失', index: 4 },
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const completenessTypeHandleSelect = (item: sourceSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectcompletenessType.value = completenessTypeloadAll()
+})
+
+interface traditionalQuantityUnitSelectItem {
+	value: string
+	index: number
+}
+const toSelecttraditionalQuantityUnit = ref<traditionalQuantityUnitSelectItem[]>([])
+
+//搜索符合条件的选项
+const traditionalQuantityUnitQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelecttraditionalQuantityUnit.value.filter(traditionalQuantityUnitCreateFilter(queryString))
+		: toSelecttraditionalQuantityUnit.value
+	cb(results)
+}
+const traditionalQuantityUnitCreateFilter = (queryString: string) => {
+	return (restaurant: traditionalQuantityUnitSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const traditionalQuantityUnitloadAll = () => {
+	return [
+		{ value: '个', index: 1 },
+		{ value: '副', index: 2 },
+		{ value: '套', index: 3 },
+		{ value: '对', index: 4 },
+		{ value: '封', index: 5 },
+		{ value: '只', index: 6 },
+		{ value: '件', index: 7 }, //默认
+		{ value: '双', index: 8 }
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const traditionalQuantityUnitHandleSelect = (item: sourceSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelecttraditionalQuantityUnit.value = traditionalQuantityUnitloadAll()
+})
+
+interface realQuantityUnitSelectItem {
+	value: string
+	index: number
+}
+const toSelectrealQuantityUnit = ref<realQuantityUnitSelectItem[]>([])
+
+//搜索符合条件的选项
+const realQuantityUnitQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectrealQuantityUnit.value.filter(realQuantityUnitCreateFilter(queryString))
+		: toSelectrealQuantityUnit.value
+	cb(results)
+}
+const realQuantityUnitCreateFilter = (queryString: string) => {
+	return (restaurant: realQuantityUnitSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const realQuantityUnitloadAll = () => {
+	return [
+		{ value: '个', index: 1 },
+		{ value: '副', index: 2 },
+		{ value: '套', index: 3 },
+		{ value: '对', index: 4 },
+		{ value: '封', index: 5 },
+		{ value: '只', index: 6 },
+		{ value: '件', index: 7 }, //默认
+		{ value: '双', index: 8 }
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const realQuantityUnitHandleSelect = (item: sourceSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectrealQuantityUnit.value = realQuantityUnitloadAll()
+})
+
+interface dimensionUnitSelectItem {
+	value: string
+	index: number
+}
+const toSelectdimensionUnit = ref<dimensionUnitSelectItem[]>([])
+
+//搜索符合条件的选项
+const dimensionUnitQuerySearch = (queryString: string, cb: any) => {
+	const results = queryString
+		? toSelectdimensionUnit.value.filter(dimensionUnitCreateFilter(queryString))
+		: toSelectdimensionUnit.value
+	cb(results)
+}
+const dimensionUnitCreateFilter = (queryString: string) => {
+	return (restaurant: dimensionUnitSelectItem) => {
+		return (
+			restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+		)
+	}
+}
+
+//可选择的选项
+const dimensionUnitloadAll = () => {
+	return [
+		{ value: '毫米', index: 1 },//默认
+		{ value: '厘米', index: 2 },
+		{ value: '米', index: 3 },
+	]
+}
+
+//处理选择的项，比如说给一个东西赋值
+const dimensionUnitHandleSelect = (item: sourceSelectItem) => {
+	console.log(item)
+}
+
+onMounted(() => {
+	toSelectdimensionUnit.value = dimensionUnitloadAll()
+})
+
+
+
 const iconStyle = computed(() => {
 	const marginMap = {
 		large: '8px',
@@ -1173,6 +1625,7 @@ const iconStyle = computed(() => {
 		marginRight: marginMap.default,
 	}
 })
+
 </script>
 
 <style scoped>
