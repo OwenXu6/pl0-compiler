@@ -19,27 +19,27 @@
 				
 				<el-table-column label="操作" width="300" align="center">
 					<template #default="scope">
-						<el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
+						<el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" >
 							<button  :icon="Edit" class="btnSty green"></button>
 							修改剩余门票
 						</el-button>
-						<el-button text class="gray" @click="handleEdit(scope.$index, scope.row,1)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="15" disabled>
+						<el-button text class="gray" @click="handleEdit(scope.$index, scope.row,1)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]"  disabled>
 							<button :icon="Edit" class="btnSty gray" ></button>
 							修改剩余门票
 						</el-button>
-						<!-- <el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
+						<!-- <el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" >
 							<button class="el-icon-lx-add btnSty green" ></button>
 							增加门票
 						</el-button>
-						<el-button text class="gray" @click="handleEdit(scope.$index, scope.row,1)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="15" disabled>
+						<el-button text class="gray" @click="handleEdit(scope.$index, scope.row,1)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]"  disabled>
 							<button class="el-icon-lx-add btnSty gray" ></button>
 							增加门票
 						</el-button>
-						<el-button  text class="red" @click="handleEdit(scope.$index, scope.row, 0)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="16">
+						<el-button  text class="red" @click="handleEdit(scope.$index, scope.row, 0)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" >
 							<button class="el-icon-lx-move btnSty red" ></button>
 							减少门票
 						</el-button>
-						<el-button  text class="gray" @click="handleEdit(scope.$index, scope.row, 0)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="16" disabled>
+						<el-button  text class="gray" @click="handleEdit(scope.$index, scope.row, 0)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" disabled>
 							<button class="el-icon-lx-move btnSty gray" ></button>
 							减少门票
 						</el-button> -->

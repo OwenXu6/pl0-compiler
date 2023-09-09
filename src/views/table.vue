@@ -25,7 +25,7 @@
 				<el-table-column prop="exhibitionHallHumidity" label="湿度" align="center"></el-table-column>
 				<el-table-column label="操作" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
+						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" >
 							编辑
 						</el-button>	
 					</template>
