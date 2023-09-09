@@ -95,13 +95,13 @@
 					<el-select v-model="form.workType" placeholder="请选择工作方向"  class="full-width-select">
 						<el-option label="大领导" value="大领导"></el-option>
 						<el-option label="全能神" value="全能神"></el-option>
-						<el-option label="藏品管理员" value="CollectionManager"></el-option>
+						<el-option label="CollectionManager" value="CollectionManager"></el-option>
 						<el-option label="库房管理员" value="库房管理员"></el-option>
-						<el-option label="系统管理员" value="SystemAdmin"></el-option>
+						<el-option label="SystemAdmin" value="SystemAdmin"></el-option>
 						<el-option label="导览人员" value="导览人员"></el-option>
-						<el-option label="考古人员" value="Archaeologist"></el-option>
+						<el-option label="Archaeologist" value="Archaeologist"></el-option>
 						<el-option label="安保人员" value="安保人员"></el-option>
-						<el-option label="藏品鉴定人员" value="CollectionResearcher"></el-option>
+						<el-option label="CollectionResearcher" value="CollectionResearcher"></el-option>
 						<el-option label="其他工作人员" value="其他工作人员"></el-option>
 					</el-select>
 				</el-form-item>
@@ -151,13 +151,13 @@
 					<el-select v-model="form.workType" placeholder="请选择工作方向"  class="full-width-select">
 						<el-option label="大领导" value="大领导"></el-option>
 						<el-option label="全能神" value="全能神"></el-option>
-						<el-option label="藏品管理员" value="CollectionManager"></el-option>
+						<el-option label="CollectionManager" value="CollectionManager"></el-option>
 						<el-option label="库房管理员" value="库房管理员"></el-option>
-						<el-option label="系统管理员" value="SystemAdmin"></el-option>
+						<el-option label="SystemAdmin" value="SystemAdmin"></el-option>
 						<el-option label="导览人员" value="导览人员"></el-option>
-						<el-option label="考古人员" value="Archaeologist"></el-option>
+						<el-option label="Archaeologist" value="Archaeologist"></el-option>
 						<el-option label="安保人员" value="安保人员"></el-option>
-						<el-option label="藏品鉴定人员" value="CollectionResearcher"></el-option>
+						<el-option label="CollectionResearcher" value="CollectionResearcher"></el-option>
 						<el-option label="其他工作人员" value="其他工作人员"></el-option>
 					</el-select>
 				</el-form-item>

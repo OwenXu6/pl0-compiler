@@ -20,11 +20,11 @@
 				<el-table-column label="操作" width="300" align="center">
 					<template #default="scope">
 						<el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
-							<button  class="el-icon-lx-edit btnSty green"></button>
+							<button  :icon="Edit" class="btnSty green"></button>
 							修改剩余门票
 						</el-button>
 						<el-button text class="gray" @click="handleEdit(scope.$index, scope.row,1)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="15" disabled>
-							<button class="el-icon-lx-edit btnSty gray" ></button>
+							<button :icon="Edit" class="btnSty gray" ></button>
 							修改剩余门票
 						</el-button>
 						<!-- <el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
