@@ -59,7 +59,7 @@
 			</el-table>
 			<div class="pagination"  style="display: flex; align-items: center;">
 				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
-				 size="small" style="width: 100px;" clearable ="true" >
+				 size="small" style="width: 100px;" clearable>
 				 <el-option label="5" value="5"></el-option>
 				 <el-option label="10" value="10"></el-option>
 				 <el-option label="20" value="20"></el-option>
@@ -390,6 +390,7 @@
 import { ref, reactive, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, View } from '@element-plus/icons-vue';
+import { onMounted } from 'vue';
 // import { fetchData } from '../api/index';
 import {
 
@@ -559,13 +560,13 @@ let form = reactive({
 	completeness: '',
 	completenessType: '',
 	dimensionInfo: {
-		collectionId: null,
+		collectionId: '',
 		dimension: '',
 		dimensionUnit: '',
-		weight: null,
+		weight: '',
 		weightUnit: '',
-		realQuantity: null,
-		traditionalQuantity: null
+		realQuantity: '',
+		traditionalQuantity: ''
 	},
 	era: '',
 	identificationComments: '',
@@ -579,9 +580,9 @@ let form = reactive({
 	},
 	originalName: '',
 	textureType: '',
-	exhibitionHallId: null,
-	warehouseId: null,
-	containerId: null,
+	exhibitionHallId: '',
+	warehouseId: '',
+	containerId: '',
 });
 //查看的内容
 let view = reactive({
