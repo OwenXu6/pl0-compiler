@@ -1,75 +1,64 @@
- <template>
+<template>
 	<div>
-		<div id="main" style="width: 100%; height: 400px;"></div>
+		<div id="chart" style="width: 100%; height: 600px;"></div>
 		<div class="container">
 			<div class="handle-box">
-				<el-select v-model="query.address" placeholder="展厅位置" class="handle-select mr10">
-    <el-option key="1" label="全部" value="全部"></el-option>
-    <el-option key="2" label="安楼" value="安楼"></el-option>
-    <el-option key="3" label="博楼" value="博楼"></el-option>
-    <el-option key="4" label="诚楼" value="诚楼"></el-option>
-	<el-option key="5" label="德楼" value="德楼"></el-option>
-</el-select>
-
 				<el-input v-model="query.name" placeholder="展厅名称" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="exhibitionHallId" label="展厅ID" width="55" align="center"></el-table-column>
-				<el-table-column prop="exhibitionHallName" label="展厅名称"></el-table-column>
-				<el-table-column prop="exhibitionHallTheme" label="展厅主题"></el-table-column>
-				
-        <!-- <el-table-column prop="exhibits_amount" label="展品数量"></el-table-column>
-        	<el-table-column prop="activity_amount" label="活动数量"></el-table-column> -->
-				<el-table-column label="状态" align="center">
+				<el-table-column prop="exhibitionHallName" label="展厅名称" align="center"></el-table-column>
+				<el-table-column prop="exhibitionHallTheme" label="展厅主题" align="center"></el-table-column>
+				<el-table-column label="展厅状态" align="center">
 					<template #default="scope">
 						<el-tag
-							:type="scope.row.exhibitionHallStatus === '运营中' ? 'success' : scope.row.exhibitionHallStatus === '闲置中' ? 'danger' : ''"
+							:type="scope.row.exhibitionHallStatus === '运营中' ? 'success' : scope.row.exhibitionHallStatus === '修缮中' ? 'danger' : ''"
 						>
 							{{ scope.row.exhibitionHallStatus }}
 						</el-tag>
 					</template>
 				</el-table-column>
-
-				<el-table-column prop="exhibitionHallPosition" label="展厅位置"></el-table-column>
-
-				<el-table-column prop="collections" label="展品"></el-table-column>
-
-				<el-table-column label="操作" width="300" align="center">
+				<el-table-column prop="exhibitionHallVisitor" label="访客人数" align="center"></el-table-column>
+				<el-table-column prop="exhibitionHallTemperature" label="温度" align="center"></el-table-column>
+				<el-table-column prop="exhibitionHallCo2" label="CO2浓度" align="center"></el-table-column>
+				<el-table-column prop="exhibitionHallHumidity" label="湿度" align="center"></el-table-column>
+				<el-table-column label="操作" align="center">
 					<template #default="scope">
 						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
 							编辑
-						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
-							删除
 						</el-button>	
-						<!-- <el-button text :icon="More" @click="goToDetail(scope.row.name)">
-                            详情
-                        </el-button> -->
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="pagination">
-				<el-pagination
-					background
-					layout="total, prev, pager, next"
-					:current-page="query.pageIndex"
-					:page-size="query.pageSize"
-					:total="pageTotal"
-					@current-change="handlePageChange"
-				></el-pagination>
-			</div>
 		</div>
 
 		<!-- 编辑弹出框 -->
 		<el-dialog title="编辑" v-model="editVisible" width="30%">
 			<el-form label-width="70px">
 				<el-form-item label="展厅名称">
-					<el-input v-model="form.name"></el-input>
+					<el-input v-model="editForm.name"></el-input>
 				</el-form-item>
-				<el-form-item label="展厅位置">
-					<el-input v-model="form.address"></el-input>
+				<el-form-item label="展厅主题">
+					<el-input v-model="editForm.theme"></el-input>
+				</el-form-item>
+				<el-form-item label="展厅状态">
+					<el-select v-model="editForm.state" placeholder="状态">
+						<el-option key="1" label="营业中" value="营业中"></el-option>
+						<el-option key="2" label="修缮中" value="修缮中"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="访客人数">
+					<el-input v-model="editForm.visitor"></el-input>
+				</el-form-item>
+				<el-form-item label="温度">
+					<el-input v-model="editForm.temperature"></el-input>
+				</el-form-item>
+				<el-form-item label="CO2浓度">
+					<el-input v-model="editForm.Co2"></el-input>
+				</el-form-item>
+				<el-form-item label="湿度">
+					<el-input v-model="editForm.humidity"></el-input>
 				</el-form-item>
 			</el-form>
 			<template #footer>
@@ -79,60 +68,20 @@
 				</span>
 			</template>
 		</el-dialog>
-
-    <!-- 新增弹出框 -->
-		<el-dialog title="新增" v-model="addVisible" width="30%">
-			<el-form label-width="70px">
-				<el-form-item label="展厅名称">
-					<el-input v-model="addForm.name"></el-input>
-				</el-form-item>
-				<el-form-item label="展厅主题">
-					<el-input v-model="addForm.theme"></el-input>
-				</el-form-item>
-        <el-form-item label="状态">
-					<el-select v-model="addForm.state" placeholder="状态">
-						<el-option key="1" label="营业中" value="营业中"></el-option>
-						<el-option key="2" label="闲置中" value="闲置中"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="展厅位置">
-					<el-input v-model="addForm.position"></el-input>
-				</el-form-item>
-				<el-form-item label="展品">
-					<el-input v-model="addForm.collection"></el-input>
-				</el-form-item>
-        <!-- <el-form-item label="展品数量">
-					<el-input v-model="addForm.exhibits_amount"></el-input>
-				</el-form-item>
-         <el-form-item label="活动数量">
-					<el-input v-model="addForm.activity_amount"></el-input>
-				</el-form-item>				 -->
-			</el-form>
-			<template #footer>
-				<span class="dialog-footer">
-					<el-button @click="addVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveAdd">确 定</el-button>
-				</span>
-			</template>
-		</el-dialog>
 	</div>
 </template>
 
-
-
 <script setup lang="ts" name="basetable">
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, Sort, More } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios'
 import * as echarts from 'echarts';
 
-
 const fetchData = async () => {
 	try {
 		const response = await axios.get('http://42.192.39.198:5000/api/ExhibitionHall');
-		console.log(response.data); 
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -143,52 +92,38 @@ interface TableItem {
 	exhibitionHallId: number;
 	exhibitionHallName: string;
 	exhibitionHallTheme:string;
-	exhibitionHallStatus: string;
-	exhibitionHallPosition: string;
-	collections:string[];
-// 	exhibits_amount:number;
-//   activity_amount:number;
+	exhibitionHallState: string;
+	exhibitionHallVisitor: number;
+	exhibitionHallTemperature:string;
+	exhibitionHallCo2:string;
+	exhibitionHallHumidity:string;
 }
 
 const query = reactive({
-	address: '',
 	name: '',
-	pageIndex: 1,
-	pageSize: 10
 });
 
 const tableData = ref<TableItem[]>([]);
-const pageTotal = ref(0);
 const addedData = ref<TableItem[]>([]); // 保存新增的数据
-	const compare = (a:TableItem,b:TableItem)=>{
+
+const compare = (a:TableItem,b:TableItem)=>{
 	return a.exhibitionHallId < b.exhibitionHallId ? -1:1;
-	}
+}
 
 // 获取表格数据
 const getData = async () => {
 	const res = await fetchData();
 	let filteredData = res.concat(addedData.value);
-	//if (query.designIdea !== '') {
-		//filteredData = filteredData.filter((item: TableItem) => item.designIdea === query.designIdea);
-	//}
 	if (query.name !== '') {
 		filteredData = filteredData.filter((item: TableItem) => item.exhibitionHallName.includes(query.name));
 	}
-
 	tableData.value = filteredData.sort(compare);
-	console.log(JSON.stringify(tableData.value));
 
 };
 getData();
 
 // 查询操作
 const handleSearch = () => {
-	query.pageIndex = 1;
-	getData();
-};
-// 分页导航
-const handlePageChange = (val: number) => {
-	query.pageIndex = val;
 	getData();
 };
 
@@ -197,179 +132,119 @@ const uploadData = async (id:number, data:any) => {
 		const response = await axios.put(`http://42.192.39.198:5000/api/ExhibitionHall/${id}`, data);
         ElMessage.success('数据上传成功');
     } catch (error) {
+		console.error('数据上传失败:', error);
         ElMessage.error('数据上传失败');
     }
-};
-
-const uploadData1 = async (data:any) => {
-    try {
-        const response = await axios.post('http://42.192.39.198:5000/api/ExhibitionHall', data);
-        ElMessage.success('数据上传成功');
-    } catch (error) {
-        ElMessage.error('数据上传失败');
-    }
-};
-
-// 请求删除数据到服务器
-const deleteData = async (id:number) => {
-  try {
-    const response = await axios.delete(`http://42.192.39.198:5000/api/ExhibitionHall/${id}`);
-    ElMessage.success('数据删除成功');
-  } catch (error) {
-    ElMessage.error('数据删除失败');
-  }
-};
-
-// 删除操作
-const handleDelete = (index: number) => {
-	// 二次确认删除
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning'
-	})
-	.then(async () => {
-      ElMessage.success('删除成功');
-      const itemId = tableData.value[index].exhibitionHallId;
-      tableData.value.splice(index, 1);
-      await deleteData(itemId);
-    })
-    .catch(() => {});
 };
 
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
-let form = reactive({
-	name: '',
-	address: ''
+let editForm = reactive({
+    name: '',
+    theme: '',
+    state: '',
+	visitor:0,
+    temperature: '',
+	humidity: '',
+	Co2: '',
 });
+
 let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
 	idx = index;
-	form.name = row.name;
-	form.address = row.position;
+	editForm.name = row.exhibitionHallName;
+	editForm.theme = row.exhibitionHallTheme;
+	editForm.state = row.exhibitionHallState;
+	editForm.visitor = row.exhibitionHallVisitor;
+	editForm.temperature = row.exhibitionHallTemperature ;
+	editForm.humidity = row.exhibitionHallHumidity;
+	editForm.Co2 = row.exhibitionHallCo2;
 	editVisible.value = true;
 };
 
 const saveEdit = async () => {
 	editVisible.value = false;
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);
-	tableData.value[idx].exhibitionHallName = form.name;
-	tableData.value[idx].exhibitionHallPosition = form.address;
+	tableData.value[idx].exhibitionHallName = editForm.name;
+	tableData.value[idx].exhibitionHallTheme = editForm.theme;
+	tableData.value[idx].exhibitionHallState = editForm.state;
+	tableData.value[idx].exhibitionHallVisitor = editForm.visitor;
+	tableData.value[idx].exhibitionHallTemperature = editForm.temperature;
+	tableData.value[idx].exhibitionHallHumidity = editForm.humidity;
+	tableData.value[idx].exhibitionHallCo2 = editForm.Co2;
 	await uploadData(tableData.value[idx].exhibitionHallId, tableData.value[idx]);
 };
 
-// 新增弹窗和保存
-const addVisible = ref(false);
-let addForm = reactive({
-    name: '',
-    theme: '',
-    state: '',
-    position: '',
-	collection:[] as string[]
-    // exhibits_amount: 0,
-    // activity_amount: 0,
-});
-const handleAdd = () => {
-    addVisible.value = true;
-};
-const saveAdd = async () => {
-    addVisible.value = false;
-    const newItem = {
-        exhibitionHallId: tableData.value.length + 1,
-        exhibitionHallName: addForm.name,
-        exhibitionHallTheme: addForm.theme,
-        exhibitionHallStatus: addForm.state,
-        exhibitionHallPosition: addForm.position,
-		collections:addForm.collection
-        // exhibits_amount: addForm.exhibits_amount,
-        // activity_amount: addForm.activity_amount,
-       
-    };
-
-    addedData.value.push(newItem); // 将新增的数据保存到addedData数组中
-    tableData.value.push(newItem);
-    ElMessage.success('新增成功');
-	await uploadData1(newItem);
-};
-
-// // 详情页面跳转
-// const router = useRouter();
-// const goToDetail = (name:string) => {
-// 	router.push( {name:'collections',params:{name}} );
-// };
-
 onMounted(() => {
-  // 获取图表容器
-  const chartDom = document.getElementById('main');
+    const selectedBlock = ref('展厅1');
+    var chartDom = document.getElementById('chart');
+    var myChart = echarts.init(chartDom);
+    fetch('src/assets/img/Museumizer.svg').then(response => response.text()).then(svg => {
+        echarts.registerMap('Hall', { svg: svg });
+        const option = {
+            tooltip: {},
+            label: {
+                show: true,
+                fontSize: 20,
+                color: 'black',
+                formatter: function (params) {
+                    return params.name;
+                }
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: 20,
+                    color: 'black',
+                    formatter: function (params) {
+                        return params.name;
+                    }
+                }
+            },
+            visualMap: {
+                left: 'center',
+                bottom: '10%',
+                min: 5,
+                max: 100,
+                orient: 'horizontal',
+                text: ['', '人流量'],
+                realtime: true,
+                calculable: true,
+                inRange: {
+                    color: ['#dbac00', '#db6e00', '#cf0000']
+                }
+            },
+            series: [
+                {
+                    name: 'Hall',
+                    type: 'map',
+                    map: 'Hall',
+                    zoom:1,
+                    roam: true,
+                    data: [
+                        {name: '常驻展厅A', value: 50},
+                        { name: '常驻展厅C', value: 35 },
+                        
+                    ],
+                }
+            ]
+        };
+        myChart.setOption(option);
+        myChart.on('click', function (params) {
+          const exhibitionHallName = params.name;
 
-  // 使用 ECharts 初始化图表
-  const myChart = echarts.init(chartDom);
+// Find the corresponding exhibition hall ID based on the name
+const exhibitionHall = tableData.value.find(item => item.exhibitionHallName === exhibitionHallName);
 
-  // ECharts 配置选项
-  const option = {
-    series: [
-      {
-        type: 'treemap',
-        clickable: true,
-        data: [
-          {
-            name: 'nodeA',
-            value: 10,
-            children: [
-              {
-                name: 'nodeAa',
-                value: 4,
-              },
-              {
-                name: 'nodeAb',
-                value: 6,
-              },
-            ],
-          },
-          {
-            name: 'nodeB',
-            value: 20,
-            children: [
-              {
-                name: 'nodeBa',
-                value: 20,
-                children: [
-                  {
-                    name: 'nodeBa1',
-                    value: 20,
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  };
+if (exhibitionHall) {
+    // Navigate to collection.vue with the exhibition hall ID as a parameter
+    const router = useRouter();
+    router.push({ path: 'collections', query: { exhibitionHallId: exhibitionHall.exhibitionHallId } });
+}
+        });
+    });
 
-  // 使用配置选项设置图表
-  myChart.setOption(option);
-
-  // 监听点击事件
-  myChart.on('click', function (params) {
-    // 检查是否点击了有效的图表元素
-	console.log('Click event params:',params.data);
-
-    if (params.data.name === 'nodeBa1') {
-      // 在这里执行路由导航或其他跳转操作
-      // 示例中使用 Vue Router 进行导航
-	 
-      const router = useRouter();
-      router.push({ name: 'collections', params: { nodeName: 'nodeBa1' } });
-    }
-  });
-
-  // 在组件销毁前销毁 ECharts 实例
-  onBeforeUnmount(() => {
-    console.log('Component is unmounted. Disposing ECharts instance.');
-    myChart.dispose();
-  });
 });
-
 </script>
 
 

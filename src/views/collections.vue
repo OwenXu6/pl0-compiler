@@ -1,192 +1,527 @@
 <template>
 	<div>
+		<div class="charts-container">
+      <!-- 添加 chart1、chart2、chart3 的容器并设置样式 -->
+	  <div class="chart" id="chart2"></div>
+      <div class="chart" id="chart1"></div>
+      <div class="chart" id="chart3"></div>
+    </div>
+		<div id="chart" style="width: 100%; height: 10px;"></div>
 		<div class="container">
+			<!-- 查询的部分 -->
 			<div class="handle-box">
-                <el-button type="primary" :icon="ArrowLeft" @click="goback" class="mr10">返回</el-button>
-				<el-select v-model="query.address" placeholder="所属展厅" class="handle-select mr10">
-	<el-option key="1" label="全部" value="全部"></el-option>
-    <el-option key="2" label="安馆" value="安馆"></el-option>
-    <el-option key="3" label="博馆" value="博馆"></el-option>
-    <el-option key="4" label="诚馆" value="诚馆"></el-option>
-</el-select>
-				<el-input v-model="query.name" placeholder="展品名称" class="handle-input mr10"></el-input>
+				<el-input v-model="query.name" placeholder="文物名称" class="handle-input mr10"></el-input>
+				<!--显示一个输入框，用户可以输入名称进行搜索。v-model="query.name"将输入的值绑定到query.name变量上。-->
+				<el-input v-model="query.id" placeholder="文物ID" class="handle-input mr10"></el-input>
+				<br><br>
+				<el-select v-model="query.collectionType" placeholder="文物种类" class="handle-select mr10" clearable ="true">
+					<el-option key="1" label="瓷器" value="瓷器"></el-option>
+					<el-option key="2" label="青铜器" value="青铜器"></el-option>
+				</el-select>
+				<el-select v-model="query.era" placeholder="文物年代" class="handle-select mr10" clearable ="true">
+					<el-option key="1" label="唐代" value="唐代"></el-option>
+					<el-option key="2" label="清代" value="清代"></el-option>
+				</el-select>
+				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10" clearable ="true">
+					<el-option key="1" label="在库" value="在库"></el-option>
+					<el-option key="2" label="在展" value="在展"></el-option>
+				</el-select>
+				<el-select v-model="query.excavation_site" placeholder="出土地" class="handle-select mr10" clearable ="true">
+					<el-option key="1" label="三星堆" value="三星堆"></el-option>
+					<el-option key="2" label="北首岭遗址" value="北首岭遗址"></el-option>
+				</el-select>
+				<el-input v-model="query.excavation_date" placeholder="出土日期" class="handle-input mr11"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
+				<el-button type="primary" @click="goToExhibitionHall">返回展厅</el-button>
+				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
 			</div>
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="id" label="展品ID" width="55" align="center"></el-table-column>
-				<el-table-column prop="name" label="展品名称"></el-table-column>
-				<el-table-column label="头像(查看大图)" align="center">
+			<!-- 显示文物详细信息的表格界面 -->
+			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+				<el-table-column prop="collectionId" label="ID" width="110" align="center"></el-table-column>
+				<el-table-column prop="name" label="文物名称" align="center"></el-table-column>
+				<el-table-column label="文物图片(查看大图)" align="center">
 					<template #default="scope">
-						<el-image
-							class="table-td-thumb"
-							:src="scope.row.thumb"
-							:z-index="10"
-							:preview-src-list="[scope.row.thumb]"
-							preview-teleported
-						>
+						<el-image class="table-td-thumb" :src="scope.row.collectionPhoto" :z-index="10"
+							:preview-src-list="[scope.row.thumb]" preview-teleported>
 						</el-image>
 					</template>
 				</el-table-column>
-				<el-table-column prop="hall_name" label="所属展厅"></el-table-column>
-				<el-table-column prop="introduction" label="简介"></el-table-column>
-        <el-table-column prop="temperature" label="温度（℃）"></el-table-column>
-        	<el-table-column prop="humidity" label="湿度（%RH）"></el-table-column>
-			<el-table-column prop="light" label="光强（cd）"></el-table-column>
-				<el-table-column label="状态" align="center">
+				<el-table-column prop="collectionType" label="文物种类" align="center"></el-table-column>
+				<el-table-column prop="era" label="文物年代" align="center"></el-table-column>
+				<!--<el-table-column prop="address" label="地址"></el-table-column>-->
+				<el-table-column prop="storageInfo.currentStatus" label="藏品状态" align="center">
 					<template #default="scope">
 						<el-tag
-							:type="scope.row.state === '良好' ? 'success' : scope.row.state === '危险' ? 'danger' : ''"
-						>
-							{{ scope.row.state }}
+							:type="scope.row.storageInfo.currentStatus === '在展' ? 'success' : scope.row.storageInfo.currentStatus === '修缮中' ? 'danger' : ''">
+							{{ scope.row.storageInfo.currentStatus }}
 						</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="others" label="其他"></el-table-column>
-
-				<el-table-column label="操作" width="220" align="center">
+				<el-table-column prop="collectInfo.collectTime" label="入藏时间" align="center"></el-table-column>
+				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
+				<el-table-column label="操作" width="150" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
-							编辑
+						<el-button text :icon="View" @click="handleDetails(scope.$index, scope.row)">
+							查看
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
-							删除
-						</el-button>	
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="pagination">
-				<el-pagination
-					background
-					layout="total, prev, pager, next"
-					:current-page="query.pageIndex"
-					:page-size="query.pageSize"
-					:total="pageTotal"
-					@current-change="handlePageChange"
-				></el-pagination>
+			<div class="pagination"  style="display: flex; align-items: center;">
+				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
+				 size="small" style="width: 100px;" clearable ="true" >
+				 <el-option label="5" value="5"></el-option>
+				 <el-option label="10" value="10"></el-option>
+				 <el-option label="20" value="20"></el-option>
+				 <el-option label="50" value="50"></el-option>
+				</el-select>
+				<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
+					:page-size="query.pageSize" :total="filteredData.length"
+					 @current-change="handlePageChange"
+					 @update:page-size = "handleSearch">
+				</el-pagination>
 			</div>
 		</div>
 
-		<!-- 编辑弹出框 -->
-		<el-dialog title="编辑" v-model="editVisible" width="30%">
-			<el-form label-width="70px">
-				<el-form-item label="展品名称">
-					<el-input v-model="form.name"></el-input>
-				</el-form-item>
-				<el-form-item label="所属展厅">
-					<el-input v-model="form.address"></el-input>
-				</el-form-item>
-			</el-form>
+		<!-- 查看的弹出框 -->
+		<el-dialog title="查看" v-model="viewVisible" width="60%">
+			<!-- <div>文物名称：{{ view.name }}</div>
+			<div>文物种类：{{ view.collectionType }}</div>
+			<div>文物年代：{{ view.era }}</div>
+			<div>藏品状态：{{ view.storageInfo.currentStatus }}</div> -->
+			<div class="cardContainer" id="container">
+
+				<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
+					<!-- 收藏单位 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item" :style="{ minWidth: view.collectInfo.collectMuseum.length * 12 + 'px' }">
+								<el-icon :style="iconStyle">
+									<user />
+								</el-icon>
+								收藏单位
+							</div>
+						</template>
+						{{ view.collectInfo.collectMuseum }}
+					</el-descriptions-item>
+					<!-- 现登记号 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<EditPen />
+								</el-icon>
+								现登记号
+							</div>
+						</template>
+						{{ view.collectionId }}
+					</el-descriptions-item>
+					<!-- 藏品图片 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Picture />
+								</el-icon>
+								藏品图片
+							</div>
+						</template>
+						<template #default="scope">
+							<el-image class="CollectionImg" :src="view.collectionPhoto" :z-index="10">
+							</el-image>
+						</template>
+					</el-descriptions-item>
+					<!-- 名称 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<tickets />
+								</el-icon>
+								名称
+							</div>
+						</template>
+						{{ view.name }}
+					</el-descriptions-item>
+					<!-- 文物原名 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<tickets />
+								</el-icon>
+								原名
+							</div>
+						</template>
+						{{ view.originalName }}
+					</el-descriptions-item>
+					<!-- 文物级别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Medal />
+								</el-icon>
+								文物级别
+							</div>
+						</template>
+						{{ view.storageInfo.protectionLevel }}
+					</el-descriptions-item>
+					<!-- 文物类别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Grid />
+								</el-icon>
+								文物类别
+							</div>
+						</template>
+						{{ view.collectionType }}
+					</el-descriptions-item>
+					<!-- 质地 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Pointer />
+								</el-icon>
+								质地
+							</div>
+						</template>
+						{{ view.textureType }}
+					</el-descriptions-item>
+					<!--年代 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Calendar />
+								</el-icon>
+								年代
+							</div>
+						</template>
+						{{ view.era }}
+					</el-descriptions-item>
+					<!-- 地域 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<LocationInformation />
+								</el-icon>
+								地域
+							</div>
+						</template>
+						{{ view.area }}
+					</el-descriptions-item>
+					<!-- 来源 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<MapLocation />
+								</el-icon>
+								来源
+							</div>
+						</template>
+						{{ view.collectInfo.source }}
+					</el-descriptions-item>
+					<!-- 保存状况 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Collection />
+								</el-icon>
+								保存状况
+							</div>
+						</template>
+						{{ view.storageInfo.currentStatus }}
+						<span v-if="view.storageInfo.currentStatus == '在展'">所在展厅：{{ view.exhibitionHallId }}</span>
+						<span v-if="view.storageInfo.currentStatus == '在库'">所在仓库：{{ view.storageId }}</span>
+					</el-descriptions-item>
+					<!-- 完残程度 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Box />
+								</el-icon>
+								完残程度
+							</div>
+						</template>
+						{{ view.completeness }}
+					</el-descriptions-item>
+					<!-- 尺寸 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<FullScreen />
+								</el-icon>
+								尺寸
+							</div>
+						</template>
+						{{ view.dimensionInfo.dimension + view.dimensionInfo.dimensionUnit }}
+					</el-descriptions-item>
+					<!-- 质量-->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Coin />
+								</el-icon>
+								质量
+							</div>
+						</template>
+						{{ view.dimensionInfo.weight + view.dimensionInfo.weightUnit }}
+					</el-descriptions-item>
+					<!-- 传统数量 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Histogram />
+								</el-icon>
+								传统数量
+							</div>
+						</template>
+						{{ view.dimensionInfo.traditionalQuantity + "个" }}
+					</el-descriptions-item>
+					<!-- 实际数量 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Histogram />
+								</el-icon>
+								实际数量
+							</div>
+						</template>
+						{{ view.dimensionInfo.realQuantity + "个" }}
+					</el-descriptions-item>
+					<!-- 入藏时间 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<AlarmClock />
+								</el-icon>
+								入藏时间
+							</div>
+						</template>
+						{{ view.collectInfo.collectTime }}
+					</el-descriptions-item>
+					<!-- 保护等级 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Trophy />
+								</el-icon>
+								保护等级
+							</div>
+						</template>
+						{{ view.storageInfo.protectionLevel }}
+					</el-descriptions-item>
+					<!-- 鉴定意见 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<EditPen />
+								</el-icon>
+								鉴定意见
+							</div>
+						</template>
+						{{ view.identificationComments }}
+						<div style="margin-top: 10px">鉴定人：{{ view.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
+							view.identificationDate }}</div>
+					</el-descriptions-item>
+					<!-- 备注 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								备注
+							</div>
+						</template>
+						{{ view.remark }}
+					</el-descriptions-item>
+				</el-descriptions>
+
+			</div>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click="editVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveEdit">确 定</el-button>
+					<el-button type="primary" @click="closeView">关 闭</el-button>
+					<el-button type="success" v-print="'#container'">打 印</el-button>
 				</span>
 			</template>
 		</el-dialog>
 
-    <!-- 新增弹出框 -->
-		<el-dialog title="新增" v-model="addVisible" width="30%">
-			<el-form label-width="70px">
-				<el-form-item label="展品名称">
-					<el-input v-model="addForm.name"></el-input>
-				</el-form-item>
-				<el-form-item label="所属展厅">
-					<el-input v-model="addForm.hall_name"></el-input>
-				</el-form-item>
-				<el-form-item label="简介">
-					<el-input v-model="addForm.introduction"></el-input>
-				</el-form-item>
-				<el-form-item label="温度">
-					<el-input v-model="addForm.temperature"></el-input>
-				</el-form-item>
-				<el-form-item label="湿度">
-					<el-input v-model="addForm.humidity"></el-input>
-				</el-form-item>
-				<el-form-item label="光强">
-					<el-input v-model="addForm.light"></el-input>
-				</el-form-item>
-        <el-form-item label="状态">
-					<el-select v-model="addForm.state" placeholder="状态">
-						<el-option key="1" label="良好" value="良好"></el-option>
-						<el-option key="2" label="危险" value="危险"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="其他">
-					<el-input v-model="addForm.others"></el-input>
-				</el-form-item>	
-			</el-form>
-			<template #footer>
-				<span class="dialog-footer">
-					<el-button @click="addVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveAdd">确 定</el-button>
-				</span>
-			</template>
-		</el-dialog>
 	</div>
 </template>
 
-<script setup lang="ts" name="collections">
-import { ref, reactive } from 'vue';
+<script setup lang="ts" name="basetable">
+import { ref, reactive, computed, onMounted , onBeforeUnmount} from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus, Sort, More, ArrowLeft } from '@element-plus/icons-vue';
-// import { fetchCollectionsData } from '../api/index';
-import { useRoute, useRouter } from 'vue-router';
-import axios from "axios";
+import { Delete, Edit, Search, Plus, View } from '@element-plus/icons-vue';
+// import { fetchData } from '../api/index';
+import {
 
+	Tickets,
+	User,
+} from '@element-plus/icons-vue'
+import { useRouter, useRoute } from 'vue-router';// 导入useRouter
+import axios from 'axios'
+import * as echarts from 'echarts';
 
-interface TableItem {
-	id: number;
-	name: string;
-  hall_name:string;
-	introduction: string;
-    temperature:number;
-    humidity:number;
-    light:number;
-	state: string;
-	others:string;
-}
+const hallId = ref(0); // 初始化 hallId 为 0，或者根据您的需求选择其他默认值
+let temperature:string="0";
+let humidity:string="0";
+let Co2:string="0";
+let router = useRouter();
 
-const query = reactive({
-	address: '',
-	pass_name:'',
-	name: '',
-	pageIndex: 1,
-	pageSize: 10
+// 在组件加载时，初始化 hallId
+onMounted(() => {
+  updateHallIdFromRoute();
 });
 
-const tableData = ref<TableItem[]>([]);
-const pageTotal = ref(0);
-const addedData = ref<TableItem[]>([]); // 保存新增的数据
-//接受展厅数据
-const route = useRoute();
-const paramName = route.params.name;
-if (Array.isArray(paramName)) {
-  query.pass_name = paramName[0]; // 将数组的第一个元素赋值给 query.address
-} else {
-  query.pass_name = paramName; // 直接赋值给 query.address
+// 监听路由变化，实时更新 hallId
+router.afterEach(() => {
+  updateHallIdFromRoute();
+  getData();
+});
+
+function updateHallIdFromRoute() {
+  const exhibitionHallId = router.currentRoute.value.query.exhibitionHallId as string;
+  hallId.value = exhibitionHallId ? parseInt(exhibitionHallId, 10) : 0;
 }
 
-// 获取表格数据
+const goToExhibitionHall = () => {
+  // 使用 router.push() 方法导航到展厅界面
+  router.push({ path: 'table'}); 
+};
+
+//获取后端数据库的数据
+const fetchData = async () => {
+	try {
+		const response = await axios.get(' http://42.192.39.198:5000/api/ExhibitionHall');
+		console.log(response.data);
+		console.log("数据库连接成功！");
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+//表格中展示的数据
+interface TableItem {
+	collectionId: number;
+	name: string;
+	money: string;
+	date: string;
+	collectionType: string;
+	collectInfo: {
+		collectTime: string;	//收藏的时间
+		source: string;
+	}
+	era: string;
+	status: string;
+	hall_name: string;
+	storageInfo: {
+		currentStatus: string;
+		protectionLevel: string;
+	}
+	textureType: string;
+	area: string;
+	completeness: string;
+	dimensionInfo: {
+		collectionId: string;
+		dimension: string;
+		dimensionUnit: string;
+		weight: string;
+		weightUnit: string;
+		realQuantity: string;
+		traditionalQuantity: string;
+	},
+	exhibitionHallId: string;
+	storageId: string;
+}
+//请求数据
+const query = reactive({
+	name: '',         //文物姓名
+	id: '',           //文物id
+	collectionType: '',        //文物类别
+	era: '',         //文物的朝代
+	status: '',      //藏品状态
+	excavation_site: '',    //出土地
+	excavation_date: '',   //出土日期
+	collectTime: '',	//收藏的时间
+	pageIndex: 1,      //所在页面
+	pageSize: 10,       //一页最多拥有的条目个数
+	tempPageSize : '', //中间变量，存储用户选择的PageSize
+	storageInfo: {
+		currentStatus: '',
+		protectionLevel: ''
+	}
+});
+//文物展示表格的数据
+const tableData = ref<TableItem[]>([]);
+const pageData = ref<TableItem[]>([]);   //
+let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
+
+
 const getData = () => {
-	//fetchCollectionsData()
-    axios.get('/').then(res => {
-		let filteredData = res.data.list.concat(addedData.value);
-		if (query.address !== '') {
-			if(query.address==='全部'){
-			tableData.value = filteredData;
-			}
-			else{
-            filteredData = filteredData.filter((item: TableItem) => item.hall_name === query.address);
-			}
-        }
-        if (query.name !== '') {
-            filteredData = filteredData.filter((item: TableItem) => item.name.includes(query.name));
-        }
-		tableData.value = filteredData;
-		pageTotal.value = res.data.pageTotal || 50;
-	});
-} ;
+  fetchData().then(res => {
+    // 扁平化数据并保留展品数组
+    const exhibitions = res.filter(item => item.collections && item.collections.length > 0 && item.exhibitionHallId === hallId.value);
+    const collections = exhibitions.map(item => item.collections).flat();
+	console.log(collections);
+	temperature = exhibitions.map(item => item.exhibitionHallTemperature).flat();
+    humidity = exhibitions.map(item => item.exhibitionHallHumidity).flat();
+	Co2 = exhibitions.map(item => item.exhibitionHallCo2).flat();
+
+
+    // 过滤数据
+    filteredData.value = collections.filter(item => item.storageInfo.currentStatus !== '未鉴定');
+    filteredData.value = filteredData.value.filter(item => item.name.includes(query.name));
+    filteredData.value = filteredData.value.filter(item => String(item.collectionId).includes(query.id));
+    filteredData.value = filteredData.value.filter(item => item.textureType.includes(query.collectionType));
+    filteredData.value = filteredData.value.filter(item => item.era.includes(query.era));
+    filteredData.value = filteredData.value.filter(item => item.storageInfo.currentStatus.includes(query.status));
+    filteredData.value = filteredData.value.filter(item => item.area.includes(query.excavation_site));
+    filteredData.value = filteredData.value.filter(item => item.collectInfo.collectTime.includes(query.excavation_date));
+
+    tableData.value = filteredData.value;
+
+    const startIndex = (query.pageIndex - 1) * query.pageSize;
+    const endIndex = query.pageIndex * query.pageSize;
+
+    // 截取当前页的数据
+    const pagedData = filteredData.value.slice(startIndex, endIndex);
+
+    // 将截取的数据赋值给 pagedData
+    pageData.value = pagedData;
+
+    // 格式化 collectTime 以进行显示
+    for (var i = 0; i < pageData.value.length; i++) {
+      var T = pageData.value[i].collectInfo.collectTime;
+      var dest = '';
+      for (var j = 0; j < T.length; j++) {
+        if (T[j] == 'T')
+          break;
+        dest += T[j];
+      }
+      pageData.value[i].collectInfo.collectTime = dest;
+    }
+  });
+};
+
+
 getData();
 
 // 查询操作
@@ -200,78 +535,352 @@ const handlePageChange = (val: number) => {
 	getData();
 };
 
-// 删除操作
-const handleDelete = (index: number) => {
-	// 二次确认删除
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning'
-	})
-		.then(() => {
-			ElMessage.success('删除成功');
-			tableData.value.splice(index, 1);
-		})
-		.catch(() => {});
-};
+//改变页面大小
+const applyPageSize = () =>{
+	if(query.tempPageSize !=''){
+		query.pageSize = Number(query.tempPageSize);
+	}
+	else{
+		query.pageSize = 10;
+	}
+	console.log(query.pageSize);
+	query.pageIndex = 1;
+	getData();
+}
 
-// 表格编辑时弹窗和保存
-const editVisible = ref(false);
-let form = reactive({
+// 表格查看详细资料时弹窗和保存
+const viewVisible = ref(false);
+
+//查看的内容
+let view = reactive({
+	area: '',
+	collectInfo: {
+		collectionId: '',
+		source: '',
+		collectMuseum: '',
+		generalRegistrationId: '',
+		collectTime: '',
+		collectionLevel: ''
+	},
+	collectionId: '',
+	collectionPhoto: '',
+	collectionType: '',
+	completeness: '',
+	completenessType: '',
+	dimensionInfo: {
+		collectionId: '',
+		dimension: '',
+		dimensionUnit: '',
+		weight: '',
+		weightUnit: '',
+		realQuantity: '',
+		traditionalQuantity: ''
+	},
+	era: '',
+	identificationComments: '',
+	identificationDate: '',
+	identificationStaffName: '',
 	name: '',
-	address: ''
+	remark: '',
+	storageInfo: {
+		currentStatus: '',
+		protectionLevel: ''
+	},
+	originalName: '',
+	textureType: '',
+	exhibitionHallId: '',
+	storageId: '',
+
 });
-let idx: number = -1;
-const handleEdit = (index: number, row: any) => {
-	idx = index;
-	form.name = row.name;
-	form.address = row.position;
-	editVisible.value = true;
-};
-const saveEdit = () => {
-	editVisible.value = false;
-	ElMessage.success(`修改第 ${idx + 1} 行成功`);
-	tableData.value[idx].name = form.name;
-	tableData.value[idx].hall_name = form.address;
+
+//处理查看操作
+let i: number = -1;
+// const view = ref<TableItem[]>([]);
+const handleDetails = (index: number, row: any) => {
+	view.area = row.area;
+	view.collectInfo = {
+		collectionId: row.collectInfo.collectionId,
+		source: row.collectInfo.source,
+		collectMuseum: row.collectInfo.collectMuseum,
+		generalRegistrationId: row.collectInfo.generalRegistrationId,
+		collectTime: row.collectInfo.collectTime,
+		collectionLevel: row.collectInfo.collectionLevel
+	};
+	view.collectionId = row.collectionId;
+	view.collectionPhoto = row.collectionPhoto;
+	view.collectionType = row.collectionType;
+	view.completeness = row.completeness;
+	view.completenessType = row.completenessType;
+	view.dimensionInfo = {
+		collectionId: row.dimensionInfo.collectionId,
+		dimension: row.dimensionInfo.dimension,
+		dimensionUnit: row.dimensionInfo.dimensionUnit,
+		weight: row.dimensionInfo.weight,
+		weightUnit: row.dimensionInfo.weightUnit,
+		realQuantity: row.dimensionInfo.realQuantity,
+		traditionalQuantity: row.dimensionInfo.traditionalQuantity
+	};
+	view.era = row.era;
+	view.identificationComments = row.identificationComments;
+	view.identificationDate = row.identificationDate;
+	view.identificationStaffName = row.identificationStaffName;
+	view.name = row.name;
+	view.remark = row.remark;
+	view.storageInfo = {
+		currentStatus: row.storageInfo.currentStatus,
+		protectionLevel: row.storageInfo.protectionLevel
+	};
+	view.originalName = row.originalName;
+	view.textureType = row.textureType;
+	view.exhibitionHallId = row.exhibitionHallId;
+	view.storageId = row.storageId;
+	viewVisible.value = true;
 };
 
+//关闭“查看详细信息”的弹窗
+const closeView = () => {
+	viewVisible.value = false;                    //editVisible.value被用来控制编辑界面或对话框的显示与隐藏
+};
 
-// 新增弹窗和保存
-const addVisible = ref(false);
-let addForm = reactive({
-    name: '',
-    hall_name: '',
-	introduction:'',
-	temperature: 0,
-    humidity: 0,
-	light:0,
-    state: '',
-    others: '',
+const size = ref('')
+const iconStyle = computed(() => {
+	const marginMap = {
+		large: '8px',
+		default: '6px',
+		small: '4px',
+	}
+	return {
+		marginRight: marginMap.default,
+	}
+})
+
+onMounted(async () => {
+  try {
+    // 获取图表容器
+    const chartDom = document.getElementById('chart1');
+
+    // 使用 ECharts 初始化图表
+    const myChart = echarts.init(chartDom);
+
+    // 获取展厅温度数据
+    await getData(); // 等待数据获取完成
+
+    // ECharts 配置选项
+    const option = {
+  series: [
+    {
+      type: 'gauge',
+      center: ['50%', '60%'],
+      startAngle: 200,
+      endAngle: -20,
+      min: 0,
+      max: 60,
+      splitNumber: 12,
+      itemStyle: {
+        color: '#FFAB91'
+      },
+      progress: {
+        show: true,
+        width: 30
+      },
+      pointer: {
+        show: false
+      },
+      axisLine: {
+        lineStyle: {
+          width: 30
+        }
+      },
+      axisTick: {
+        distance: -45,
+        splitNumber: 5,
+        lineStyle: {
+          width: 2,
+          color: '#999'
+        }
+      },
+      splitLine: {
+        distance: -52,
+        length: 14,
+        lineStyle: {
+          width: 3,
+          color: '#999'
+        }
+      },
+      axisLabel: {
+        distance: -20,
+        color: '#999',
+        fontSize: 20
+      },
+      anchor: {
+        show: false
+      },
+      title: {
+        show: false
+      },
+      detail: {
+        valueAnimation: true,
+        width: '60%',
+        lineHeight: 40,
+        borderRadius: 8,
+        offsetCenter: [0, '-15%'],
+        fontSize: 60,
+        fontWeight: 'bolder',
+        formatter: '{value} °C',
+        color: 'inherit'
+      },
+      data: [
+        {
+          value: 30
+        }
+      ]
+    },
+    {
+      type: 'gauge',
+      center: ['50%', '60%'],
+      startAngle: 200,
+      endAngle: -20,
+      min: 0,
+      max: 60,
+      itemStyle: {
+        color: '#FD7347'
+      },
+      progress: {
+        show: true,
+        width: 8
+      },
+      pointer: {
+        show: false
+      },
+      axisLine: {
+        show: false
+      },
+      axisTick: {
+        show: false
+      },
+      splitLine: {
+        show: false
+      },
+      axisLabel: {
+        show: false
+      },
+      detail: {
+        show: false
+      },
+      data: [
+        {
+          value: 30
+        }
+      ]
+    }
+  ]
+};
+
+    option && myChart.setOption(option);
+
+    // 在组件销毁前销毁 ECharts 实例
+    onBeforeUnmount(() => {
+      console.log('Component is unmounted. Disposing ECharts instance.');
+      myChart.dispose();
+    });
+  } catch (error) {
+    console.error('Error initializing chart1:', error);
+  }
 });
-const handleAdd = () => {
-    addVisible.value = true;
-};
-const saveAdd = () => {
-    addVisible.value = false;
-    const newItem = {
-        id: tableData.value.length + 1,
-        name: addForm.name,
-		hall_name:addForm.hall_name,
-        introduction: addForm.introduction,
-		temperature: addForm.temperature,
-		humidity: addForm.humidity,
-		light: addForm.light,
-        state: addForm.state,
-        others:addForm.others,
-    };
-    addedData.value.push(newItem); // 将新增的数据保存到addedData数组中
-    tableData.value.push(newItem);
-    ElMessage.success('新增成功');
+
+
+onMounted(async () => {
+  try {
+    // 获取图表容器
+    const chartDom = document.getElementById('chart2');
+
+    // 使用 ECharts 初始化图表
+    const myChart = echarts.init(chartDom);
+
+    // ECharts 配置选项
+    const option = {
+		tooltip: {
+    formatter: '{a} <br/>{b} : {c}%'
+  },
+  series: [
+    {
+      name: 'Pressure',
+      type: 'gauge',
+      progress: {
+        show: true
+      },
+      detail: {
+        valueAnimation: true,
+        formatter: '{value}'
+      },
+      data: [
+        {
+          value: 30,
+          name: 'Humidity'
+        }
+      ]
+    }
+  ]
 };
 
-// 返回展厅
-const router = useRouter();
-const goback = () => {
-	router.push( 'table' );
+    option && myChart.setOption(option);
+
+    // 在组件销毁前销毁 ECharts 实例
+    onBeforeUnmount(() => {
+      console.log('Component is unmounted. Disposing ECharts instance.');
+      myChart.dispose();
+    });
+  } catch (error) {
+    console.error('Error initializing chart1:', error);
+  }
+});
+
+onMounted(async () => {
+  try {
+    // 获取图表容器
+    const chartDom = document.getElementById('chart3');
+
+    // 使用 ECharts 初始化图表
+    const myChart = echarts.init(chartDom);
+
+    // ECharts 配置选项
+    const option = {
+		tooltip: {
+    formatter: '{a} <br/>{b} : {c}%'
+  },
+  series: [
+    {
+      name: 'Pressure',
+      type: 'gauge',
+      progress: {
+        show: true
+      },
+      detail: {
+        valueAnimation: true,
+        formatter: '{value}'
+      },
+      data: [
+        {
+          value: 30,
+          name: 'CO2'
+        }
+      ]
+    }
+  ]
 };
+
+    option && myChart.setOption(option);
+
+    // 在组件销毁前销毁 ECharts 实例
+    onBeforeUnmount(() => {
+      console.log('Component is unmounted. Disposing ECharts instance.');
+      myChart.dispose();
+    });
+  } catch (error) {
+    console.error('Error initializing chart1:', error);
+  }
+});
+
 </script>
 
 <style scoped>
@@ -283,24 +892,65 @@ const goback = () => {
 	width: 120px;
 }
 
-
 .handle-input {
 	width: 300px;
 }
+
 .table {
 	width: 100%;
 	font-size: 14px;
 }
+
 .red {
 	color: #F56C6C;
 }
+
 .mr10 {
 	margin-right: 10px;
 }
+
+.mr11 {
+	width: 150px;
+	margin-right: 10px;
+}
+
 .table-td-thumb {
 	display: block;
 	margin: auto;
 	width: 40px;
 	height: 40px;
+}
+
+.el-descriptions {
+	margin-top: 20px;
+}
+
+.cell-item {
+	display: flex;
+	align-items: center;
+}
+
+.margin-top {
+	margin-top: 20px;
+}
+
+.CollectionImg {
+	float: left;
+	width: 200px;
+	height: 130px;
+	margin: 10px;
+
+}
+.charts-container {
+  display: flex; /* 使用 Flex 布局 */
+  justify-content: space-between; /* 横向平分空间 */
+  align-items: center; /* 垂直居中对齐 */
+  flex-wrap: wrap; /* 当空间不足时换行显示 */
+}
+.chart {
+  width: calc(33.33% - 10px); /* 每个图表容器占据横向空间的 33.33%（减去一些间距） */
+  height: 400px;
+  margin-right: 10px; /* 为了在图表之间添加一些间距 */
+  box-sizing: border-box; /* 防止外边距溢出 */
 }
 </style>
