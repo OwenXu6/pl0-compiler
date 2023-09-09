@@ -64,52 +64,59 @@
 			</div>
 		</div>
 
-		<!-- 编辑弹出框 -->
-		<el-dialog title="编辑信息" v-model="editVisible" width="30%">
-			<el-form label-width="70px">
-				<el-form-item label="姓名">
-					<el-input v-model="form.staffName"></el-input>
-				</el-form-item>
-				<el-form-item label="年龄">
-					<el-input v-model="form.staffAge"></el-input>
-				</el-form-item>
-				<el-form-item label="性别">
-					<el-select v-model="form.staffGender" placeholder="请选择性别"  class="full-width-select">
-						<el-option label="男" value="男"></el-option>
-						<el-option label="女" value="女"></el-option>
-						<el-option label="双性人" value="双性人"></el-option>
-						<el-option label="跨性别男性" value="跨性别男性"></el-option>
-						<el-option label="跨性别女性" value="跨性别女性"></el-option>
-						<el-option label="非二元性别" value="非二元性别"></el-option>
-						<el-option label="性别流动" value="性别流动"></el-option>
-						<el-option label="其他" value="其他"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="职级">
-					<el-input v-model="form.staffPostRank"></el-input>
-				</el-form-item>
-				<el-form-item label="薪资">
-					<el-input v-model="form.staffSalary"></el-input>
-				</el-form-item>
-				<el-form-item label="工作方向">
-					<el-select v-model="form.workType" placeholder="请选择工作方向"  class="full-width-select">
-						<el-option label="大领导" value="大领导"></el-option>
-						<el-option label="全能神" value="全能神"></el-option>
-						<el-option label="CollectionManager" value="CollectionManager"></el-option>
-						<el-option label="库房管理员" value="库房管理员"></el-option>
-						<el-option label="SystemAdmin" value="SystemAdmin"></el-option>
-						<el-option label="导览人员" value="导览人员"></el-option>
-						<el-option label="Archaeologist" value="Archaeologist"></el-option>
-						<el-option label="安保人员" value="安保人员"></el-option>
-						<el-option label="CollectionResearcher" value="CollectionResearcher"></el-option>
-						<el-option label="其他工作人员" value="其他工作人员"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="工作内容">
-					<el-input v-model="form.job"></el-input>
-				</el-form-item>
-			</el-form>
-			<template #footer>
+        <el-pagination
+            background
+            layout="total, prev, pager, next"
+            :current-page="query.pageIndex"
+            :page-size="query.pageSize"
+            :total="filteredData.length"
+            @current-change="handlePageChange"
+            @update:page-size="PageSizeChange"
+        ></el-pagination>
+      </div>
+    </div>
+
+    <!-- 编辑弹出框 -->
+    <el-dialog title="编辑信息" v-model="editVisible" width="30%">
+      <el-form label-width="70px">
+        <el-form-item label="姓名">
+          <el-input v-model="form.staffName"></el-input>
+        </el-form-item>
+        <el-form-item label="年龄">
+          <el-input v-model="form.staffAge"></el-input>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-select v-model="form.staffGender" placeholder="请选择性别" class="full-width-select">
+            <el-option label="男" value="男"></el-option>
+            <el-option label="女" value="女"></el-option>
+            <el-option label="其他" value="其他"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="职级">
+          <el-input v-model="form.staffPostRank"></el-input>
+        </el-form-item>
+        <el-form-item label="薪资">
+          <el-input v-model="form.staffSalary"></el-input>
+        </el-form-item>
+        <el-form-item label="工作方向">
+          <el-select v-model="form.workType" placeholder="请选择工作方向" class="full-width-select">
+            <el-option label="考古学家" value="Archaeologist"></el-option>
+            <el-option label="藏品管理员" value="CollectionManager"></el-option>
+            <el-option label="藏品研究员" value="CollectionResearcher"></el-option>
+            <el-option label="展厅管理员" value="ExhibitionHallAdmin"></el-option>
+            <el-option label="文创产品管理员" value="ProductAdmin"></el-option>
+            <el-option label="反馈信息管理员" value="FeedbackAdmin"></el-option>
+            <el-option label="人事管理员" value="StaffAdmin"></el-option>
+            <el-option label="仓库管理员" value="WarehouseAdmin"></el-option>
+            <el-option label="日常管理员" value="RoutineAdmin"></el-option>
+            <el-option label="待定" value="User"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="工作内容">
+          <el-input v-model="form.job"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
 				<span class="dialog-footer">
 					<el-button @click="editVisible = false">取 消</el-button>
 					<el-button type="primary" @click="saveEdit">确 定</el-button>
@@ -117,59 +124,53 @@
 			</template>
 		</el-dialog>
 
-		<!-- 新增弹出框 -->
-		<el-dialog title="新增人员信息" v-model="newVisible" width="30%">
-			<el-form label-width="70px">
-				<el-form-item label="ID">
-					<el-input v-model="form.staffId" ></el-input>
-				</el-form-item>
-				<el-form-item label="姓名">
-					<el-input v-model="form.staffName"></el-input>
-				</el-form-item>
-				<el-form-item label="年龄">
-					<el-input v-model="form.staffAge"></el-input>
-				</el-form-item>
-				<el-form-item label="性别">
-					<el-select v-model="form.staffGender" placeholder="请选择性别"  class="full-width-select">
-						<el-option label="男" value="男"></el-option>
-						<el-option label="女" value="女"></el-option>
-						<el-option label="双性人" value="双性人"></el-option>
-						<el-option label="跨性别男性" value="跨性别男性"></el-option>
-						<el-option label="跨性别女性" value="跨性别女性"></el-option>
-						<el-option label="非二元性别" value="非二元性别"></el-option>
-						<el-option label="性别流动" value="性别流动"></el-option>
-						<el-option label="其他" value="其他"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="职级">
-					<el-input v-model="form.staffPostRank"></el-input>
-				</el-form-item>
-				<el-form-item label="薪资">
-					<el-input v-model="form.staffSalary"></el-input>
-				</el-form-item>
-				<el-form-item label="工作方向">
-					<el-select v-model="form.workType" placeholder="请选择工作方向"  class="full-width-select">
-
-						<el-option label="大领导" value="大领导"></el-option>
-						<el-option label="全能神" value="全能神"></el-option>
-						<el-option label="CollectionManager" value="CollectionManager"></el-option>
-						<el-option label="库房管理员" value="库房管理员"></el-option>
-						<el-option label="SystemAdmin" value="SystemAdmin"></el-option>
-						<el-option label="导览人员" value="导览人员"></el-option>
-						<el-option label="Archaeologist" value="Archaeologist"></el-option>
-						<el-option label="安保人员" value="安保人员"></el-option>
-						<el-option label="CollectionResearcher" value="CollectionResearcher"></el-option>
-						<el-option label="其他工作人员" value="其他工作人员"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="工作内容">
-					<el-input v-model="form.job"></el-input>
-				</el-form-item>
-				<el-form-item label="用户Id">
-					<el-input v-model="form.userId"></el-input>
-				</el-form-item>
-			</el-form>
-			<template #footer>
+    <!-- 新增弹出框 -->
+    <el-dialog title="新增人员信息" v-model="newVisible" width="30%">
+      <el-form label-width="70px">
+        <el-form-item label="ID">
+          <el-input v-model="form.staffId"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名">
+          <el-input v-model="form.staffName"></el-input>
+        </el-form-item>
+        <el-form-item label="年龄">
+          <el-input v-model="form.staffAge"></el-input>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-select v-model="form.staffGender" placeholder="请选择性别" class="full-width-select">
+            <el-option label="男" value="男"></el-option>
+            <el-option label="女" value="女"></el-option>
+            <el-option label="其他" value="其他"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="职级">
+          <el-input v-model="form.staffPostRank"></el-input>
+        </el-form-item>
+        <el-form-item label="薪资">
+          <el-input v-model="form.staffSalary"></el-input>
+        </el-form-item>
+        <el-form-item label="工作方向">
+          <el-select v-model="form.workType" placeholder="请选择工作方向" class="full-width-select">
+            <el-option label="考古学家" value="Archaeologist"></el-option>
+            <el-option label="藏品管理员" value="CollectionManager"></el-option>
+            <el-option label="藏品研究员" value="CollectionResearcher"></el-option>
+            <el-option label="展厅管理员" value="ExhibitionHallAdmin"></el-option>
+            <el-option label="文创产品管理员" value="ProductAdmin"></el-option>
+            <el-option label="反馈信息管理员" value="FeedbackAdmin"></el-option>
+            <el-option label="人事管理员" value="StaffAdmin"></el-option>
+            <el-option label="仓库管理员" value="WarehouseAdmin"></el-option>
+            <el-option label="日常管理员" value="RoutineAdmin"></el-option>
+            <el-option label="待定" value="User"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="工作内容">
+          <el-input v-model="form.job"></el-input>
+        </el-form-item>
+        <el-form-item label="用户Id">
+          <el-input v-model="form.userId"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
 				<span class="dialog-footer">
 					<el-button @click="newVisible = false">取 消</el-button>
 					<el-button type="primary" @click="savenew">确 定</el-button>
@@ -380,15 +381,16 @@ const PageSizeChange = () =>{
 
 // 删除操作
 const handleDelete = (index: number) => {
-	// 二次确认删除
-	idx = index;
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning'
-	})
-		.then(() => {
-			deleteData();
-		})
-		.catch(() => {});
+  // 二次确认删除
+  idx = index;
+  ElMessageBox.confirm('确定要删除吗？', '提示', {
+    type: 'warning',customClass: 'my-message-box'
+  })
+      .then(() => {
+        deleteData();
+      })
+      .catch(() => {
+      });
 };
 
 
@@ -592,19 +594,50 @@ const saveEdit = () => {
 		return;
 	}
 
-	editVisible.value = false;
-	ElMessage.success(`修改第 ${idx + 1} 行成功`);
-	console.log(idx,pageData);
-	pageData.value[idx].staffId = form.staffId;
-	pageData.value[idx].staffName = form.staffName;
-	pageData.value[idx].staffAge = form.staffAge;
-	pageData.value[idx].staffGender = form.staffGender;
-	pageData.value[idx].staffPostRank = form.staffPostRank;
-	pageData.value[idx].staffSalary = Number(form.staffSalary);
-	pageData.value[idx].workType = form.workType;
-	pageData.value[idx].job = form.job; //应该要至后端修改之
-	editData();
-	grant(form.workType,pageData.value[idx].userId);     //需要真实的userId,这里只有aspUserId
+  let Nametested = testStaffName();
+  if (Nametested != true) {
+    ElMessage.error(Nametested);
+    return;
+  }
+  let Agetested = testStaffAge();
+  if (Agetested != true) {
+    ElMessage.error(Agetested);
+    return;
+  }
+  let Salarytested = testStaffSalary();
+  if (Salarytested != true) {
+    ElMessage.error(Salarytested);
+    return;
+  }
+  let Jobtested = testJob();
+  if (Jobtested != true) {
+    ElMessage.error(Jobtested);
+    return;
+  }
+  let PostRanktested = testStaffPostRank();
+  if (PostRanktested != true) {
+    ElMessage.error(PostRanktested);
+    return;
+  }
+  let WorkTypetested = testWorkType();
+  if (WorkTypetested != true) {
+    ElMessage.error(WorkTypetested);
+    return;
+  }
+
+  editVisible.value = false;
+  ElMessage.success(`修改第 ${idx + 1} 行成功`);
+  console.log(idx, pageData);
+  pageData.value[idx].staffId = form.staffId;
+  pageData.value[idx].staffName = form.staffName;
+  pageData.value[idx].staffAge = form.staffAge;
+  pageData.value[idx].staffGender = form.staffGender;
+  pageData.value[idx].staffPostRank = form.staffPostRank;
+  pageData.value[idx].staffSalary = Number(form.staffSalary);
+  pageData.value[idx].workType = form.workType;
+  pageData.value[idx].job = form.job; //应该要至后端修改之
+  editData();
+  grantByAspNetUserPk(form.workType, pageData.value[idx].aspNetUserPk);    
 };
 
 
@@ -709,5 +742,12 @@ const savenew = () => {         //保存新增人员
 .full-width-select {
 	width: 100%;
 }
-
+.my-message-box {
+  /* 自定义样式 */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+}
 </style>
