@@ -445,13 +445,7 @@
 					</el-dialog>
 				</el-form-item-->
 
-				<el-form-item>
-					<el-upload class="upload-demo" multiple="false" action="/foreignImage/upload" name="smfile"
-						:headers="{ Authorization: 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" :on-success="handleSuccess"
-						:on-error="handleError" :before-upload="beforeUpload" :limit="1" :on-exceed="handleExceed">
-						<el-button size="small" type="primary">点击上传</el-button>
-					</el-upload>
-				</el-form-item>
+				
 
 			</el-form>
 
@@ -477,11 +471,47 @@ import { onMounted } from 'vue'
 import axios from 'axios';
 import type { FormInstance, FormRules } from 'element-plus'
 
+import { useBaseUrl } from "@/store/baseUrl";
+import { useUserInfo } from "@/store/userInfo";
 
 
-let tmp = ({
-	location: "",
-})
+/*const userInfo = useUserInfo();
+const token=userInfo.userToken;
+console.log("打印用户信息")
+console.log(userInfo)
+console.log("打印token")
+console.log(token)*/
+
+function getToken() {
+	// 替换为获取token的逻辑
+	const UserInfo = useUserInfo();
+	return UserInfo.userToken;
+
+	}
+
+// 创建一个具有默认头的Axios实例
+const axiosInstance = axios.create({
+	baseURL: 'http://42.192.39.198:5000/api',
+});
+
+// 拦截器：将token添加到每个请求中
+axiosInstance.interceptors.request.use((config) => {
+	const token = getToken();
+
+	if (token) {
+		if (config.headers) {
+			config.headers.Authorization = `Bearer ${token}`;
+		} else {
+			config.headers = {
+				Authorization: `Bearer ${token}`,
+			};
+		}
+	}
+
+	return config;
+}, (error) => {
+	return Promise.reject(error);
+});
 
 
 interface TableItem {
@@ -639,13 +669,14 @@ const submitForm = async (newCollection: TableItem) => {
 	try {
 		console.log(newCollection);
 
-		const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiamlhb2FvIiwianRpIjoiNDZkNWU5MTAtZjg3Ny00YTM2LWJhMGEtMDFiNTgyZDE3ZGUzIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIkNvbGxlY3Rpb25NYW5hZ2VyIiwiQXJjaGFlb2xvZ2lzdCIsIkNvbGxlY3Rpb25SZXNlYXJjaGVyIiwiVXNlciIsIlN5c3RlbUFkbWluIiwiUHJvZHVjdEFkbWluIl0sImV4cCI6MTY5MzkzODk2OCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjAwIn0.-ApklH2AXId5CKfIyeQMGtNMnJcdtjNoccfu_Lhr_zk";
-
-		const headers = {
+		/*const headers = {
 			'Authorization': `Bearer ${token}`
 		};
 
-		const response = await axios.post('http://42.192.39.198:5000/api/Collections', newCollection, { headers });
+		const response = await axios.post('http://42.192.39.198:5000/api/Collections', newCollection, { headers });*/
+		
+		const response= await axiosInstance.post('/Collections', newCollection);
+		
 		ElMessage.success('数据上传成功');
 	} catch (error) {
 		ElMessage.error('数据上传失败');
@@ -755,13 +786,14 @@ const pageTotal = ref(0);
 //获取后端数据库的数据
 const fetchData = async () => {
 	try {
-		/*const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiamlhb2FvIiwianRpIjoiNDZkNWU5MTAtZjg3Ny00YTM2LWJhMGEtMDFiNTgyZDE3ZGUzIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIkNvbGxlY3Rpb25NYW5hZ2VyIiwiQXJjaGFlb2xvZ2lzdCIsIkNvbGxlY3Rpb25SZXNlYXJjaGVyIiwiVXNlciIsIlN5c3RlbUFkbWluIiwiUHJvZHVjdEFkbWluIl0sImV4cCI6MTY5MzkzODk2OCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjAwIn0.-ApklH2AXId5CKfIyeQMGtNMnJcdtjNoccfu_Lhr_zk";
-
-		const headers = {
+		/*const headers = {
 			'Authorization': `Bearer ${token}`
-		};*/
+		};
 
-		const response = await axios.get(' http://42.192.39.198:5000/api/Collections'/*, {headers}*/);
+		const response = await axios.get(' http://42.192.39.198:5000/api/Collections', {headers});*/
+		
+		const response= await axiosInstance.get('/Collections');
+
 		console.log(response.data);
 		console.log("数据库连接成功！");
 		return response.data;
