@@ -4,7 +4,7 @@
 		<div class="container">
 			<div class="handle-box">
 				<el-input v-model="query.name" placeholder="展厅名称" class="handle-input mr10"></el-input>
-				<div style="display: inline-block;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
+				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="exhibitionHallId" label="展厅ID" width="55" align="center"></el-table-column>
@@ -78,10 +78,44 @@ import { Delete, Edit, Search, Plus, Sort, More } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
 import axios from 'axios'
 import * as echarts from 'echarts';
+import { useUserInfo } from '../store/userInfo';
+
+
+function getToken() {
+	// 替换为获取token的逻辑
+	const UserInfo = useUserInfo();
+	return UserInfo.userToken;
+
+	}
+
+// 创建一个具有默认头的Axios实例
+const axiosInstance = axios.create({
+	baseURL: 'http://42.192.39.198:5000/api',
+});
+
+// 拦截器：将token添加到每个请求中
+axiosInstance.interceptors.request.use((config) => {
+	const token = getToken();
+
+	if (token) {
+		if (config.headers) {
+			config.headers.Authorization = `Bearer ${token}`;
+		} else {
+			config.headers = {
+				Authorization: `Bearer ${token}`,
+			};
+		}
+	}
+
+	return config;
+}, (error) => {
+	return Promise.reject(error);
+});
+
 
 const fetchData = async () => {
 	try {
-		const response = await axios.get('http://42.192.39.198:5000/api/ExhibitionHall');
+		const response = await axiosInstance.get('/ExhibitionHall');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -129,7 +163,7 @@ const handleSearch = () => {
 
 const uploadData = async (id:number, data:any) => {
     try {
-		const response = await axios.put(`http://42.192.39.198:5000/api/ExhibitionHall/${id}`, data);
+		const response = await axiosInstance.put(`/ExhibitionHall/${id}`, data);
         ElMessage.success('数据上传成功');
     } catch (error) {
 		console.error('数据上传失败:', error);
@@ -174,6 +208,8 @@ const saveEdit = async () => {
 	tableData.value[idx].exhibitionHallCo2 = editForm.Co2;
 	await uploadData(tableData.value[idx].exhibitionHallId, tableData.value[idx]);
 };
+
+let router = useRouter();
 
 onMounted(() => {
     const selectedBlock = ref('展厅1');
@@ -235,10 +271,9 @@ onMounted(() => {
 
 // Find the corresponding exhibition hall ID based on the name
 const exhibitionHall = tableData.value.find(item => item.exhibitionHallName === exhibitionHallName);
-
+console.log(exhibitionHall.exhibitionHallId)
 if (exhibitionHall) {
     // Navigate to collection.vue with the exhibition hall ID as a parameter
-    const router = useRouter();
     router.push({ path: 'collections', query: { exhibitionHallId: exhibitionHall.exhibitionHallId } });
 }
         });
