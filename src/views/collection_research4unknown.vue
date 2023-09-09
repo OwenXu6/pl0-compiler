@@ -728,10 +728,50 @@ import {
 import { useRouter } from 'vue-router'; // 导入useRouter
 import axios from 'axios'
 
+import { useUserInfo } from "@/store/userInfo";
+import { useBaseUrl } from "@/store/baseUrl";
+
+function getToken() {
+	// 替换为获取token的逻辑
+	const UserInfo = useUserInfo();
+	return UserInfo.userToken;
+
+	}
+
+// 创建一个具有默认头的Axios实例
+const axiosInstance = axios.create({
+	baseURL: 'http://42.192.39.198:5000/api',
+});
+
+// 拦截器：将token添加到每个请求中
+axiosInstance.interceptors.request.use((config) => {
+	const token = getToken();
+
+	console.log(token);
+
+	if (token) {
+		if (config.headers) {
+			config.headers.Authorization = `Bearer ${token}`;
+		} else {
+			config.headers = {
+				Authorization: `Bearer ${token}`,
+			};
+		}
+	}
+
+	return config;
+}, (error) => {
+	return Promise.reject(error);
+});
+
+
+
 //获取后端数据库的数据
 const fetchData = async () => {
 	try {
-		const response = await axios.get(' http://42.192.39.198:5000/api/Collections');
+		
+		const response= await axiosInstance.get('/Collections');
+		//const response = await axios.get(' http://42.192.39.198:5000/api/Collections');
 		console.log(response.data);
 		console.log("数据库连接成功！");
 		return response.data;
@@ -1057,7 +1097,9 @@ const handleDetails = (index: number, row: any) => {
 const uploadData = async () => {
 	console.log(tableData.value[idx])
 	try {
-		const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
+		
+		const response= await axiosInstance.put('/Collections' + tableData.value[idx].collectionId, tableData.value[idx]);
+		//const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
 		ElMessage.success('数据上传成功');
 		getData();
 	} catch (error) {
