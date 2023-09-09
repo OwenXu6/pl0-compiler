@@ -17,6 +17,11 @@ export default defineConfig({
         rewrite:(path)=>path.replace(/^\/foreignImage/,""),
         changeOrigin: true,
 
+      },
+      "/api": {
+        target:"http://42.192.39.198:5000",
+        changeOrigin: true,
+
       }
     },
   },

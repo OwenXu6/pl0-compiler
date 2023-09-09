@@ -425,8 +425,8 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click="editVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveEdit">确 定</el-button>
+					<div style="display: inline-block;margin:10px;"><el-button type="danger" @click="editVisible = false">取 消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
 				</span>
 			</template>
 		</el-dialog>
@@ -626,7 +626,7 @@ const saveDelete = async (index: number) => {
 const handleDelete = (index: number) => {
 	// 二次确认删除
 	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning'
+		type: 'warning',customClass: 'my-message-box'
 	})
 		.then(() => {
 			ElMessage.success('删除成功');
@@ -1451,5 +1451,12 @@ const iconStyle = computed(() => {
 	height: 130px;
 	margin: 10px;
 
+}
+.my-message-box {
+  /* 自定义样式 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

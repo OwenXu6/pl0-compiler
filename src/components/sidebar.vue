@@ -62,22 +62,22 @@ const items = [
     icon: 'goods',
     index: '1',
     title: '藏品管理',
-    permiss: ['CollectionManager','Archaeologist','CollectionResearcher',"SystemAdmin"],
+    permiss: ['CollectionManager','Archaeologist','CollectionResearcher'],
     subs: [
       {
         index: '/collection_add',
         title: '新增藏品',
-        permiss: ['Archaeologist','SystemAdmin'],
+        permiss: ['Archaeologist'],
       },
       {
         index: '/collection_search',
         title: '查询藏品',
-        permiss: ['CollectionManager','SystemAdmin'],
+        permiss: ['CollectionManager'],
       },
       {
         index: '/collection_research4unknown',
         title: '未知文物研究鉴定',
-        permiss: ['CollectionResearcher','SystemAdmin'],
+        permiss: ['CollectionResearcher'],
       },
     ],
   },
@@ -85,7 +85,7 @@ const items = [
     icon:'lock',
     index: '/Human_Management',
     title: '人事管理',
-    permiss: ['StaffAdmin','SystemAdmin'],
+    permiss: ['StaffAdmin'],
   },
   {
     icon: 'more',

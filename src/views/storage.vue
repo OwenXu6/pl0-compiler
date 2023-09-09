@@ -4,8 +4,8 @@
 			<div class="handle-box">
 				<el-input v-model="query.name" placeholder="库房名称" class="handle-input mr10"></el-input>
 				<el-input v-model="query.address" placeholder="库房地址" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="handleAdd">新增仓库</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Plus" @click="handleAdd">新增仓库</el-button></div>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column type="expand">
@@ -48,10 +48,10 @@
 							<el-table-column prop="containerSize" label="货柜大小" />
 							<el-table-column label="操作" width="220" align="center">
 								<template #default="scope">
-									<el-button text :icon="Edit"
+									<div style="display: inline-block;margin:10px;"><el-button text :icon="Edit"
 										@click="ctHandleEdit(props.$index, scope.$index, scope.row)" v-permiss="15">
 										编辑
-									</el-button>
+									</el-button></div>
 								</template>
 							</el-table-column>
 						</el-table>
@@ -98,8 +98,8 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click="editVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveEdit">确 定</el-button>
+					<div style="display: inline-block;margin:10px;"><el-button @click="editVisible = false">取 消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
 				</span>
 			</template>
 		</el-dialog>
@@ -121,8 +121,8 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click="addVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveAdd">确 定</el-button>
+					<div style="display: inline-block;margin:10px;"><el-button @click="addVisible = false">取 消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveAdd">确 定</el-button></div>
 				</span>
 			</template>
 		</el-dialog>
@@ -135,8 +135,8 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click="ctEditVisible = false">取 消</el-button>
-					<el-button type="primary" @click="ctSaveEdit">确 定</el-button>
+					<div style="display: inline-block;margin:10px;"><el-button @click="ctEditVisible = false">取 消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="ctSaveEdit">确 定</el-button></div>
 				</span>
 			</template>
 		</el-dialog>
@@ -152,8 +152,8 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click="ctAddVisible = false">取 消</el-button>
-					<el-button type="primary" @click="ctSaveAdd">确 定</el-button>
+					<div style="display: inline-block;margin:10px;"><el-button @click="ctAddVisible = false">取 消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="ctSaveAdd">确 定</el-button></div>
 				</span>
 			</template>
 		</el-dialog>
