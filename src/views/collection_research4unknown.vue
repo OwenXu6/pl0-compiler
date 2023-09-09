@@ -38,9 +38,6 @@
 						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)">
 							删除
 						</el-button>
-						<el-button text :icon="View" @click="handleDetails(scope.$index, scope.row)">
-							查看
-						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
