@@ -1289,24 +1289,26 @@ const eraCreateFilter = (queryString: string) => {
 
 //可选择的选项
 const EraloadAll = () => {
-	return [
-		{ value: '夏朝', index: 1 },
-		{ value: '商朝', index: 2 },
-		{ value: '春秋战国', index: 3 },
-		{ value: '秦朝', index: 4 },
-		{ value: '汉朝', index: 5 },
-		{ value: '三国', index: 6 },
-		{ value: '魏晋南北朝', index: 7 },
-		{ value: '隋朝', index: 8 },
-		{ value: '唐朝', index: 9 },
-		{ value: '五代十国', index: 10 },
-		{ value: '宋朝', index: 11 },
-		{ value: '元朝', index: 12 },
-		{ value: '明朝', index: 13 },
-		{ value: '清朝', index: 14 },
-		{ value: '民国', index: 15 },
-	]
-}
+  return [
+    { value: '史前文明', index: 1 },
+    { value: '夏代', index: 2 },
+    { value: '商代', index: 3 },
+    { value: '周代', index: 4 },
+    { value: '春秋战国', index: 5 },
+    { value: '秦代', index: 6 },
+    { value: '汉代', index: 7 },
+    { value: '三国', index: 8 },
+    { value: '魏晋南北朝', index: 9 },
+    { value: '隋代', index: 10 },
+    { value: '唐代', index: 11 },
+    { value: '五代十国', index: 12 },
+    { value: '宋代', index: 13 },
+    { value: '元代', index: 14 },
+    { value: '明代', index: 15 },
+    { value: '清代', index: 16 },
+    { value: '民国', index: 17 },
+  ];
+};
 
 //处理选择的项，比如说给一个东西赋值
 const eraHandleSelect = (item: EraSelectItem) => {
