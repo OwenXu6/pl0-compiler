@@ -86,6 +86,7 @@ import axios from 'axios'
 import { useRouter } from 'vue-router';
 import { useUserInfo } from '../store/userInfo';
 
+
 export interface Response {
   area?: string;
   collectInfo?: CollectInfo;
@@ -150,6 +151,8 @@ const fetchData = async () => {
 // 获取表格数据
 const getData = async () => {
   const res = await fetchData();
+  const userInfo = useUserInfo();
+  console.log(userInfo.staffInfo)
   tableData.value = res;
   console.log(tableData.value);
 };
@@ -163,6 +166,7 @@ const handleLogout = () => {
     userInfo.updateToken(undefined);
     userInfo.updateRole(undefined);
     userInfo.updateExpireTime(new Date(0))
+    console.log(userInfo.staffInfo)
 		router.push('/login');
 };
 

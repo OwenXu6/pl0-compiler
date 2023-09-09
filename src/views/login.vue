@@ -22,8 +22,6 @@ const login = () => {
       alert(response.data)
       userInfo.updateRole(response.data.role)
       userInfo.updateStaffInfo(response.data.staffInfo)
-      
-      
       router.push('/');
     })
     .catch(function (error) {
