@@ -7,8 +7,8 @@
           placeholder="活动名称"
           class="handle-input mr10"
         ></el-input>
-				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
-        <div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button></div>
+        <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
+        <el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
       </div>
       <el-table
         :data="tableData"
@@ -37,6 +37,7 @@
               text
               :icon="Edit"
               @click="handleEdit(scope.$index, scope.row)"
+              v-permiss="15"
             >
               编辑
             </el-button>
@@ -45,7 +46,7 @@
               :icon="Delete"
               class="red"
               @click="handleDelete(scope.$index)"
-
+              v-permiss="16"
             >
               删除
             </el-button>
@@ -224,18 +225,47 @@ import { fetchActivityData } from "../api/index";
 import { useRouter } from "vue-router";
 
 import axios from "axios";
+import { useUserInfo } from "../store/userInfo";
+
+function getToken() {
+	// 替换为获取token的逻辑
+	const UserInfo = useUserInfo();
+	return UserInfo.userToken;
+
+	}
+
+// 创建一个具有默认头的Axios实例
+const axiosInstance = axios.create({
+	baseURL: 'http://42.192.39.198:5000/api',
+});
+
+// 拦截器：将token添加到每个请求中
+axiosInstance.interceptors.request.use((config) => {
+	const token = getToken();
+
+	if (token) {
+		if (config.headers) {
+			config.headers.Authorization = `Bearer ${token}`;
+		} else {
+			config.headers = {
+				Authorization: `Bearer ${token}`,
+			};
+		}
+	}
+
+	return config;
+}, (error) => {
+	return Promise.reject(error);
+});
+
 
 const fetchData = async () => {
-  try {
-    const response = await axios.get(
-      "http://42.192.39.198:5000/api/Activities"
-    );
-    console.log(response.data, 123);
-
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
+	try {
+		const response = await axiosInstance.get('/Activities');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
 };
 
 interface TableItem {
@@ -348,7 +378,7 @@ getData();
 const editData = async () => {
   try {
     console.log(idx, tableData.value[idx].activityId, tableData.value[idx]);
-    const response = await axios.put("http://42.192.39.198:5000/api/Activities/" +tableData.value[idx].activityId,tableData.value[idx]);
+    const response = await axiosInstance.put("http://42.192.39.198:5000/api/Activities/" +tableData.value[idx].activityId,tableData.value[idx]);
     ElMessage.success("数据处理成功");
   } catch (error) {
     ElMessage.error("数据处理失败");
@@ -358,7 +388,7 @@ const editData = async () => {
 const uploadData = async () => {
   try {
     console.log(tableData.value[tableData.value.length - 1]);
-    const response = await axios.post("http://42.192.39.198:5000/api/Activities",tableData.value[tableData.value.length - 1]);
+    const response = await axiosInstance.post("http://42.192.39.198:5000/api/Activities",tableData.value[tableData.value.length - 1]);
     ElMessage.success("数据处理成功");
   } catch (error) {
     ElMessage.error("数据处理失败");
@@ -368,7 +398,7 @@ const uploadData = async () => {
 const deleteData = async () => {
     try {
 		  console.log(idx,tableData.value[idx]);
-      const response = await axios.delete("http://42.192.39.198:5000/api/Activities/"+tableData.value[idx].activityId);
+      const response = await axiosInstance.delete("http://42.192.39.198:5000/api/Activities/"+tableData.value[idx].activityId);
       ElMessage.success('数据处理成功');
 		  getData();
     } catch (error) {
