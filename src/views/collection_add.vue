@@ -414,43 +414,14 @@
 
 				</el-descriptions>
 
-				<el-form-item>
-					<el-button class="centered-button" type="primary" @click="submitnew()">
-						提交
-					</el-button>
-					<!--el-button @click="resetForm(form)">重置</el-button-->
-				</el-form-item>
-
-				<!--el-form-item>
-					<el-button type="warning" class="import-button" icon="el-icon-upload2" size="mini" @click="uploadFiles1">
-						<i class="icon"></i>
-						批量导入
-					</el-button>
-					<el-dialog class="dialog-box" title="批量导入" width="25%" :visible.sync="uploadShowDialog1">
-
-						<el-upload class="upload-demo" ref="upload" action="#" :multiple="false" :show-file-list="true"
-							:before-upload="beforeUpload" :http-request="uploadHttpRequest1" :file-list="fileList"
-							:on-change="handleUploadChange1" :limit="1">
-							<div class="border">
-								<i class="el-icon-plus"></i>
-							</div>
-							<div slot="tip" class="el-upload-tip">只能上传.xls、.xlsx文件</div>
-						</el-upload>
-						<span slot="footer">
-							<el-button @click="submitUpload1" type="primary"> 导入 </el-button>
-							<el-button @click="uploadShowDialog1 = false" class="cancelDialog">
-								取消
-							</el-button>
-						</span>
-					</el-dialog>
-				</el-form-item-->
-
-				
-
 			</el-form>
-
-
 		</div>
+		
+		<div class="centered-button">
+		<el-button type="primary" @click="submitnew()">
+						提交
+		</el-button>
+	</div>
 	</div>
 </template>
 
@@ -1460,6 +1431,7 @@ const fileList = ref<UploadUserFile[]>([
 .centered-button {
 	display: flex;
 	justify-content: center;
+	margin-top: 20px; /* 调整按钮与上方内容的间距 */
 }
 </style>
 
