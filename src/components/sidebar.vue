@@ -112,20 +112,27 @@ const items = [
     ],
   },
   {
+    icon: 'User',
+    index:'storage',
+    title:'仓库管理',
+    permiss:["SystemAdmin"],
+  },
+  {
+    icon: 'User',
+    index: '/user',
+    title: '用户管理',
+    permiss: ["SystemAdmin"],
+  },
+  {
     icon: 'Calendar',
     index: '/statistics',
     title: '统计信息',
     permiss: ["SystemAdmin"],
   },
+
   {
-    icon: 'share',
-    index: '/charts',
-    title: '人流信息',
-    permiss: ["SystemAdmin"],
-  },
-  {
-    icon: 'edit',
-    index: '/charts',
+    icon: 'setting',
+    index: '/demo',
     title: '系统设置',
     permiss: ["SystemAdmin"],
   },
@@ -158,12 +165,7 @@ const items = [
     title: "个人中心",
     permiss: ["SystemAdmin"],
   },
-  {
-    icon: "DocumentCopy",
-    index: "/demo",
-    title: "demo",
-    permiss: ["SystemAdmin"],
-  }
+ 
 ];
 
 const route = useRoute();
