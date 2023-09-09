@@ -207,6 +207,7 @@
 							<el-radio :label="1">在展</el-radio>
 							<el-radio :label="2">在库</el-radio>
 							<el-radio :label="3">未鉴定</el-radio>
+							<el-radio :label="4">修缮中</el-radio>
 						</el-radio-group>
 						<div v-if="radio == 1">
 							<span>请输入展厅Id: </span><el-input v-model="form.exhibitionHallId"
@@ -431,10 +432,6 @@
 		</el-dialog>
 		<!-- 查看的弹出框 -->
 		<el-dialog title="查看" v-model="viewVisible" width="60%">
-			<!-- <div>文物名称：{{ view.name }}</div>
-			<div>文物种类：{{ view.collectionType }}</div>
-			<div>文物年代：{{ view.era }}</div>
-			<div>藏品状态：{{ view.storageInfo.currentStatus }}</div> -->
 			<div class="cardContainer" id="container">
 
 				<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
@@ -1129,6 +1126,9 @@ const saveEdit = async () => {
 	}
 	else if (radio.value == 3)
 		tableData.value[idx].storageInfo.currentStatus = "未鉴定";
+	else if (radio.value == 4)
+		tableData.value[idx].storageInfo.currentStatus = "修缮中";
+	
 	radio.value = 3;
 
 	tableData.value[idx].storageInfo.protectionLevel = form.storageInfo.protectionLevel;
