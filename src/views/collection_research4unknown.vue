@@ -13,7 +13,7 @@
 				<el-table-column label="文物图片(查看大图)" align="center">
 					<template #default="scope">
 						<el-image class="table-td-thumb" :src="scope.row.collectionPhoto" :z-index="10"
-							:preview-src-list="[scope.row.thumb]" preview-teleported>
+							:preview-src-list="[scope.row.collectionPhoto]" preview-teleported>
 						</el-image>
 					</template>
 				</el-table-column>
@@ -971,6 +971,7 @@ const uploadData = async () => {
 	try {
 		const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
 		ElMessage.success('数据上传成功');
+		getData();
 	} catch (error) {
 		ElMessage.error('数据上传失败');
 	}
