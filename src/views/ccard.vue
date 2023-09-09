@@ -15,23 +15,23 @@
 
       <!-- 显示个人信息 -->
       <el-col :span="4">
-        <div style="margin:25px;">用户名：deidei</div>
-        <div style="margin:25px;">性别：男</div>
+        <div style="margin:25px;">用户名：{{ userInfo.staffName }}</div>
+        <div style="margin:25px;">性别：{{ userInfo.staffGender }}</div>
       </el-col>
       <!-- 显示个人信息 -->
       <el-col :span="4">
-        <div style="margin:25px;">年龄：22</div>
-        <div style="margin:25px;">职级：藏品管理员</div>
+        <div style="margin:25px;">年龄：{{ userInfo.staffAge }}</div>
+        <div style="margin:25px;">职级：{{ userInfo.staffPostRank }}</div>
       </el-col>
       <!-- 显示个人信息 -->
       <el-col :span="4">
-        <div style="margin:25px;">工作方向：藏品管理</div>
-        <div style="margin:25px;">薪资：10000</div>
+        <div style="margin:25px;">工作方向：{{ userInfo.workType }}</div>
+        <div style="margin:25px;">薪资：{{ userInfo.staffSalary }}</div>
       </el-col>
     </el-row>
     <!-- 显示个人信息 -->
     <el-row :span="12" class="arbeit">
-      <div style="margin:25px;width: 650px;">工作内容：藏品管理</div>
+      <div style="margin:25px;width: 650px;">工作内容：{{ userInfo.job }}</div>
     </el-row>
   </el-card>
 
@@ -44,6 +44,8 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { useUserInfo } from '../store/userInfo';
+import { ref, reactive, computed } from 'vue';
+
 import imgurl from '../assets/img/img.jpg';
 
 const router = useRouter();
@@ -55,6 +57,27 @@ const handleLogout = () => {
   userInfo.updateExpireTime(new Date(0))
   router.push('/login');
 };
+
+let userInfo=reactive({
+  staffName:"",
+  staffGender:"",
+  workType:"",
+  staffAge:"",
+  staffSalary:"",
+  staffPostRank:"",
+  job:""
+})
+
+const Info = useUserInfo();
+console.log(Info.staffInfo);
+userInfo.job=Info.staffInfo[0].job;
+userInfo.staffName=Info.staffInfo[0].staffName;
+userInfo.staffGender=Info.staffInfo[0].staffGender;
+userInfo.workType=Info.staffInfo[0].workType;
+userInfo.staffAge=Info.staffInfo[0].staffAge;
+userInfo.staffPostRank=Info.staffInfo[0].staffPostRank;
+userInfo.staffSalary=Info.staffInfo[0].staffSalary;
+console.log(userInfo)
 
 </script>
 
