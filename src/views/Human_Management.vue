@@ -416,7 +416,7 @@ const handleDelete = (index: number) => {
   // 二次确认删除
   idx = index;
   ElMessageBox.confirm('确定要删除吗？', '提示', {
-    type: 'warning'
+    type: 'warning',customClass: 'my-message-box'
   })
       .then(() => {
         deleteData();
@@ -746,5 +746,12 @@ const savenew = () => {         //保存新增人员
 .full-width-select {
   width: 100%;
 }
-
+.my-message-box {
+  /* 自定义样式 */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+}
 </style>
