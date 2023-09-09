@@ -59,18 +59,18 @@
 				</el-table-column>
 				<el-table-column prop="collectInfo.collectTime" label="入藏时间" align="center"></el-table-column>
 				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
-				<el-table-column label="操作" width="150" align="center">
+				<el-table-column label="操作" width="170" align="center">
 					<template #default="scope">
 						<div style="display: inline-block;"><el-button text :icon="View" @click="handleDetails(scope.$index, scope.row)">
 							查看
 						</el-button></div>
 						
-						<div style="display: inline-block;"><el-button text :icon="Edit" @click="handleDetails2Warehouse(scope.$index, scope.row)">
-							打印入库单
+						<div style="display: inline-block;"><el-button text :icon="Edit" @click="handleDetails2Repair(scope.$index, scope.row)">
+							打印出展修缮单
 						</el-button></div>
 
-						<div style="display: inline-block;"><el-button text :icon="Edit" @click="handleDetails2Exhibition(scope.$index, scope.row)">
-							打印入展单
+						<div style="display: inline-block;"><el-button text :icon="Edit" @click="handleDetails2Warehouse(scope.$index, scope.row)">
+							打印出展入库单
 						</el-button></div>
 					</template>
 				</el-table-column>
@@ -99,7 +99,7 @@
 			<div>藏品状态：{{ view.storageInfo.currentStatus }}</div> -->
 			<div class="cardContainer" id="container">
 
-				<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
+				<el-descriptions class="margin-top" title="藏品编目卡"  :column="2" :size="size" border>
 					<!-- 收藏单位 -->
 					<el-descriptions-item>
 						<template #label>
@@ -370,6 +370,651 @@
 			</template>
 		</el-dialog>
 
+				<!-- 打印出展修缮单的弹出框 -->
+				<el-dialog title="打印出展修缮单" v-model="view2RepairVisible" width="60%">
+			<div class="cardContainer" id="container2W">
+
+				<el-descriptions class="margin-top" title="出展修缮单" :column="2" :size="size" border>
+					<!-- 收藏单位 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item" :style="{ minWidth: view.collectInfo.collectMuseum.length * 12 + 'px' }">
+								<el-icon :style="iconStyle">
+									<user />
+								</el-icon>
+								收藏单位
+							</div>
+						</template>
+						{{ view.collectInfo.collectMuseum }}
+					</el-descriptions-item>
+					<!-- 现登记号 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<EditPen />
+								</el-icon>
+								现登记号
+							</div>
+						</template>
+						{{ view.collectionId }}
+					</el-descriptions-item>
+					<!-- 藏品图片 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Picture />
+								</el-icon>
+								藏品图片
+							</div>
+						</template>
+						<template #default="scope">
+							<el-image class="CollectionImg" :src="view.collectionPhoto" :z-index="10">
+							</el-image>
+						</template>
+					</el-descriptions-item>
+					<!-- 名称 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<tickets />
+								</el-icon>
+								名称
+							</div>
+						</template>
+						{{ view.name }}
+					</el-descriptions-item>
+					<!-- 文物原名 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<tickets />
+								</el-icon>
+								原名
+							</div>
+						</template>
+						{{ view.originalName }}
+					</el-descriptions-item>
+					<!-- 文物级别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Medal />
+								</el-icon>
+								文物级别
+							</div>
+						</template>
+						{{ view.storageInfo.protectionLevel }}
+					</el-descriptions-item>
+					<!-- 文物类别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Grid />
+								</el-icon>
+								文物类别
+							</div>
+						</template>
+						{{ view.collectionType }}
+					</el-descriptions-item>
+					<!-- 质地 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Pointer />
+								</el-icon>
+								质地
+							</div>
+						</template>
+						{{ view.textureType }}
+					</el-descriptions-item>
+					<!--年代 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Calendar />
+								</el-icon>
+								年代
+							</div>
+						</template>
+						{{ view.era }}
+					</el-descriptions-item>
+					<!-- 地域 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<LocationInformation />
+								</el-icon>
+								地域
+							</div>
+						</template>
+						{{ view.area }}
+					</el-descriptions-item>
+					<!-- 来源 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<MapLocation />
+								</el-icon>
+								来源
+							</div>
+						</template>
+						{{ view.collectInfo.source }}
+					</el-descriptions-item>
+					<!-- 保存状况 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Collection />
+								</el-icon>
+								保存状况
+							</div>
+						</template>
+						{{ view.storageInfo.currentStatus }}
+					</el-descriptions-item>
+					<!-- 完残程度 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Box />
+								</el-icon>
+								完残程度
+							</div>
+						</template>
+						{{ view.completeness }}
+					</el-descriptions-item>
+					<!-- 尺寸 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<FullScreen />
+								</el-icon>
+								尺寸
+							</div>
+						</template>
+						{{ view.dimensionInfo.dimension + view.dimensionInfo.dimensionUnit }}
+					</el-descriptions-item>
+					<!-- 质量-->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Coin />
+								</el-icon>
+								质量
+							</div>
+						</template>
+						{{ view.dimensionInfo.weight + view.dimensionInfo.weightUnit }}
+					</el-descriptions-item>
+					<!-- 传统数量 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Histogram />
+								</el-icon>
+								传统数量
+							</div>
+						</template>
+						{{ view.dimensionInfo.traditionalQuantity + "个" }}
+					</el-descriptions-item>
+					<!-- 实际数量 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Histogram />
+								</el-icon>
+								实际数量
+							</div>
+						</template>
+						{{ view.dimensionInfo.realQuantity + "个" }}
+					</el-descriptions-item>
+					<!-- 入藏时间 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<AlarmClock />
+								</el-icon>
+								入藏时间
+							</div>
+						</template>
+						{{ view.collectInfo.collectTime }}
+					</el-descriptions-item>
+					<!-- 保护等级 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Trophy />
+								</el-icon>
+								保护等级
+							</div>
+						</template>
+						{{ view.storageInfo.protectionLevel }}
+					</el-descriptions-item>
+					<!-- 鉴定意见 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<EditPen />
+								</el-icon>
+								鉴定意见
+							</div>
+						</template>
+						{{ view.identificationComments }}
+						<div style="margin-top: 10px">鉴定人：{{ view.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
+							view.identificationDate }}</div>
+					</el-descriptions-item>
+					<!-- 备注 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								备注
+							</div>
+						</template>
+						{{ view.remark }}
+					</el-descriptions-item>
+
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								申请时间
+							</div>
+						</template>
+						{{ print.time }}
+					</el-descriptions-item>
+
+				
+				<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								展厅管理员签字
+							</div>
+						</template>
+				</el-descriptions-item>
+
+				<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								修缮管理员签字
+							</div>
+						</template>
+				</el-descriptions-item>
+
+
+				</el-descriptions>
+
+				
+
+			</div>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button type="primary" @click="closeView2Repair">关 闭</el-button>
+					<el-button type="success" v-print="'#container2W'">打 印</el-button>
+				</span>
+			</template>
+		</el-dialog>
+
+		<!-- 打印出展入库单的弹出框 -->
+		<el-dialog title="打印出展入库单" v-model="view2WarehouseVisible" width="60%">
+			<div class="cardContainer" id="container2E">
+
+				<el-descriptions class="margin-top" title="出展入库单" :column="2" :size="size" border>
+					<!-- 收藏单位 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item" :style="{ minWidth: view.collectInfo.collectMuseum.length * 12 + 'px' }">
+								<el-icon :style="iconStyle">
+									<user />
+								</el-icon>
+								收藏单位
+							</div>
+						</template>
+						{{ view.collectInfo.collectMuseum }}
+					</el-descriptions-item>
+					<!-- 现登记号 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<EditPen />
+								</el-icon>
+								现登记号
+							</div>
+						</template>
+						{{ view.collectionId }}
+					</el-descriptions-item>
+					<!-- 藏品图片 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Picture />
+								</el-icon>
+								藏品图片
+							</div>
+						</template>
+						<template #default="scope">
+							<el-image class="CollectionImg" :src="view.collectionPhoto" :z-index="10">
+							</el-image>
+						</template>
+					</el-descriptions-item>
+					<!-- 名称 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<tickets />
+								</el-icon>
+								名称
+							</div>
+						</template>
+						{{ view.name }}
+					</el-descriptions-item>
+					<!-- 文物原名 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<tickets />
+								</el-icon>
+								原名
+							</div>
+						</template>
+						{{ view.originalName }}
+					</el-descriptions-item>
+					<!-- 文物级别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Medal />
+								</el-icon>
+								文物级别
+							</div>
+						</template>
+						{{ view.storageInfo.protectionLevel }}
+					</el-descriptions-item>
+					<!-- 文物类别 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Grid />
+								</el-icon>
+								文物类别
+							</div>
+						</template>
+						{{ view.collectionType }}
+					</el-descriptions-item>
+					<!-- 质地 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Pointer />
+								</el-icon>
+								质地
+							</div>
+						</template>
+						{{ view.textureType }}
+					</el-descriptions-item>
+					<!--年代 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Calendar />
+								</el-icon>
+								年代
+							</div>
+						</template>
+						{{ view.era }}
+					</el-descriptions-item>
+					<!-- 地域 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<LocationInformation />
+								</el-icon>
+								地域
+							</div>
+						</template>
+						{{ view.area }}
+					</el-descriptions-item>
+					<!-- 来源 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<MapLocation />
+								</el-icon>
+								来源
+							</div>
+						</template>
+						{{ view.collectInfo.source }}
+					</el-descriptions-item>
+					<!-- 保存状况 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Collection />
+								</el-icon>
+								保存状况
+							</div>
+						</template>
+						{{ view.storageInfo.currentStatus }}
+					</el-descriptions-item>
+					<!-- 完残程度 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Box />
+								</el-icon>
+								完残程度
+							</div>
+						</template>
+						{{ view.completeness }}
+					</el-descriptions-item>
+					<!-- 尺寸 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<FullScreen />
+								</el-icon>
+								尺寸
+							</div>
+						</template>
+						{{ view.dimensionInfo.dimension + view.dimensionInfo.dimensionUnit }}
+					</el-descriptions-item>
+					<!-- 质量-->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Coin />
+								</el-icon>
+								质量
+							</div>
+						</template>
+						{{ view.dimensionInfo.weight + view.dimensionInfo.weightUnit }}
+					</el-descriptions-item>
+					<!-- 传统数量 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Histogram />
+								</el-icon>
+								传统数量
+							</div>
+						</template>
+						{{ view.dimensionInfo.traditionalQuantity + "个" }}
+					</el-descriptions-item>
+					<!-- 实际数量 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Histogram />
+								</el-icon>
+								实际数量
+							</div>
+						</template>
+						{{ view.dimensionInfo.realQuantity + "个" }}
+					</el-descriptions-item>
+					<!-- 入藏时间 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<AlarmClock />
+								</el-icon>
+								入藏时间
+							</div>
+						</template>
+						{{ view.collectInfo.collectTime }}
+					</el-descriptions-item>
+					<!-- 保护等级 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Trophy />
+								</el-icon>
+								保护等级
+							</div>
+						</template>
+						{{ view.storageInfo.protectionLevel }}
+					</el-descriptions-item>
+					<!-- 鉴定意见 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<EditPen />
+								</el-icon>
+								鉴定意见
+							</div>
+						</template>
+						{{ view.identificationComments }}
+						<div style="margin-top: 10px">鉴定人：{{ view.identificationStaffName }} &nbsp &nbsp &nbsp 鉴定时间:{{
+							view.identificationDate }}</div>
+					</el-descriptions-item>
+					<!-- 备注 -->
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								备注
+							</div>
+						</template>
+						{{ view.remark }}
+					</el-descriptions-item>
+
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								申请时间
+							</div>
+						</template>
+						{{ print.time }}
+					</el-descriptions-item>
+
+					<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								入库ID
+							</div>
+						</template>
+				</el-descriptions-item>
+
+				<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								货柜ID
+							</div>
+						</template>
+				</el-descriptions-item>
+				
+				
+				<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								展厅管理员签字
+							</div>
+						</template>
+				</el-descriptions-item>
+
+				<el-descriptions-item :span="2">
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<Notebook />
+								</el-icon>
+								仓库管理员签字
+							</div>
+						</template>
+				</el-descriptions-item>
+
+				</el-descriptions>
+
+				
+
+			</div>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button type="primary" @click="closeView2Warehouse">关 闭</el-button>
+					<el-button type="success" v-print="'#container2E'">打 印</el-button>
+				</span>
+			</template>
+		</el-dialog>
+
 	</div>
 </template>
 
@@ -400,6 +1045,10 @@ function getToken() {
 const axiosInstance = axios.create({
 	baseURL: 'http://42.192.39.198:5000/api',
 });
+
+const print = ({
+	time: "",
+})
 
 // 拦截器：将token添加到每个请求中
 axiosInstance.interceptors.request.use((config) => {
@@ -591,6 +1240,8 @@ const applyPageSize = () =>{
 
 // 表格查看详细资料时弹窗和保存
 const viewVisible = ref(false);
+const view2RepairVisible = ref(false);
+const view2WarehouseVisible = ref(false);
 
 //查看的内容
 let view = reactive({
@@ -678,10 +1329,111 @@ const handleDetails = (index: number, row: any) => {
 	viewVisible.value = true;
 };
 
+
+const handleDetails2Warehouse = (index: number, row: any) => {
+	view.area = row.area;
+	view.collectInfo = {
+		collectionId: row.collectInfo.collectionId,
+		source: row.collectInfo.source,
+		collectMuseum: row.collectInfo.collectMuseum,
+		generalRegistrationId: row.collectInfo.generalRegistrationId,
+		collectTime: row.collectInfo.collectTime,
+		collectionLevel: row.collectInfo.collectionLevel
+	};
+	view.collectionId = row.collectionId;
+	view.collectionPhoto = row.collectionPhoto;
+	view.collectionType = row.collectionType;
+	view.completeness = row.completeness;
+	view.completenessType = row.completenessType;
+	view.dimensionInfo = {
+		collectionId: row.dimensionInfo.collectionId,
+		dimension: row.dimensionInfo.dimension,
+		dimensionUnit: row.dimensionInfo.dimensionUnit,
+		weight: row.dimensionInfo.weight,
+		weightUnit: row.dimensionInfo.weightUnit,
+		realQuantity: row.dimensionInfo.realQuantity,
+		traditionalQuantity: row.dimensionInfo.traditionalQuantity
+	};
+	view.era = row.era;
+	view.identificationComments = row.identificationComments;
+	view.identificationDate = row.identificationDate;
+	view.identificationStaffName = row.identificationStaffName;
+	view.name = row.name;
+	view.remark = row.remark;
+	view.storageInfo = {
+		currentStatus: row.storageInfo.currentStatus,
+		protectionLevel: row.storageInfo.protectionLevel
+	};
+	view.originalName = row.originalName;
+	view.textureType = row.textureType;
+	view2WarehouseVisible.value = true;
+	print.time=getCurrentTime();
+};
+
+const handleDetails2Repair = (index: number, row: any) => {
+	view.area = row.area;
+	view.collectInfo = {
+		collectionId: row.collectInfo.collectionId,
+		source: row.collectInfo.source,
+		collectMuseum: row.collectInfo.collectMuseum,
+		generalRegistrationId: row.collectInfo.generalRegistrationId,
+		collectTime: row.collectInfo.collectTime,
+		collectionLevel: row.collectInfo.collectionLevel
+	};
+	view.collectionId = row.collectionId;
+	view.collectionPhoto = row.collectionPhoto;
+	view.collectionType = row.collectionType;
+	view.completeness = row.completeness;
+	view.completenessType = row.completenessType;
+	view.dimensionInfo = {
+		collectionId: row.dimensionInfo.collectionId,
+		dimension: row.dimensionInfo.dimension,
+		dimensionUnit: row.dimensionInfo.dimensionUnit,
+		weight: row.dimensionInfo.weight,
+		weightUnit: row.dimensionInfo.weightUnit,
+		realQuantity: row.dimensionInfo.realQuantity,
+		traditionalQuantity: row.dimensionInfo.traditionalQuantity
+	};
+	view.era = row.era;
+	view.identificationComments = row.identificationComments;
+	view.identificationDate = row.identificationDate;
+	view.identificationStaffName = row.identificationStaffName;
+	view.name = row.name;
+	view.remark = row.remark;
+	view.storageInfo = {
+		currentStatus: row.storageInfo.currentStatus,
+		protectionLevel: row.storageInfo.protectionLevel
+	};
+	view.originalName = row.originalName;
+	view.textureType = row.textureType;
+	view2RepairVisible.value = true;
+	print.time=getCurrentTime();
+};
+
+
+function getCurrentTime() {
+	const now = new Date();
+	const year = now.getFullYear();
+	const month = (now.getMonth() + 1).toString().padStart(2, '0');
+	const day = now.getDate().toString().padStart(2, '0');
+	const hours = now.getHours().toString().padStart(2, '0');
+	const minutes = now.getMinutes().toString().padStart(2, '0');
+	const seconds = now.getSeconds().toString().padStart(2, '0');
+	return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+}
+
+
 //关闭“查看详细信息”的弹窗
 const closeView = () => {
 	viewVisible.value = false;                    //editVisible.value被用来控制编辑界面或对话框的显示与隐藏
 };
+const closeView2Repair = () => {
+	view2RepairVisible.value = false;                    //editVisible.value被用来控制编辑界面或对话框的显示与隐藏
+};
+const closeView2Warehouse = () => {
+	view2WarehouseVisible.value = false;                    //editVisible.value被用来控制编辑界面或对话框的显示与隐藏
+};
+
 
 const size = ref('')
 const iconStyle = computed(() => {
