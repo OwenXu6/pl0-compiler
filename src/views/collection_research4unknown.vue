@@ -904,7 +904,7 @@ const saveDelete = async (index: number) => {
 const handleDelete = (index: number) => {
 	// 二次确认删除
 	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning'
+		type: 'warning',customClass: 'my-message-box'
 	})
 		.then(() => {
 			ElMessage.success('删除成功');
@@ -1729,5 +1729,12 @@ const iconStyle = computed(() => {
 	height: 130px;
 	margin: 10px;
 
+}
+.my-message-box {
+  /* 自定义样式 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

@@ -68,8 +68,8 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-	          <el-button @click="editCreativeVisible = false">取 消</el-button>
-	          <el-button type="primary" @click="saveEdit">确 定</el-button>
+				<div style="display: inline-block;margin:10px;"> <el-button @click="editCreativeVisible = false">取 消</el-button></div>
+					<div style="display: inline-block;margin:10px;"> <el-button type="primary" @click="saveEdit">确 定</el-button></div>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -95,8 +95,8 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-	          <el-button @click="editCreativeVisible = false">取 消</el-button>
-	          <el-button type="primary" @click="saveEdit">确 定</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button @click="editCreativeVisible = false">取 消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -113,7 +113,7 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-	          <el-button @click="viewVisible = false">关闭</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button @click="viewVisible = false">关闭</el-button></div>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -139,8 +139,8 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-	          <el-button @click="addVisible = false">取 消</el-button>
-	          <el-button type="primary" @click="saveAdd">确 定</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button @click="addVisible = false">取 消</el-button></div>
+	          <div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveAdd">确 定</el-button></div>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -315,7 +315,7 @@ const viewCreativeProduct = async (index: number) => {
 const handleDelete = (index: number) => {
 	// 二次确认删除
 	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning'
+		type: 'warning',customClass: 'my-message-box'
 	})
 		.then(() => {
 			ElMessage.success('删除成功');
@@ -510,6 +510,18 @@ const saveAdd = async () => {
 	margin: auto;
 	width: 40px;
 	height: 40px;
+}
+
+.my-message-box {
+  /* 自定义样式 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.my-message-box .el-message-box__btns {
+  display: inline-block !important;
+  margin: 10px !important;
 }
 </style>
 	
