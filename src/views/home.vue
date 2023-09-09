@@ -6,9 +6,11 @@
     <div class="content">
       <router-view v-slot="{ Component }">
         <transition name="move" mode="out-in">
-          <keep-alive :include="tags.nameList">
-            <component :is="Component"></component>
-          </keep-alive>
+          <!--<keep-alive :include="tags.nameList">-->
+            <div :key="$route.path">
+              <component :is="Component"></component>
+            </div>
+          <!--</keep-alive>-->
         </transition>
       </router-view>
     </div>

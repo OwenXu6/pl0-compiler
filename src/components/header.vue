@@ -60,30 +60,6 @@ import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
 import axios from 'axios'
 
-//获取后端数据库的数据
-const fetchData = async () => {
-	try {
-		const response = await axios.get(' http://42.192.39.198:5000/api/Authenticate/Login');
-		console.log(response.data);
-		console.log("数据库连接成功！");
-		return response.data;
-	} catch (error) {
-		console.error(error);
-	}
-};
-let username=ref('');
-const getData = () => {
-	fetchData().then(res => {
-
-		console.log(res);
-		//过滤掉“未鉴定”的文物
-		username=res.username;
-	});
-
-};
-
-getData();
-
 
 
 // const username: string | null = localStorage.getItem('ms_username');

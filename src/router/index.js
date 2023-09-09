@@ -24,7 +24,7 @@ const routes = [
             },
             {
                 path: '/collection_add',
-                name: 'basetable7',
+                name: 'collection_add',
                 meta: {
                     title: '新增藏品',
                     permiss: [],
@@ -33,7 +33,7 @@ const routes = [
             },
             {
                 path: '/collection_search',
-                name: 'basetable1',
+                name: 'collectio_search',
                 meta: {
                     title: '查询藏品',
                     permiss: [],
@@ -42,7 +42,7 @@ const routes = [
             },
             {
                 path: '/collection_research4unknown',
-                name: 'basetable8',
+                name: 'collection_research4unknown',
                 meta: {
                     title: '未知文物研究鉴定',
                     permiss: [],
@@ -51,7 +51,7 @@ const routes = [
             },
             {
                 path: '/Human_Management',
-                name: 'basetable4',
+                name: 'Human_Management',
                 meta: {
                     title: '人事管理',
                     permiss: [],
@@ -60,19 +60,19 @@ const routes = [
             },
             {
                 path: '/statistics',
-                name: 'basetable3',
+                name: 'statistics',
                 meta: {
                     title: '统计信息',
-                    permiss: '3',
+                    permiss: [],
                 },
                 component: () => import('../views/statistics.vue'),
             },
             {
                 path: '/table',
-                name: 'basetable',
+                name: 'table',
                 meta: {
                     title: '展厅',
-                    permiss: '2',
+                    permiss: [],
                 },
                 component: () => import('../views/table.vue'),
             },
@@ -81,7 +81,7 @@ const routes = [
                 name: 'collections',
                 meta: {
                     title: '展品详情',
-                    permiss: '2',
+                    permiss: [],
                 },
                 component: () => import('../views/collections.vue'),
             },
@@ -90,7 +90,7 @@ const routes = [
                 name: 'activity',
                 meta: {
                     title: '活动',
-                    permiss: '2',
+                    permiss: [],
                 },
                 component: () => import('../views/activity.vue'),
             },
@@ -100,7 +100,7 @@ const routes = [
                 name: 'feedback',
                 meta: {
                     title: '反馈列表',
-                    permiss: '12',
+                    permiss: [],
                 },
                 component: () => import('../views/feedbacks.vue'),
             },
@@ -109,7 +109,7 @@ const routes = [
                 name: 'product',
                 meta: {
                     title: '文创产品',
-                    permiss: '12',
+                    permiss: [],
                 },
                 component: () => import('../views/products.vue'),
             },
@@ -118,7 +118,7 @@ const routes = [
                 name: 'cooperation',
                 meta: {
                     title: '合作联名项目',
-                    permiss: '12',
+                    permiss: [],
                 },
                 component: () => import('../views/cooperations.vue'),
 
@@ -128,7 +128,7 @@ const routes = [
                 name: 'ccard',
                 meta: {
                     title: '个人中心',
-                    permiss: '12',
+                    permiss: ['User'],
                 },
                 component: () => import('../views/ccard.vue'),
             },
@@ -137,7 +137,7 @@ const routes = [
                 name:'storage',
                 meta:{
                     title:'库存管理',
-                    permiss:'12',
+                    permiss:['WarehouseAdmin'],
                 },
                 component:()=>import('../views/storage.vue'),
             }

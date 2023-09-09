@@ -32260,8 +32260,8 @@
 
 .el-button--primary {
     /* line-height: 32px; 根据按钮的高度设置合适的行高 */
-    /* display: flex; */
-    /* align-items: center; */
+    display: flex;
+    align-items: center;
     justify-content: center;
     color: #1686f5;
     background-color: rgb(240, 248, 255);

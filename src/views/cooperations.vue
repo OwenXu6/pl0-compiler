@@ -6,8 +6,8 @@
 				<el-input v-model="query.name" placeholder="联名名称" class="handle-input mr10"></el-input>
 
 
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button></div>
 
 
 			</div>
@@ -22,10 +22,10 @@
 				<el-table-column prop="timeStamp_end" label="合作时间（终）"></el-table-column>
 				<el-table-column label="操作" width="220" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
+						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)">
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)">
 							删除
 						</el-button>
 					</template>
