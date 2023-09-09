@@ -17,6 +17,11 @@ export default defineConfig({
         rewrite:(path)=>path.replace(/^\/foreignImage/,""),
         changeOrigin: true,
 
+      },
+      "/api": {
+        target:"http://localhost:5000",
+        changeOrigin: true,
+
       }
     },
   },
