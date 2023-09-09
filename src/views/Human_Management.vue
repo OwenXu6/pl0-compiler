@@ -343,10 +343,30 @@ const grant = async(WorkType,userId)=>{
 	}
 	console.log(token);
 	console.log(WorkType,userId);
-	const response = await axios.post('http://42.192.39.198:5000/api/Authenticate/Grant'+ WorkType, username, config);
+	const response = await axios.post('http://42.192.39.198:5000/api/Authenticate/Grant/'+ WorkType, username, config);
 	}catch (error) {
         console.error("Error in grant:", error);
     }
+}
+const grantByAspNetUserPk = async(WorkType,userId)=>{
+  try{
+    // 设置请求头，包括 Bearer Token
+    let token = await gettoken();
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const username = {
+      "username" : userId,
+    }
+    console.log(token);
+    console.log(WorkType,userId);
+    const response = await axios.post('http://42.192.39.198:5000/api/Authenticate/GrantByAspNetUserPk/'+ WorkType, username, config);
+  }catch (error) {
+    console.error("Error in grant:", error);
+  }
 }
 // 查询操作
 const handleSearch = () => {
@@ -603,7 +623,7 @@ const saveEdit = () => {
 	pageData.value[idx].workType = form.workType;
 	pageData.value[idx].job = form.job; //应该要至后端修改之
 	editData();
-	grant(form.workType,pageData.value[idx].userId);     //需要真实的userId,这里只有aspUserId
+	grantByAspNetUserPk(form.workType,pageData.value[idx].userId);     //需要真实的userId,这里只有aspUserId
 };
 
 
