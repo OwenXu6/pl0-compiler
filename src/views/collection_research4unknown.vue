@@ -167,7 +167,7 @@
 							</div>
 						</template>
 						<el-autocomplete v-model="form.era" :fetch-suggestions="eraQuerySearch" clearable
-							class="inline-input w-50" placeholder="请输入文物的年代" @select="eraSelect" />
+							class="inline-input w-50" placeholder="请选择文物的年代" @select="eraHandleSelect" />
 					</el-descriptions-item>
 					<!-- 地域 -->
 					<el-descriptions-item>
@@ -1095,6 +1095,7 @@ onMounted(() => {
 	toSelect.value = typeLoadAll()
 })
 
+
 // 文物时期下拉菜单的属性
 interface EraSelectItem {
 	value: string
@@ -1137,14 +1138,16 @@ const EraloadAll = () => {
 		{ value: '民国', index: 15 },
 	]
 }
+
 //处理选择的项，比如说给一个东西赋值
-const eraSelect = (item: EraSelectItem) => {
+const eraHandleSelect = (item: EraSelectItem) => {
 	console.log(item)
 }
 
 onMounted(() => {
 	toSelectEra.value = EraloadAll()
 })
+
 
 //可选择的选项
 const protectLevelLoadAll = () => {
@@ -1173,6 +1176,7 @@ const iconStyle = computed(() => {
 		marginRight: marginMap.default,
 	}
 })
+
 </script>
 
 <style scoped>
