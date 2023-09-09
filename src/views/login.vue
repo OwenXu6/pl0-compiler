@@ -12,17 +12,19 @@ const user_name = ref("")
 const user_password = ref("")
 const login = () => {
   const LoginModel = {
-    "userName": user_name.value,
+    "userId": user_name.value,
     "password": user_password.value
   }
   axios.post(baseUrl + '/api/Authenticate/Login', LoginModel)
     .then(function (response) {
       userInfo.updateToken(response.data.token)
       userInfo.updateExpireTime(Date(response.data.expiration))
-      alert(response.data)
+      alert("登录成功！")
       userInfo.updateRole(response.data.role)
       userInfo.updateStaffInfo(response.data.staffInfo)
-      router.push('/');
+      router.push(
+          {path:'/', params:{refresh:true}}
+      );
     })
     .catch(function (error) {
       if (error.response) {

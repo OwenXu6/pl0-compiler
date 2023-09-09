@@ -30,7 +30,7 @@
 
 <script setup lang="ts" name="dashboard">
 import { onMounted, reactive, ref, watch } from 'vue';
-import imgurl from '../assets/img/img.jpg';
+// import imgurl from '../assets/img/img.jpg';
 import { CENTERED_ALIGNMENT } from 'element-plus/es/components/virtual-list/src/defaults';
 import iostatistics from '../components/IOStatistics.vue';
 import onsitestatistics from '../components/OnSiteStatistics.vue';
@@ -44,6 +44,7 @@ const role: string = name === 'admin' ? '超级管理员' : '普通用户';
 
 
 const fetchData = async (date) => {
+	
 	try {
 		const response = await axios.get('http://42.192.39.198:5000/api/IOStatistics/' + date);
 		//console.log(response.data); 

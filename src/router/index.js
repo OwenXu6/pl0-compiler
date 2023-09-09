@@ -127,7 +127,7 @@ const routes = [
                 path: '/ccard',
                 name: 'ccard',
                 meta: {
-                    title: '文创卡片',
+                    title: '个人中心',
                     permiss: '12',
                 },
                 component: () => import('../views/ccard.vue'),
