@@ -27,16 +27,16 @@
 	        <el-table-column label="操作" width="300" align="center">
 	          <template #default="scope">
 	            <div class="custom-button-container">
-	              <el-button text :icon="Edit" @click="handleEditNormal(scope.$index, scope.row)" v-permiss="15"
+	              <el-button text :icon="Edit" @click="handleEditNormal(scope.$index, scope.row)"
 	                v-if="!scope.row.isRelated">
 	                编辑
 	              </el-button>
-	              <el-button text :icon="Edit" @click="handleEditCreative(scope.$index, scope.row)" v-permiss="15"
+	              <el-button text :icon="Edit" @click="handleEditCreative(scope.$index, scope.row)"
 	                v-if="scope.row.isRelated">
 	                编辑
 	              </el-button>
 	
-	              <el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
+	              <el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" >
 	                删除
 	              </el-button>
 	              <el-button @click="viewCreativeProduct(scope.$index)"

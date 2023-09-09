@@ -37,7 +37,6 @@
               text
               :icon="Edit"
               @click="handleEdit(scope.$index, scope.row)"
-              v-permiss="15"
             >
               编辑
             </el-button>
@@ -46,7 +45,7 @@
               :icon="Delete"
               class="red"
               @click="handleDelete(scope.$index)"
-              v-permiss="16"
+
             >
               删除
             </el-button>
