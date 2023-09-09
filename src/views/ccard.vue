@@ -106,9 +106,12 @@ const handleLogout = () => {
   router.push('/login');
 };
 
-// const userInfo = useUserInfo();
+const userInfo = useUserInfo();
 // console.log("打印用户信息")
-// console.log(userInfo)
+console.log(userInfo.userToken)
+console.log(userInfo.userRole)
+console.log(userInfo.expireTime)
+console.log(userInfo.staffInfo)
 
 </script>
 

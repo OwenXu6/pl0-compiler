@@ -10,9 +10,9 @@
 	
 	        <el-input v-model="query.productName" placeholder="商品名称" class="handle-input mr10"></el-input>
 	
-	        <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-	        <el-button type="primary" @click="handleAddNormal">新增普通商品</el-button>
-	        <el-button type="primary" @click="handleAddCreative">新增文创产品</el-button>
+			<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
+	        <div style="display: inline-block;margin:10px;"><el-button type="primary" @click="handleAddNormal">新增普通商品</el-button></div>
+	        <div style="display: inline-block;margin:10px;"><el-button type="primary" @click="handleAddCreative">新增文创产品</el-button></div>
 	
 	      </div>
 	      <el-table :data="tableData" border class="table" ref="multipleTable"

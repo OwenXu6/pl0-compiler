@@ -4,8 +4,8 @@
 			<div class="handle-box">
 				<el-input v-model="query.name" placeholder="库房名称" class="handle-input mr10"></el-input>
 				<el-input v-model="query.address" placeholder="库房地址" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="handleAdd">新增仓库</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Plus" @click="handleAdd">新增仓库</el-button></div>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column type="expand">

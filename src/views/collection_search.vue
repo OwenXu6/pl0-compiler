@@ -19,7 +19,7 @@
 				</el-select>
 				<el-input v-model="query.excavation_site" placeholder="出土地" class="handle-input mr11"></el-input>
 				<el-input v-model="query.excavation_date" placeholder="入藏时间" class="handle-input mr11"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
+				<div style="display: inline-block;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
 				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->

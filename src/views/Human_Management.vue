@@ -3,8 +3,8 @@
 		<div class="container" v-permiss = "3">
 			<div class="handle-box">
 				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch" v-permiss="15">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="handlenew" v-permiss="16">新增</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Plus" @click="handlenew" v-permiss="16">新增</el-button></div>
 			</div>
 			<el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="staffId" label="职工ID" width="170" align="center"></el-table-column>

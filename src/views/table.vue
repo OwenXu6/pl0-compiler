@@ -4,7 +4,7 @@
 		<div class="container">
 			<div class="handle-box">
 				<el-input v-model="query.name" placeholder="展厅名称" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
+				<div style="display: inline-block;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="exhibitionHallId" label="展厅ID" width="55" align="center"></el-table-column>
