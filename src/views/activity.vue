@@ -397,15 +397,15 @@ const handlePageChange = (val: number) => {
 
 // 删除操作
 const handleDelete = (index: number) => {
-  // 二次确认删除
-  idx = index;
-  ElMessageBox.confirm("确定要删除吗？", "提示", {
-    type: "warning",
-  })
-  .then(() => {
-    deleteData();
-  })
-  .catch(() => {});
+  	// 二次确认删除
+	const result = window.confirm('确定要删除吗？');
+	if (result) {
+		ElMessage.success('删除成功');
+		deleteData();
+	} else {
+		// 用户点击了取消按钮
+		// 可以在这里添加逻辑处理
+	}
 };
 
 // 表格编辑时弹窗和保存
