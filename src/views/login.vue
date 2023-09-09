@@ -48,7 +48,7 @@ const login = () => {
 <template>
   <div class="page-container">
     <div class="login-container">
-      <h2 class="title">欢迎登陆博数管理系统</h2>
+      <h2 class="title">欢迎登录博数管理系统</h2>
       <el-input v-model="user_name" placeholder="请输入用户名" />
       <el-input v-model="user_password" placeholder="请输入密码" />
       <el-button @click="login">登录</el-button>
@@ -62,7 +62,7 @@ const login = () => {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('../assets/img/login-bg.jpg'); /* 将图片的 URL 替换为你想要的图片地址 */
+  background-image: url('../assets/img/login.png'); /* 将图片的 URL 替换为你想要的图片地址 */
   background-size: cover; /* 图片将填充容器，并保持纵横比，可能会裁剪部分内容 */
   background-position: center; /* 将图片在容器中居中显示 */
 }
@@ -73,14 +73,15 @@ const login = () => {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  border: 1px solid #100f0f;
+  border: 1px solid #100f0f56;
   /* 添加边框，可以根据需要修改边框颜色和粗细 */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.356);
   /* 添加阴影 */
   border-radius: 10px;
   /* 设置圆角矩形，可以根据需要修改曲率大小 */
   width: 400px;
   height: 300px;
+  background-color: #ffffffb1;
 }
 
 .el-input,

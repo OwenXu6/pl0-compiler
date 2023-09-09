@@ -27,7 +27,7 @@
     						</el-tooltip>
   					</template>
 				</el-table-column>
-				<el-table-column prop="user.id" label="用户Id" width="120" align="center"></el-table-column>
+				<el-table-column prop="userId" label="用户Id" width="120" align="center"></el-table-column>
 
 				<el-table-column label="操作" width="320" align="center">
 					<template #default="scope">
@@ -206,9 +206,7 @@ interface TableItem {
 	staffSalary: number;
 	workType: string;
 	job: string;
-	user:{
-		id:string
-	}
+	userId:string;
 }
 
 let newEmployee = reactive ({
@@ -278,6 +276,7 @@ const getData = async () => {
 
 	// 将截取的数据赋值给 pagedData
 	pageData.value = pagedData;
+	console.log(pageData.value);
 
 };
 getData();
@@ -310,6 +309,7 @@ const uploadData = async (newEmployee) => {
     try {
 		console.log(newEmployee);
         const response = await axios.post('http://42.192.39.198:5000/api/Staffs',newEmployee);
+		grant(response.data.workType,newEmployee.userId);
         ElMessage.success('数据上传成功');
 		PageSizeChange();
     } catch (error) {
@@ -328,17 +328,25 @@ const deleteData = async () => {
     }
 };
 
-const grant = async(WorkType)=>{
+const grant = async(WorkType,userId)=>{
+	try{
 	// 设置请求头，包括 Bearer Token
-	let token = gettoken();
+	let token = await gettoken();
 	const config = {
     headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
     	},
     };
+	const username = {
+		"username" : userId,
+	}
 	console.log(token);
-	const response = await axios.post('http://42.192.39.198:5000/api/Authenticate/Grant'+ WorkType, WorkType, config);
+	console.log(WorkType,userId);
+	const response = await axios.post('http://42.192.39.198:5000/api/Authenticate/Grant'+ WorkType, username, config);
+	}catch (error) {
+        console.error("Error in grant:", error);
+    }
 }
 // 查询操作
 const handleSearch = () => {
@@ -595,11 +603,11 @@ const saveEdit = () => {
 	pageData.value[idx].workType = form.workType;
 	pageData.value[idx].job = form.job; //应该要至后端修改之
 	editData();
-	grant(form.workType);
+	grant(form.workType,pageData.value[idx].userId);     //需要真实的userId,这里只有aspUserId
 };
 
 
-const generatePassword = () =>{
+/*const generatePassword = () =>{
       const length = 10;
       const charset =
         'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~';
@@ -609,7 +617,7 @@ const generatePassword = () =>{
       }
       let password = retVal;
 	  return password;
-};
+};*/
 
 const savenew = () => {         //保存新增人员
 
@@ -662,9 +670,9 @@ const savenew = () => {         //保存新增人员
 	newEmployee.workType = form.workType;
 	newEmployee.job = form.job; 
 	newEmployee.userId = form.userId;
-	newEmployee.userPassword = generatePassword();
+	newEmployee.userPassword = "abcABC!12345";
 	uploadData(newEmployee);             //上传
-	grant(form.workType);
+
 };
 </script>
 
