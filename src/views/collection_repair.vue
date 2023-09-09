@@ -366,7 +366,7 @@
 
 		<!-- 打印入库单的弹出框 -->
 		<el-dialog title="打印入库单" v-model="view2WarehouseVisible" width="60%">
-			<div class="cardContainer" id="container">
+			<div class="cardContainer" id="container2W">
 
 				<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
 					<!-- 收藏单位 -->
@@ -693,14 +693,14 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button type="primary" @click="closeView2Warehouse">关 闭</el-button>
-					<el-button type="success" v-print="'#container'">打 印</el-button>
+					<el-button type="success" v-print="'#container2W'">打 印</el-button>
 				</span>
 			</template>
 		</el-dialog>
 
 		<!-- 打印入展单的弹出框 -->
 		<el-dialog title="打印入展单" v-model="view2ExhibitionVisible" width="60%">
-			<div class="cardContainer" id="container">
+			<div class="cardContainer" id="container2E">
 
 				<el-descriptions class="margin-top" title="藏品编目卡" :column="2" :size="size" border>
 					<!-- 收藏单位 -->
@@ -1014,7 +1014,7 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button type="primary" @click="closeView2Exhibition">关 闭</el-button>
-					<el-button type="success" v-print="'#container'">打 印</el-button>
+					<el-button type="success" v-print="'#container2E'">打 印</el-button>
 				</span>
 			</template>
 		</el-dialog>
