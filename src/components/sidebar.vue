@@ -75,10 +75,16 @@ const items = [
         permiss: ['CollectionManager'],
       },
       {
+        index: '/collection_repair',
+        title: '修缮藏品',
+        permiss: ['CollectionRepair'],
+      },
+      {
         index: '/collection_research4unknown',
         title: '未知文物研究鉴定',
         permiss: ['CollectionResearcher'],
       },
+      
     ],
   },
   {
