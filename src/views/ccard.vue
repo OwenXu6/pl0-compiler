@@ -42,8 +42,6 @@
 </template>
 
 <script setup lang="ts">
-
-import { computed, ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router';
 import { useUserInfo } from '../store/userInfo';
