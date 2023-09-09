@@ -61,8 +61,16 @@
 				<!--<el-table-column prop="date" label="注册时间"></el-table-column>-->
 				<el-table-column label="操作" width="150" align="center">
 					<template #default="scope">
-						<div style="display: inline-block;margin:10px;"><el-button text :icon="View" @click="handleDetails(scope.$index, scope.row)">
+						<div style="display: inline-block;"><el-button text :icon="View" @click="handleDetails(scope.$index, scope.row)">
 							查看
+						</el-button></div>
+						
+						<div style="display: inline-block;"><el-button text :icon="Edit" @click="handleDetails2Warehouse(scope.$index, scope.row)">
+							打印入库单
+						</el-button></div>
+
+						<div style="display: inline-block;"><el-button text :icon="Edit" @click="handleDetails2Exhibition(scope.$index, scope.row)">
+							打印入展单
 						</el-button></div>
 					</template>
 				</el-table-column>
