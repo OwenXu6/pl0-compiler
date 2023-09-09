@@ -29,7 +29,7 @@
 				<el-table-column label="文物图片(查看大图)" align="center">
 					<template #default="scope">
 						<el-image class="table-td-thumb" :src="scope.row.collectionPhoto" :z-index="10"
-							:preview-src-list="[scope.row.thumb]" preview-teleported>
+							:preview-src-list="[scope.row.collectionPhoto]" preview-teleported>
 						</el-image>
 					</template>
 				</el-table-column>
