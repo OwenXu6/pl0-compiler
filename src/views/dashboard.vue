@@ -44,6 +44,7 @@ const role: string = name === 'admin' ? '超级管理员' : '普通用户';
 
 
 const fetchData = async (date) => {
+	window.location.reload();
 	try {
 		const response = await axios.get('http://42.192.39.198:5000/api/IOStatistics/' + date);
 		//console.log(response.data); 

@@ -92,6 +92,7 @@ import { computed, ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router';
 import { useUserInfo } from '../store/userInfo';
+import { ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus";
 import imgurl from '../assets/img/img.jpg';
 
 const router = useRouter();
@@ -125,11 +126,13 @@ const handleLogout = () => {
   justify-content: center;
   align-items: center;
 }
-.arbeit{
+
+.arbeit {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .center-image {
   width: 150px;
   height: 150px;
