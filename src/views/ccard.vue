@@ -56,6 +56,7 @@
 import { computed, ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router';
+import { useUserInfo } from '../store/userInfo';
 
 export interface Response {
     area?: string;
@@ -129,7 +130,11 @@ getData();
 
 const router = useRouter();
 const handleLogout = () => {
-		localStorage.removeItem('ms_username');
+		const userInfo = useUserInfo();
+    userInfo.updateStaffInfo(undefined);
+    userInfo.updateToken(undefined);
+    userInfo.updateRole(undefined);
+    userInfo.updateExpireTime(new Date(0))
 		router.push('/login');
 };
 
