@@ -19,7 +19,7 @@ export default defineConfig({
 
       },
       "/api": {
-        target:"http://localhost:5000",
+        target:"http://42.192.39.198:5000",
         changeOrigin: true,
 
       }

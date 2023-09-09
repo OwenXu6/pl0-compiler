@@ -222,7 +222,7 @@ interface TableItem {
   workType: string;
   job: string;
   userId: string;
-  AspNetUserPk: string;
+  aspNetUserPk: string;
 }
 
 let newEmployee = reactive({
@@ -647,7 +647,7 @@ const saveEdit = () => {
   pageData.value[idx].workType = form.workType;
   pageData.value[idx].job = form.job; //应该要至后端修改之
   editData();
-  grantByAspNetUserPk(form.workType, pageData.value[idx].AspNetUserPk);     //需要真实的userId,这里只有aspUserId
+  grantByAspNetUserPk(form.workType, pageData.value[idx].aspNetUserPk);     //需要真实的userId,这里只有aspUserId
 };
 
 
@@ -714,7 +714,7 @@ const savenew = () => {         //保存新增人员
   newEmployee.workType = form.workType;
   newEmployee.job = form.job;
   newEmployee.userId = form.userId;
-  newEmployee.userPassword = "abcABC!12345";
+  newEmployee.userPassword = "Bestjiaoao0!";
   uploadData(newEmployee);             //上传
 
 };
