@@ -72,13 +72,13 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click="editVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveEdit">确 定</el-button>
+					<div style="display: inline-block;margin:10px;"><el-button @click="editVisible = false">取 消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
 				</span>
 			</template>
 		</el-dialog>
-		<!-- <button @click="postData1">post数据</button>
-		<button @click="putData">put数据</button> -->
+		<!-- <button @click="postData1">post数据</button> -->
+		<!-- <button @click="putData">put数据</button> -->
 	</div>
 </template>
 
@@ -193,7 +193,7 @@ const getData = async () => {
 
 	for(let i=0;i<tableData.value.length;i++)
 	{
-		if(i>=3){
+		if(i>=5){
 			visTmp.push(0);
 		}
 		else{
@@ -271,9 +271,9 @@ const postData1 = async () => {
 		const response = await axios({
                 method: 'post',//请求方法
                 data: {
-					date:'2023-08-12T00:00:00',
-  					totalTickets:50986,
-  					soldTickets:49518,
+					date:'2023-09-14T00:00:00',
+  					totalTickets:43986,
+  					soldTickets:42506,
 				},
                 url: 'http://42.192.39.198:5000/api/TicketsStatistics/',
             }).then(response => {
