@@ -67,6 +67,11 @@
       <div style="margin:25px;">年龄：22</div>
       <div style="margin:25px;">职级：藏品管理员</div>
     </el-col>
+    <!-- 显示个人信息 -->
+    <el-col :span="4">
+      <div style="margin:25px;">工作方向：藏品管理</div>
+      <div style="margin:25px;">薪资：10000</div>
+    </el-col>
   </el-card>
 
   <!-- 退出按钮 -->
