@@ -37,7 +37,7 @@
 								<el-icon :style="iconStyle">
 									<Picture />
 								</el-icon>
-								藏品图片
+								藏品图片*
 							</div>
 						</template>
 
@@ -56,14 +56,11 @@
 							</el-image>
 						</template :on-preview="handlePreview"-->
 
-						<el-upload 
-						v-model:file-list="fileList"
-							class="upload-demo" 
-							multiple="false"
+						<el-upload v-model:file-list="fileList" class="upload-demo" multiple="false"
 							action="/foreignImage/upload" name="smfile"
 							:headers="{ Authorization: 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" :on-success="handleSuccess"
-							:on-error="handleError" :before-upload="beforeUpload" 
-    						:limit="1" :on-exceed="handleExceed">
+							:on-error="handleError" :before-upload="beforeUpload" :limit="1" :on-exceed="handleExceed"
+							prop="collectionPhoto">
 							<el-button size="small" type="primary">点击上传</el-button>
 						</el-upload>
 						<!-- 显示已上传的图片 -->
@@ -86,16 +83,16 @@
 						<el-input v-model="form.name" placeholder="请输入文物名称"></el-input>
 					</el-descriptions-item>
 					<!-- 文物原名 -->
-					<el-descriptions-item>
+					<el-descriptions-item required>
 						<template #label>
 							<div class="cell-item">
 								<el-icon :style="iconStyle">
 									<tickets />
 								</el-icon>
-								原名
+								原名*
 							</div>
 						</template>
-						<el-input v-model="form.originalName" placeholder="请输入文物原名"></el-input>
+						<el-input v-model="form.originalName" placeholder="请输入文物原名" prop="originalName"></el-input>
 					</el-descriptions-item>
 					<!-- 文物级别 select没写完-->
 					<el-descriptions-item>
@@ -117,11 +114,11 @@
 								<el-icon :style="iconStyle">
 									<Grid />
 								</el-icon>
-								文物类别
+								文物类别*
 							</div>
 						</template>
 						<el-autocomplete v-model="form.collectionType" :fetch-suggestions="typeQuerySearch" clearable
-							class="inline-input w-50" placeholder="请选择文物的种类" @select="typeHandleSelect" />
+							class="inline-input w-50" placeholder="请选择文物的类别" @select="typeHandleSelect" />
 					</el-descriptions-item>
 					<!-- 质地 -->
 					<el-descriptions-item>
@@ -130,11 +127,24 @@
 								<el-icon :style="iconStyle">
 									<Pointer />
 								</el-icon>
-								质地
+								质地*
 							</div>
 						</template>
 						<el-autocomplete v-model="form.textureType" :fetch-suggestions="textureQuerySearch" clearable
 							class="inline-input w-50" placeholder="请选择文物的质地" @select="textureHandleSelect" />
+					</el-descriptions-item>
+					<!-- 来源 -->
+					<el-descriptions-item>
+						<template #label>
+							<div class="cell-item">
+								<el-icon :style="iconStyle">
+									<MapLocation />
+								</el-icon>
+								来源*
+							</div>
+						</template>
+						<el-autocomplete v-model="form.collectInfo.source" :fetch-suggestions="sourceQuerySearch" clearable
+							class="inline-input w-50" placeholder="请选择文物的来源" @select="sourceHandleSelect" />
 					</el-descriptions-item>
 					<!--年代 -->
 					<el-descriptions-item>
@@ -161,20 +171,7 @@
 						</template>
 						<el-input v-model="form.area" placeholder="请输入文物的地域"></el-input>
 					</el-descriptions-item>
-					<!-- 来源 -->
-					<el-descriptions-item>
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<MapLocation />
-								</el-icon>
-								来源
-							</div>
-						</template>
-						<el-autocomplete v-model="form.collectInfo.source" :fetch-suggestions="sourceQuerySearch" clearable
-							class="inline-input w-50" placeholder="请选择文物的来源" @select="sourceHandleSelect" />
-					</el-descriptions-item>
-					
+
 
 					<!-- 完残程度类别 -->
 					<el-descriptions-item>
@@ -183,13 +180,14 @@
 								<el-icon :style="iconStyle">
 									<Box />
 								</el-icon>
-								完残程度类别
+								完残程度类别*
 							</div>
 						</template>
-						<el-autocomplete v-model="form.completenessType" :fetch-suggestions="completenessTypeQuerySearch" clearable
-							class="inline-input w-50" placeholder="请选择文物的完残程度类别" @select="completenessTypeHandleSelect" />
+						<el-autocomplete v-model="form.completenessType" :fetch-suggestions="completenessTypeQuerySearch"
+							clearable class="inline-input w-50" placeholder="请选择文物的完残程度类别"
+							@select="completenessTypeHandleSelect" />
 					</el-descriptions-item>
-					
+
 					<!-- 完残程度 -->
 					<el-descriptions-item>
 						<template #label>
@@ -227,8 +225,9 @@
 								尺寸单位
 							</div>
 						</template>
-						<el-autocomplete v-model="form.dimensionInfo.dimensionUnit" :fetch-suggestions="dimensionUnitQuerySearch" clearable
-							class="inline-input w-50" placeholder="请选择文物的尺寸单位" @select="dimensionUnitHandleSelect" />
+						<el-autocomplete v-model="form.dimensionInfo.dimensionUnit"
+							:fetch-suggestions="dimensionUnitQuerySearch" clearable class="inline-input w-50"
+							placeholder="请选择文物的尺寸单位" @select="dimensionUnitHandleSelect" />
 
 					</el-descriptions-item>
 
@@ -254,9 +253,9 @@
 								质量单位
 							</div>
 						</template>
-						<el-autocomplete v-model="form.dimensionInfo.weightUnit" :fetch-suggestions="weightUnitQuerySearch" clearable
-							class="inline-input w-50" placeholder="请选择文物的质量单位" @select="weightUnitHandleSelect" />
-					
+						<el-autocomplete v-model="form.dimensionInfo.weightUnit" :fetch-suggestions="weightUnitQuerySearch"
+							clearable class="inline-input w-50" placeholder="请选择文物的质量单位" @select="weightUnitHandleSelect" />
+
 					</el-descriptions-item>
 					<!-- 传统数量 -->
 					<el-descriptions-item>
@@ -265,10 +264,10 @@
 								<el-icon :style="iconStyle">
 									<Histogram />
 								</el-icon>
-								传统数量
+								传统数量*
 							</div>
 						</template>
-						<el-input v-model="form.dimensionInfo.traditionalQuantity" placeholder="请输入文物的实际数量"></el-input>
+						<el-input v-model="form.dimensionInfo.traditionalQuantity" placeholder="请输入文物的传统数量"></el-input>
 					</el-descriptions-item>
 					<!-- 传统数量单位 -->
 					<el-descriptions-item>
@@ -277,12 +276,13 @@
 								<el-icon :style="iconStyle">
 									<Histogram />
 								</el-icon>
-								传统数量单位
+								传统数量单位*
 							</div>
 						</template>
-						<el-autocomplete v-model="form.dimensionInfo.traditionalQuantityUnit" :fetch-suggestions="traditionalQuantityUnitQuerySearch" clearable
-							class="inline-input w-50" placeholder="请选择文物的传统数量单位" @select="traditionalQuantityUnitHandleSelect" />
-					
+						<el-autocomplete v-model="form.dimensionInfo.traditionalQuantityUnit"
+							:fetch-suggestions="traditionalQuantityUnitQuerySearch" clearable class="inline-input w-50"
+							placeholder="请选择文物的传统数量单位" @select="traditionalQuantityUnitHandleSelect" />
+
 					</el-descriptions-item>
 
 					<!-- 实际数量 -->
@@ -292,7 +292,7 @@
 								<el-icon :style="iconStyle">
 									<Histogram />
 								</el-icon>
-								实际数量
+								实际数量*
 							</div>
 						</template>
 						<el-input v-model="form.dimensionInfo.realQuantity" placeholder="请输入文物的实际数量"></el-input>
@@ -305,12 +305,13 @@
 								<el-icon :style="iconStyle">
 									<Histogram />
 								</el-icon>
-								实际数量单位
+								实际数量单位*
 							</div>
 						</template>
-						<el-autocomplete v-model="form.dimensionInfo.realQuantityUnit" :fetch-suggestions="realQuantityUnitQuerySearch" clearable
-							class="inline-input w-50" placeholder="请选择文物的实际数量单位" @select="realQuantityUnitHandleSelect" />
-					
+						<el-autocomplete v-model="form.dimensionInfo.realQuantityUnit"
+							:fetch-suggestions="realQuantityUnitQuerySearch" clearable class="inline-input w-50"
+							placeholder="请选择文物的实际数量单位" @select="realQuantityUnitHandleSelect" />
+
 					</el-descriptions-item>
 
 					<!-- 保护等级 -->
@@ -323,8 +324,9 @@
 								保护等级
 							</div>
 						</template>
-						<el-autocomplete v-model="form.storageInfo.protectionLevel" :fetch-suggestions="protectLevelQuerySearch"
-							clearable class="inline-input w-50" placeholder="请选择文物的保护等级" @select="protectLevelSelect" />
+						<el-autocomplete v-model="form.storageInfo.protectionLevel"
+							:fetch-suggestions="protectLevelQuerySearch" clearable class="inline-input w-50"
+							placeholder="请选择文物的保护等级" @select="protectLevelSelect" />
 					</el-descriptions-item>
 
 					<!-- 备注 -->
@@ -351,51 +353,51 @@
 							</div>
 						</template>
 						<!-- <el-input v-model="form.storageInfo.currentStatus"></el-input> -->
-						
+
 						{{ form.storageInfo.currentStatus }}
 
 					</el-descriptions-item>
-					
+
 					<div>
-					<el-descriptions-item v-if="form.storageInfo.currentStatus==='在展' ">
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Collection />
-								</el-icon>
-								展厅编号
-							</div>
-						</template>
-						<el-input v-model="form.exhibitionHallId"></el-input>
+						<el-descriptions-item v-if="form.storageInfo.currentStatus === '在展'">
+							<template #label>
+								<div class="cell-item">
+									<el-icon :style="iconStyle">
+										<Collection />
+									</el-icon>
+									展厅编号
+								</div>
+							</template>
+							<el-input v-model="form.exhibitionHallId"></el-input>
 
-					</el-descriptions-item>
+						</el-descriptions-item>
 
-					<el-descriptions-item v-if="form.storageInfo.currentStatus==='在库' ">
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Collection />
-								</el-icon>
-								仓库编号
-							</div>
-						</template>
-						<el-input v-model="form.warehouseId"></el-input>
+						<el-descriptions-item v-if="form.storageInfo.currentStatus === '在库'">
+							<template #label>
+								<div class="cell-item">
+									<el-icon :style="iconStyle">
+										<Collection />
+									</el-icon>
+									仓库编号
+								</div>
+							</template>
+							<el-input v-model="form.warehouseId"></el-input>
 
-					</el-descriptions-item>
+						</el-descriptions-item>
 
-					<el-descriptions-item v-if="form.storageInfo.currentStatus==='在库' ">
-						<template #label>
-							<div class="cell-item">
-								<el-icon :style="iconStyle">
-									<Collection />
-								</el-icon>
-								货架
-							</div>
-						</template>
-						<el-input v-model="form.containerId"></el-input>
+						<el-descriptions-item v-if="form.storageInfo.currentStatus === '在库'">
+							<template #label>
+								<div class="cell-item">
+									<el-icon :style="iconStyle">
+										<Collection />
+									</el-icon>
+									货架
+								</div>
+							</template>
+							<el-input v-model="form.containerId"></el-input>
 
-					</el-descriptions-item>
-				</div>
+						</el-descriptions-item>
+					</div>
 
 					<!-- 入藏时间 自动生成 感觉没必要显示它了-->
 					<el-descriptions-item>
@@ -413,10 +415,42 @@
 				</el-descriptions>
 
 				<el-form-item>
-					<el-button type="primary" @click="submitForm(form)">
+					<el-button class="centered-button" type="primary" @click="submitnew()">
 						提交
 					</el-button>
 					<!--el-button @click="resetForm(form)">重置</el-button-->
+				</el-form-item>
+
+				<!--el-form-item>
+					<el-button type="warning" class="import-button" icon="el-icon-upload2" size="mini" @click="uploadFiles1">
+						<i class="icon"></i>
+						批量导入
+					</el-button>
+					<el-dialog class="dialog-box" title="批量导入" width="25%" :visible.sync="uploadShowDialog1">
+
+						<el-upload class="upload-demo" ref="upload" action="#" :multiple="false" :show-file-list="true"
+							:before-upload="beforeUpload" :http-request="uploadHttpRequest1" :file-list="fileList"
+							:on-change="handleUploadChange1" :limit="1">
+							<div class="border">
+								<i class="el-icon-plus"></i>
+							</div>
+							<div slot="tip" class="el-upload-tip">只能上传.xls、.xlsx文件</div>
+						</el-upload>
+						<span slot="footer">
+							<el-button @click="submitUpload1" type="primary"> 导入 </el-button>
+							<el-button @click="uploadShowDialog1 = false" class="cancelDialog">
+								取消
+							</el-button>
+						</span>
+					</el-dialog>
+				</el-form-item-->
+
+				<el-form-item>
+					<el-upload class="upload-demo" multiple="false" action="/foreignImage/upload" name="smfile"
+						:headers="{ Authorization: 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" :on-success="handleSuccess"
+						:on-error="handleError" :before-upload="beforeUpload" :limit="1" :on-exceed="handleExceed">
+						<el-button size="small" type="primary">点击上传</el-button>
+					</el-upload>
 				</el-form-item>
 
 			</el-form>
@@ -443,38 +477,6 @@ import { onMounted } from 'vue'
 import axios from 'axios';
 import type { FormInstance, FormRules } from 'element-plus'
 
-
-async function upload(path) {
-  try {
-    const authToken = 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk';
-    const url = '/pic/api/v2/upload';
-
-    // 创建一个FormData对象，用于包含文件
-    const formData = new FormData();
-    formData.append('smfile', path);
-
-    // 设置请求头
-    const headers = new Headers({
-      'Authorization': `Bearer ${authToken}`
-    });
-
-    // 发起POST请求
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: headers,
-      body: formData
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log(JSON.stringify(data, null, 4));
-    } else {
-      console.error(`HTTP Error: ${response.status} ${response.statusText}`);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
 
 
 let tmp = ({
@@ -529,59 +531,15 @@ interface TableItem {
 }
 
 let newCollection: TableItem = {
-	collectionId: 99,
-	originalName: "string",
-	name: "string",
-	collectionType: "12",
-	era: "string",
-	area: "string",
-	textureType: "string",
-	completeness: "string",
-	completenessType: "string",
-	collectionPhoto: "string",
-	collectInfo: {
-		collectionId: 99,
-		source: "string",
-		collectMuseum: "string",
-		collectTime: "2023-09-03T00:00:00",
-		collectionLevel: "string"
-	},
-	dimensionInfo: {
-		collectionId: 99,
-		dimension: "string",
-		dimensionUnit: "string",
-		weight: 0,
-		weightUnit: "string",
-		realQuantity: 0,
-		realQuantityUnit: "string",
-		traditionalQuantity: 0,
-		traditionalQuantityUnit: "string"
-	},
-	storageInfo: {
-		collectionId: 99,
-		currentStatus: "未鉴定",
-		protectionLevel: "string"
-	},
-	exhibitionHallId: null,
-	warehouseId: null,
-	containerId: null,
-	identificationStaffName: "1212",
-	identificationComments: "string",
-	identificationDate: "2023-09-03T07:46:58",
-	remark: "string"
-
-};
-
-const form = reactive({
 	collectionId: null,
 	originalName: "",
 	name: "未定",
 	collectionType: "",
 	era: "待鉴定",
-	area: "",
+	area: "待鉴定",
 	textureType: "",
-	completeness: "",
-	completenessType: "待鉴定",
+	completeness: "待鉴定",
+	completenessType: "",
 	collectionPhoto: "",
 	collectInfo: {
 		collectionId: null,
@@ -592,13 +550,13 @@ const form = reactive({
 	},
 	dimensionInfo: {
 		collectionId: null,
-		dimension: "",
+		dimension: "待鉴定",
 		dimensionUnit: "毫米",
-		weight: null,
+		weight: 0,
 		weightUnit: "克",
-		realQuantity: null,
+		realQuantity: 0,
 		realQuantityUnit: "件",
-		traditionalQuantity: null,
+		traditionalQuantity: 0,
 		traditionalQuantityUnit: "件"
 	},
 	storageInfo: {
@@ -612,40 +570,43 @@ const form = reactive({
 	identificationStaffName: null,
 	identificationComments: null,
 	identificationDate: null,
-	remark: ""
+	remark: "无"
 
-	/*collectionId: 99,
-	originalName: "string",
-	name: "string",
-	collectionType: "12",
-	era: "string",
-	area: "string",
-	textureType: "string",
-	completeness: "string",
-	completenessType: "string",
-	collectionPhoto: "string",
+};
+
+const form = reactive({
+	collectionId: null,
+	originalName: "",
+	name: "",
+	collectionType: "",
+	era: "",
+	area: "",
+	textureType: "",
+	completeness: "",
+	completenessType: "",
+	collectionPhoto: "",
 	collectInfo: {
-		collectionId: 99,
-		source: "string",
-		collectMuseum: "string",
-		collectTime: "2023-09-03T00:00:00",
-		collectionLevel: "string"
+		collectionId: null,
+		source: "",
+		collectMuseum: "博数博物馆",
+		collectTime: "",//这里要么就是 yyyy-mm-ddT+时间(**:**:**)，要么就是只有日期yyyy-mm-dd
+		collectionLevel: ""
 	},
 	dimensionInfo: {
-		collectionId: 99,
-		dimension: "string",
-		dimensionUnit: "string",
-		weight: 0,
-		weightUnit: "string",
-		realQuantity: 0,
-		realQuantityUnit: "string",
-		traditionalQuantity: 0,
-		traditionalQuantityUnit: "string"
+		collectionId: null,
+		dimension: "",
+		dimensionUnit: "毫米",
+		weight: null,
+		weightUnit: "克",
+		realQuantity: 1,
+		realQuantityUnit: "件",
+		traditionalQuantity: 1,
+		traditionalQuantityUnit: "件"
 	},
 	storageInfo: {
-		collectionId: 99,
+		collectionId: null,
 		currentStatus: "未鉴定",
-		protectionLevel: "string"
+		protectionLevel: ""
 	},
 	exhibitionHallId: null,
 	warehouseId: null,
@@ -653,50 +614,24 @@ const form = reactive({
 	identificationStaffName: null,
 	identificationComments: null,
 	identificationDate: null,
-	remark: "string" */
+	remark: ""
+
 
 });
 
-const rules = {
-	/*CollectionID: [
-		{ required: true, message: '文物编号不能为空', trigger: 'blur' },
-	],
-	OriginalName: [
+/*const rules = reactive<FormRules<TableItem>>({
+
+	originalName: [
 		{ required: true, message: '文物原名不能为空', trigger: 'blur' },
 	],
 	CollectionType: [
 		{ required: true, message: '文物类别不能为空', trigger: 'change' },
 	],
-	Researched: [
-		{ required: true, message: '是否已考证不能为空', trigger: 'change' },
-	],
-	Era: [
-		{ required: true, message: '文物年代不能为空', trigger: 'change' },
-	],
-	Location: [
-		{ required: true, message: '文物在展/在库不能为空', trigger: 'change' },
-	],*/
+	collectionPhoto: [
+		{ required: true, message: '文物图片不能为空', trigger: 'change' },
+	]
 	// 其他表单项的验证规则...
-};
-
-
-/*const submitForm = async (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-
-  const valid = await formEl.validate();
-  if (valid) {
-	try {
-	  const response = await axios.post('http://42.192.39.198:5000/api/Collections', form);
-	  console.log(response.data); // 假设后端返回提交结果的数据
-	  // 处理提交结果，可以显示成功消息或进行相应的跳转
-	} catch (error) {
-	  console.error(error);
-	  // 处理请求错误，比如显示错误消息
-	}
-  } else {
-	console.log('error submit!');
-  }
-};*/
+});*/
 
 
 
@@ -718,7 +653,88 @@ const submitForm = async (newCollection: TableItem) => {
 };
 
 const submitnew = () => {
-	submitForm(newCollection);
+
+
+	if (form.originalName == "") {
+		ElMessage.error('文物原名不能为空');
+	}
+	else if (form.collectionPhoto == "") {
+		ElMessage.error('藏品图片不能为空');
+	}
+	else if (form.collectionType == "") {
+		ElMessage.error('文物类别不能为空');
+	}
+	else if (form.textureType == "") {
+		ElMessage.error('文物质地不能为空');
+	}
+	else if (form.collectInfo.source == "") {
+		ElMessage.error('文物来源不能为空');
+	}
+	else if (form.completenessType == "") {
+		ElMessage.error('完残程度类别不能为空');
+	}
+	else if (form.dimensionInfo.traditionalQuantity == null) {
+		ElMessage.error('传统数量不能为空');
+	}
+	else if (form.dimensionInfo.traditionalQuantityUnit == "") {
+		ElMessage.error('传统数量单位不能为空');
+	}
+	else if (form.dimensionInfo.realQuantity == null) {
+		ElMessage.error('实际数量不能为空');
+	}
+	else if (form.dimensionInfo.realQuantityUnit == "") {
+		ElMessage.error('实际数量单位不能为空');
+	}
+	else {
+
+		newCollection.collectionId = form.collectionId;
+		newCollection.originalName = form.originalName;
+		if (form.name != "")
+			newCollection.name = form.name;
+		newCollection.collectionType = form.collectionType;
+		if (form.era != "")
+			newCollection.era = form.era;
+		if (form.area != "")
+			newCollection.area = form.area;
+		newCollection.textureType = form.textureType;
+		if (form.completeness != "")
+			newCollection.completeness = form.completeness;
+		newCollection.completenessType = form.completenessType;
+		newCollection.collectionPhoto = form.collectionPhoto;
+		newCollection.collectInfo.collectionId = form.collectInfo.collectionId;
+		newCollection.collectInfo.source = form.collectInfo.source;
+		newCollection.collectInfo.collectMuseum = form.collectInfo.collectMuseum;
+		newCollection.collectInfo.collectTime = form.collectInfo.collectTime;
+		if (form.collectInfo.collectionLevel != "")
+			newCollection.collectInfo.collectionLevel = form.collectInfo.collectionLevel;
+
+		newCollection.dimensionInfo.collectionId = form.dimensionInfo.collectionId;
+
+		if (form.dimensionInfo.dimension != "")
+			newCollection.dimensionInfo.dimension = form.dimensionInfo.dimension;
+		if (form.dimensionInfo.dimensionUnit != "")
+			newCollection.dimensionInfo.dimensionUnit = form.dimensionInfo.dimensionUnit;
+		if (form.dimensionInfo.weight != null)
+			newCollection.dimensionInfo.weight = form.dimensionInfo.weight;
+		if (form.dimensionInfo.weightUnit != "")
+			newCollection.dimensionInfo.weightUnit = form.dimensionInfo.weightUnit;
+		newCollection.dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;
+		newCollection.dimensionInfo.realQuantityUnit = form.dimensionInfo.realQuantityUnit;
+		newCollection.dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
+		newCollection.dimensionInfo.traditionalQuantityUnit = form.dimensionInfo.traditionalQuantityUnit;
+
+		newCollection.storageInfo.collectionId = form.storageInfo.collectionId;
+		newCollection.storageInfo.currentStatus = form.storageInfo.currentStatus;
+		if (form.storageInfo.protectionLevel != "")
+			newCollection.storageInfo.protectionLevel = form.storageInfo.protectionLevel;
+
+		if (form.remark != "")
+			newCollection.remark = form.remark;
+
+
+		submitForm(newCollection);
+	}
+
 }
 
 const resetForm = (formEl: FormInstance | undefined) => {
@@ -1071,19 +1087,19 @@ const sourceCreateFilter = (queryString: string) => {
 //可选择的选项
 const sourceloadAll = () => {
 	return [
-	{ value: '旧藏', index: 1 },
-  	{ value: '拨交', index: 2 },
-  	{ value: '移交', index: 3 },
-  	{ value: '交换', index: 4 },
-  	{ value: '拣选', index: 5 },
-  	{ value: '捐赠', index: 6 },
-  	{ value: '收购', index: 7 },
-  	{ value: '征集', index: 8 },
-  	{ value: '采集', index: 9 },
-  	{ value: '发掘', index: 10 },
-  	{ value: '寄存', index: 11 },
-  	{ value: '制作', index: 12 },
-  	{ value: '其他', index: 13 }
+		{ value: '旧藏', index: 1 },
+		{ value: '拨交', index: 2 },
+		{ value: '移交', index: 3 },
+		{ value: '交换', index: 4 },
+		{ value: '拣选', index: 5 },
+		{ value: '捐赠', index: 6 },
+		{ value: '收购', index: 7 },
+		{ value: '征集', index: 8 },
+		{ value: '采集', index: 9 },
+		{ value: '发掘', index: 10 },
+		{ value: '寄存', index: 11 },
+		{ value: '制作', index: 12 },
+		{ value: '其他', index: 13 }
 	]
 }
 
@@ -1120,10 +1136,10 @@ const completenessTypeCreateFilter = (queryString: string) => {
 //可选择的选项
 const completenessTypeloadAll = () => {
 	return [
-	{ value: '完', index: 1 },
-  	{ value: '残', index: 2 },
-  	{ value: '缺', index: 3 },
-  	{ value: '失', index: 4 },
+		{ value: '完', index: 1 },
+		{ value: '残', index: 2 },
+		{ value: '缺', index: 3 },
+		{ value: '失', index: 4 },
 	]
 }
 
@@ -1160,14 +1176,14 @@ const traditionalQuantityUnitCreateFilter = (queryString: string) => {
 //可选择的选项
 const traditionalQuantityUnitloadAll = () => {
 	return [
-    { value: '个', index: 1 },
-    { value: '副', index: 2 },
-    { value: '套', index: 3 },
-    { value: '对', index: 4 },
-    { value: '封', index: 5 },
-    { value: '只', index: 6 },
-    { value: '件', index: 7 }, //默认
-	{ value: '双', index: 8}
+		{ value: '个', index: 1 },
+		{ value: '副', index: 2 },
+		{ value: '套', index: 3 },
+		{ value: '对', index: 4 },
+		{ value: '封', index: 5 },
+		{ value: '只', index: 6 },
+		{ value: '件', index: 7 }, //默认
+		{ value: '双', index: 8 }
 	]
 }
 
@@ -1204,14 +1220,14 @@ const realQuantityUnitCreateFilter = (queryString: string) => {
 //可选择的选项
 const realQuantityUnitloadAll = () => {
 	return [
-    { value: '个', index: 1 },
-    { value: '副', index: 2 },
-    { value: '套', index: 3 },
-    { value: '对', index: 4 },
-    { value: '封', index: 5 },
-    { value: '只', index: 6 },
-    { value: '件', index: 7 }, //默认
-	{ value: '双', index: 8}
+		{ value: '个', index: 1 },
+		{ value: '副', index: 2 },
+		{ value: '套', index: 3 },
+		{ value: '对', index: 4 },
+		{ value: '封', index: 5 },
+		{ value: '只', index: 6 },
+		{ value: '件', index: 7 }, //默认
+		{ value: '双', index: 8 }
 	]
 }
 
@@ -1248,9 +1264,9 @@ const dimensionUnitCreateFilter = (queryString: string) => {
 //可选择的选项
 const dimensionUnitloadAll = () => {
 	return [
-    { value: '毫米', index: 1 },//默认
-    { value: '厘米', index: 2 },
-    { value: '米', index: 3 },
+		{ value: '毫米', index: 1 },//默认
+		{ value: '厘米', index: 2 },
+		{ value: '米', index: 3 },
 	]
 }
 
@@ -1338,38 +1354,37 @@ function getCurrentTime() {
 
 
 const handleSuccess = (response, file) => {
-      // 处理上传成功后的回调
-      console.log('上传成功', response);
-	  form.collectionPhoto=response.data.url;
-      // 在回调中处理SM.MS返回的数据，可以获取图片链接等信息
+	// 处理上传成功后的回调
+	console.log('上传成功', response);
+	form.collectionPhoto = response.data.url;
+	// 在回调中处理SM.MS返回的数据，可以获取图片链接等信息
 };
 const handleError = (err) => {
-      // 处理上传失败后的回调
-      console.error('上传失败', err);
+	// 处理上传失败后的回调
+	console.error('上传失败', err);
 };
 const beforeUpload = (file) => {
 
-      return true; // 返回true表示继续上传，返回false表示取消上传
+	return true; // 返回true表示继续上传，返回false表示取消上传
 };
 
 import type { UploadProps, UploadUserFile } from 'element-plus'
 
 const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
-  console.log(uploadFile)
+	console.log(uploadFile)
 }
 
 
 const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
-  ElMessage.warning(
-    `The limit is 1, you selected ${files.length} files this time, add up to ${
-      files.length + uploadFiles.length
-    } totally`
-  )
+	ElMessage.warning(
+		`The limit is 1, you selected ${files.length} files this time, add up to ${files.length + uploadFiles.length
+		} totally`
+	)
 }
 
 
 const fileList = ref<UploadUserFile[]>([
-  
+
 ])
 
 </script>
@@ -1406,6 +1421,11 @@ const fileList = ref<UploadUserFile[]>([
 	margin: auto;
 	width: 40px;
 	height: 40px;
+}
+
+.centered-button {
+	display: flex;
+	justify-content: center;
 }
 </style>
 
