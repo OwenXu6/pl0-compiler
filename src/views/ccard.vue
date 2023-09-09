@@ -47,7 +47,7 @@
   </div> -->
 
   <!-- 显示个人信息 -->
-  <el-card shadow="always" style=" height: 390px;">
+  <el-card shadow="always" style=" height: 500px;">
     <template #header>
       <div class="card-header">
         <span>个人信息</span>
@@ -58,23 +58,26 @@
       <el-image class="center-image" :src="imgurl" />
     </el-row>
     <el-row class="image-row">
-      
-        <!-- 显示个人信息 -->
-        <el-col :span="4">
-          <div style="margin:25px;">用户名：deidei</div>
-          <div style="margin:25px;">性别：男</div>
-        </el-col>
-        <!-- 显示个人信息 -->
-        <el-col :span="4">
-          <div style="margin:25px;">年龄：22</div>
-          <div style="margin:25px;">职级：藏品管理员</div>
-        </el-col>
-        <!-- 显示个人信息 -->
-        <el-col :span="4">
-          <div style="margin:25px;">工作方向：藏品管理</div>
-          <div style="margin:25px;">薪资：10000</div>
-        </el-col>
-      
+
+      <!-- 显示个人信息 -->
+      <el-col :span="4">
+        <div style="margin:25px;">用户名：deidei</div>
+        <div style="margin:25px;">性别：男</div>
+      </el-col>
+      <!-- 显示个人信息 -->
+      <el-col :span="4">
+        <div style="margin:25px;">年龄：22</div>
+        <div style="margin:25px;">职级：藏品管理员</div>
+      </el-col>
+      <!-- 显示个人信息 -->
+      <el-col :span="4">
+        <div style="margin:25px;">工作方向：藏品管理</div>
+        <div style="margin:25px;">薪资：10000</div>
+      </el-col>
+    </el-row>
+    <!-- 显示个人信息 -->
+    <el-row :span="12" class="arbeit">
+      <div style="margin:25px;width: 650px;">工作内容：藏品管理</div>
     </el-row>
   </el-card>
 
@@ -122,7 +125,11 @@ const handleLogout = () => {
   justify-content: center;
   align-items: center;
 }
-
+.arbeit{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .center-image {
   width: 150px;
   height: 150px;

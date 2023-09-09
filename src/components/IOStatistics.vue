@@ -77,6 +77,7 @@ export default defineComponent({
             title: {
                 text: '人流信息监测',
             },
+            // theme: 'dark',
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
