@@ -209,6 +209,6 @@ const sidebar = useSidebarStore();
 /* 设置当前被选中的一级菜单 */
 .el-menu-item.is-active {  
   color: #fff !important;  
-  background: #579EF8 !important;  
+  background: rgb(137, 139, 165) !important;  
 }  
 </style>
