@@ -10,6 +10,9 @@ export const useUserInfo=defineStore('userInfo',{
         },
         updateRole(role){
             this.userRole = role
+        },
+        updateStaffInfo(staffInfo){
+            this.staffInfo = staffInfo
         }
     },
     persist:true,
@@ -18,6 +21,7 @@ export const useUserInfo=defineStore('userInfo',{
             userToken:undefined,
             expireTime:undefined,
             userRole:undefined,
+            staffInfo:undefined
         }
     }
 })

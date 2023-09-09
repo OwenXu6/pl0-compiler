@@ -20,38 +20,14 @@
 				<el-table-column label="操作" width="300" align="center">
 					<template #default="scope">
 						<el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
-							<button  class="el-icon-lx-edit btnSty green"></button>
+							<button  :icon="Edit" class="btnSty green"></button>
 							修改剩余门票
 						</el-button>
 						<el-button text class="gray" @click="handleEdit(scope.$index, scope.row,1)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="15" disabled>
-							<button class="el-icon-lx-edit btnSty gray" ></button>
+							<button :icon="Edit" class="btnSty gray" ></button>
 							修改剩余门票
 						</el-button>
-						
-					</template>
-				</el-table-column>
-			</el-table>
-			<div class="pagination" v-if="showTable.isFull">
-				<el-pagination
-					background
-					layout="total, prev, pager, next"
-					:current-page="query.pageIndex"
-					:page-size="query.pageSize"
-					:total="pageTotal"
-					@current-change="handlePageChange"
-					
-				></el-pagination>
-			</div>
-			<!-- <el-table :data="tableData.slice((query.pageIndex-1)*query.pageSize,query.pageIndex*query.pageSize)" v-if="!showTable.isFull" border class="table" ref="multipleTable"  header-cell-class-name="table-header">
-				<el-table-column prop="date" label="日期"></el-table-column>
-				<el-table-column prop="totalTickets" label="总门票"></el-table-column>
-				<el-table-column prop="soldTickets" label="已预约门票"></el-table-column>
-				<el-table-column prop="resTickets" label="剩余门票"></el-table-column>
-
-				
-				<el-table-column label="操作" width="300" align="center">
-					<template #default="scope">
-						<el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
+						<!-- <el-button text class="green" @click="handleEdit(scope.$index, scope.row,1)" v-if="visArr[scope.$index]&&(query.pageIndex===1)" v-permiss="15">
 							<button class="el-icon-lx-add btnSty green" ></button>
 							增加门票
 						</el-button>
@@ -66,11 +42,11 @@
 						<el-button  text class="gray" @click="handleEdit(scope.$index, scope.row, 0)" v-if="!visArr[scope.$index+(query.pageIndex-1)*query.pageSize]" v-permiss="16" disabled>
 							<button class="el-icon-lx-move btnSty gray" ></button>
 							减少门票
-						</el-button>
+						</el-button> -->
 					</template>
 				</el-table-column>
 			</el-table>
-			<div v-if="!showTable.isFull" class="pagination">
+			<div class="pagination" v-if="showTable.isFull">
 				<el-pagination
 					background
 					layout="total, prev, pager, next"
@@ -80,7 +56,8 @@
 					@current-change="handlePageChange"
 					
 				></el-pagination>
-			</div> -->
+			</div>
+			
 		</div>
 
 		<!-- 编辑弹出框 -->
@@ -100,7 +77,8 @@
 				</span>
 			</template>
 		</el-dialog>
-		
+		<!-- <button @click="postData1">post数据</button>
+		<button @click="putData">put数据</button> -->
 	</div>
 </template>
 
@@ -114,29 +92,12 @@ import axios from 'axios';
 
 
 const resTicket = ref(0);
-// const showCurrent=()=>{
 
-// 	showTable.isFull=0;
-// }
 const showTable = reactive({
 	isFull:1,
 
 });
-const tableRowClassName=(row:any,rowIndex:number)=>{
-	// let i=0;
-	// for(;i<tableData.value.length;i++)
-	// {
-	// 	if(query.name===tableData.value[i].date){
-	// 		query.pageIndex = Math.trunc(i/10) +1;
-	// 		let a=0;
-	// 		break;
-	// 	}
-	// }
-	console.log("row",row)
-	return 'success-row';
-	
-	
-}
+
 
 let visArr= ref<number[]>([]);
 let originDate= ref<string[]>([]);
@@ -175,6 +136,7 @@ fetchData();
 
 const pageTotal = ref(0);
 const tableData = ref<TableItem[]>([]);
+
 const getData = async () => {
 	const data = await fetchData();
 	console.log(data); 
@@ -202,12 +164,33 @@ const getData = async () => {
 
 	for(let i=0;i<tableData.value.length;i++)
 	{
-		dateTmp.push(tableData.value[i].date);
 		tableData.value[i].date = tableData.value[i].date.substring(0,10);
 		tableData.value[i].resTickets = tableData.value[i].totalTickets-tableData.value[i].soldTickets;
 	}
-	console.log("tableData.value:")
-	console.log(tableData.value); 
+	
+
+	tableData.value.sort((a, b) => {
+		const dateA = parseInt(a.date.substring(5,7));
+		const dateB = parseInt(b.date.substring(5,7));
+		if(dateA > dateB)	return -1;
+		if(dateA < dateB)	return 1;
+		if(dateA === dateB){
+			if(parseInt(a.date.substring(8,10))>parseInt(b.date.substring(8,10))){
+				return -1;
+			}
+			else{
+				return 1;
+			}
+		}
+		return 0
+	})
+	for(let i=0;i<tableData.value.length;i++)
+	{
+		dateTmp.push(tableData.value[i].date);
+	}
+	
+	//console.log("排序",tableData.value); 
+
 	for(let i=0;i<tableData.value.length;i++)
 	{
 		if(i>=3){
@@ -281,6 +264,28 @@ const handleEdit = (index: number, row: any,flag:number) => {
 	form.residue = row.residue;
 	editVisible.value = true;
 };
+
+const postData1 = async () => {
+	//let date1=
+	try {
+		const response = await axios({
+                method: 'post',//请求方法
+                data: {
+					date:'2023-08-12T00:00:00',
+  					totalTickets:50986,
+  					soldTickets:49518,
+				},
+                url: 'http://42.192.39.198:5000/api/TicketsStatistics/',
+            }).then(response => {
+                //执行成功后代码处理
+            })
+	}
+	catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+  
+};
+//向后端传输数据
 const uploadData = async () => {
     try {
 		axios.put(`http://42.192.39.198:5000/api/TicketsStatistics/${originDate.value[idx]}`,{
@@ -292,24 +297,29 @@ const uploadData = async () => {
   	error => { console.log('失败了' + error); }
 	)
 
-    // const response = await axios.put(`http://42.192.39.198:5000/api/TicketsStatistics/${originDate.value[idx]}`,tableData.value[idx].totalTickets+tableData.value[idx].soldTickets);
-    // 	ElMessage.success('数据上传成功');
     } catch (error) {
         ElMessage.error('数据上传失败');
     }
 };
+const putData = async () => {
+    try {
+		axios.put(`http://42.192.39.198:5000/api/TicketsStatistics/${originDate.value[11]}`,{
+  		date:originDate.value[11],
+  		totalTickets:50285,
+  		soldTickets:49983,
+	}).then(
+  	response => { console.log('成功了' + response.data); },
+  	error => { console.log('失败了' + error); }
+	)
+
+    } catch (error) {
+        ElMessage.error('数据上传失败');
+    }
+};
+//保存编辑的数据
 const saveEdit = () => {
 	editVisible.value = false;
-	// if(flag1===1){
-	// 	if(parseInt(form.residue.toString())<parseInt((tableData.value[idx].totalTickets-tableData.value[idx].soldTickets).toString())){
-	// 	editVisible.value = false;
-	// 	ElMessageBox.confirm('请大于原来剩余票数', {
-    //   type: 'warning',
-    //   callback: () => {}
-    // });
-	// 	return;
-	// }
-	// }
+	
 	if(flag1===1){
 			if(parseInt(form.residue.toString())<0){
 			editVisible.value = false;
@@ -328,17 +338,6 @@ const saveEdit = () => {
 			return;
 		}
 		}
-	// else{
-	// 	if(parseInt(form.residue.toString())>parseInt((tableData.value[idx].totalTickets-tableData.value[idx].soldTickets).toString())){
-	// 	editVisible.value = false;
-	// 	ElMessageBox.confirm('请小于原来剩余票数', {
-    //   type: 'warning',
-    //   callback: () => {}
-    // });
-	// 	return;
-	// }
-	// }
-	
 	
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);
 	let tmp: number = -1;
@@ -349,7 +348,26 @@ const saveEdit = () => {
 	uploadData();
 
 };
-
+// if(flag1===1){
+	// 	if(parseInt(form.residue.toString())<parseInt((tableData.value[idx].totalTickets-tableData.value[idx].soldTickets).toString())){
+	// 	editVisible.value = false;
+	// 	ElMessageBox.confirm('请大于原来剩余票数', {
+    //   type: 'warning',
+    //   callback: () => {}
+    // });
+	// 	return;
+	// }
+	// }
+	// else{
+	// 	if(parseInt(form.residue.toString())>parseInt((tableData.value[idx].totalTickets-tableData.value[idx].soldTickets).toString())){
+	// 	editVisible.value = false;
+	// 	ElMessageBox.confirm('请小于原来剩余票数', {
+    //   type: 'warning',
+    //   callback: () => {}
+    // });
+	// 	return;
+	// }
+	// }
 // 获取表格数据
 // const getData = () => {
 // 	fetchData().then(res => {

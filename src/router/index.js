@@ -101,8 +101,8 @@ const routes = [
                 meta: {
                     title: '反馈列表',
                     permiss: '12',
-            },
-            component: () => import('../views/feedbacks.vue'),
+                },
+                component: () => import('../views/feedbacks.vue'),
             },
             {
                 path: '/products',
@@ -118,19 +118,29 @@ const routes = [
                 name: 'cooperation',
                 meta: {
                     title: '合作联名项目',
-                    permiss: '12',},
+                    permiss: '12',
+                },
                 component: () => import('../views/cooperations.vue'),
 
             },
             {
-                path:'/ccard',
-                name:'ccard',
+                path: '/ccard',
+                name: 'ccard',
+                meta: {
+                    title: '文创卡片',
+                    permiss: '12',
+                },
+                component: () => import('../views/ccard.vue'),
+            },
+            {
+                path:'/storage',
+                name:'storage',
                 meta:{
-                    title:'文创卡片',
+                    title:'库存管理',
                     permiss:'12',
                 },
-                component:()=>import('../views/ccard.vue'),
-            },
+                component:()=>import('../views/storage.vue'),
+            }
         ],
     },
     {
@@ -149,31 +159,30 @@ const routes = [
         },
         component: () => import('../views/403.vue'),
     },
-    // {
-    //     path:'',
-    //     name:'404',
-    //     meta:{
-    //         title:'您要找的页面不存在',
-    //     },
-    //     component: ()=>import('../views/404.vue')
-    // }
+    {
+        path:'/404',
+        name:'404',
+        meta:{
+            title:'您要找的页面不存在',
+        },
+        component: ()=>import('../views/404.vue')
+    }
 ];
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes,
 });
-router.beforeEach((to,from,next)=>{
+router.beforeEach((to, from, next) => {
     const userInfo = useUserInfo()
-    if(
-        (!userInfo.expireTime||
-        userInfo.expireTime<new Date())&&
-        to.path!=='/login'
-    )
-    {
+    if (
+        (!userInfo.expireTime ||
+            userInfo.expireTime < new Date()) &&
+        to.path !== '/login'
+    ) {
         next('/login');
     }
-    else{
+    else {
         next()
         let flag = false;
         if (!Array.isArray(to.meta.permiss) || to.meta.permiss.length === 0)
@@ -185,12 +194,10 @@ router.beforeEach((to,from,next)=>{
                 }
             });
         }
-        if(flag === false)
-        {
+        if (flag === false) {
             next('/403');
         }
-        else
-        {
+        else {
             next();
         }
     }
