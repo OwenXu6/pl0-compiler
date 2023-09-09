@@ -68,8 +68,8 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-	          <el-button @click="editCreativeVisible = false">取 消</el-button>
-	          <el-button type="primary" @click="saveEdit">确 定</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button @click="editCreativeVisible = false">取 消</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -95,8 +95,8 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-	          <el-button @click="editCreativeVisible = false">取 消</el-button>
-	          <el-button type="primary" @click="saveEdit">确 定</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button @click="editCreativeVisible = false">取 消</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -113,7 +113,7 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-	          <el-button @click="viewVisible = false">关闭</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button @click="viewVisible = false">关闭</el-button></div>
 	        </span>
 	      </template>
 	    </el-dialog>
@@ -139,8 +139,8 @@
 	      </el-form>
 	      <template #footer>
 	        <span class="dialog-footer">
-	          <el-button @click="addVisible = false">取 消</el-button>
-	          <el-button type="primary" @click="saveAdd">确 定</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button @click="addVisible = false">取 消</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveAdd">确 定</el-button></div>
 	        </span>
 	      </template>
 	    </el-dialog>
