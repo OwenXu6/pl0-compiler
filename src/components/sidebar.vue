@@ -56,29 +56,28 @@ const items = [
     icon: 'Odometer',
     index: '/dashboard',
     title: '系统首页',
-    permiss: []
+    permiss: ['User']
   },
   {
     icon: 'goods',
     index: '1',
     title: '藏品管理',
-    permiss: ['CollectionManager',"SystemAdmin"],
+    permiss: ['CollectionManager','Archaeologist','CollectionResearcher',"SystemAdmin"],
     subs: [
       {
         index: '/collection_add',
         title: '新增藏品',
-        permiss: ['SystemAdmin'],
-        subs: undefined
+        permiss: ['Archaeologist','SystemAdmin'],
       },
       {
         index: '/collection_search',
         title: '查询藏品',
-        permiss: ['SystemAdmin'],
+        permiss: ['CollectionManager','SystemAdmin'],
       },
       {
         index: '/collection_research4unknown',
         title: '未知文物研究鉴定',
-        permiss: ['SystemAdmin'],
+        permiss: ['CollectionResearcher','SystemAdmin'],
       },
     ],
   },
@@ -86,28 +85,28 @@ const items = [
     icon:'lock',
     index: '/Human_Management',
     title: '人事管理',
-    permiss: ['SystemAdmin','User'],
+    permiss: ['StaffAdmin','SystemAdmin'],
   },
   {
     icon: 'more',
     index: '2',
     title: '展厅',
-    permiss: ['SystemAdmin'],
+    permiss: ['ExhibitionHallAdmin','SystemAdmin'],
     subs: [
       {
         index: '/table',
         title: '展厅信息',
-        permiss: ['SystemAdmin'],
+        permiss: ['ExhibitionHallAdmin','SystemAdmin'],
       },
       {
         index: '/collections',
         title: '展品详情',
-        permiss: ["SystemAdmin"],
+        permiss: ['ExhibitionHallAdmin',"SystemAdmin"],
       },
       {
         index: '/activity',
         title: '活动',
-        permiss: ["SystemAdmin"],
+        permiss: ['ExhibitionHallAdmin',"SystemAdmin"],
       },
     ],
   },
@@ -115,47 +114,29 @@ const items = [
     icon: 'User',
     index:'storage',
     title:'仓库管理',
-    permiss:["SystemAdmin"],
-  },
-  {
-    icon: 'User',
-    index: '/user',
-    title: '用户管理',
-    permiss: ["SystemAdmin"],
+    permiss:['WarehouseAdmin',"SystemAdmin"],
   },
   {
     icon: 'Calendar',
     index: '/statistics',
-    title: '统计信息',
-    permiss: ["SystemAdmin"],
-  },
-
-  {
-    icon: 'setting',
-    index: '/demo',
-    title: '系统设置',
+    title: '门票信息',
     permiss: ["SystemAdmin"],
   },
   {
     icon: "shop",
     index: "3",
     title: "运营与合作",
-    permiss: ["SystemAdmin"],
+    permiss: ['ProductAdmin','FeedbackAdmin',"SystemAdmin"],
     subs: [
       {
         index: '/feedbacks',
         title: '反馈信息管理',
-        permiss: ["SystemAdmin"],
+        permiss: ['FeedbackAdmin',"SystemAdmin"],
       },
       {
         index: '/products',
         title: '文创产品信息管理',
-        permiss: ["SystemAdmin"],
-      },
-      {
-        index: '/cooperations',
-        title: '合作联名项目',
-        permiss: ["SystemAdmin"],
+        permiss: ['ProductAdmin',"SystemAdmin"],
       },
     ]
   },
@@ -163,7 +144,7 @@ const items = [
     icon: "rank",
     index: "/ccard",
     title: "个人中心",
-    permiss: ["SystemAdmin"],
+    permiss: ['User',"SystemAdmin"],
   },
  
 ];

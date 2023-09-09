@@ -31,8 +31,8 @@
 					<el-option key="2" label="北首岭遗址" value="北首岭遗址"></el-option>
 				</el-select>
 				<el-input v-model="query.excavation_date" placeholder="出土日期" class="handle-input mr11"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" @click="goToExhibitionHall">返回展厅</el-button>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="goToExhibitionHall">返回展厅</el-button></div>
 				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->

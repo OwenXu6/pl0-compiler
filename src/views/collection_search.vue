@@ -19,7 +19,7 @@
 				</el-select>
 				<el-input v-model="query.excavation_site" placeholder="出土地" class="handle-input mr11"></el-input>
 				<el-input v-model="query.excavation_date" placeholder="入藏时间" class="handle-input mr11"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
+				<div style="display: inline-block;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
 				<!--显示一个搜索按钮，用户点击按钮时触发handleSearch函数。-->
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->
@@ -400,10 +400,46 @@ import {
 import { useRouter } from 'vue-router'; // 导入useRouter
 import axios from 'axios'
 
+import { useUserInfo } from "@/store/userInfo";
+import { useBaseUrl } from "@/store/baseUrl";
+
+function getToken() {
+	// 替换为获取token的逻辑
+	const UserInfo = useUserInfo();
+	return UserInfo.userToken;
+
+	}
+
+// 创建一个具有默认头的Axios实例
+const axiosInstance = axios.create({
+	baseURL: 'http://42.192.39.198:5000/api',
+});
+
+// 拦截器：将token添加到每个请求中
+axiosInstance.interceptors.request.use((config) => {
+	const token = getToken();
+
+	if (token) {
+		if (config.headers) {
+			config.headers.Authorization = `Bearer ${token}`;
+		} else {
+			config.headers = {
+				Authorization: `Bearer ${token}`,
+			};
+		}
+	}
+
+	return config;
+}, (error) => {
+	return Promise.reject(error);
+});
+
+
 //获取后端数据库的数据
 const fetchData = async () => {
 	try {
-		const response = await axios.get(' http://42.192.39.198:5000/api/Collections');
+		const response= await axiosInstance.get('/Collections');
+
 		console.log(response.data);
 		console.log("数据库连接成功！");
 		return response.data;
@@ -723,7 +759,9 @@ const handleDetails = (index: number, row: any) => {
 const uploadData = async () => {
 	console.log(tableData.value[idx])
 	try {
-		const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
+		
+		const response= await axiosInstance.put('/Collections'+ tableData.value[idx].collectionId, tableData.value[idx]);
+		//const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
 		ElMessage.success('数据上传成功');
 		getData();
 	} catch (error) {

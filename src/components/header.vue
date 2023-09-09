@@ -58,7 +58,7 @@ import { useSidebarStore } from '@/store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
 
-const username: string | null = localStorage.getItem('ms_username');
+//const username: string | null = localStorage.getItem('ms_username');
 // 未读消息数量
 const message: number = 2;
 
