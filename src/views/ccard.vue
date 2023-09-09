@@ -94,6 +94,7 @@ import { useRouter } from 'vue-router';
 import { useUserInfo } from '../store/userInfo';
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus";
 import imgurl from '../assets/img/img.jpg';
+import { defineStore } from 'pinia';
 
 const router = useRouter();
 const handleLogout = () => {
@@ -104,6 +105,10 @@ const handleLogout = () => {
   userInfo.updateExpireTime(new Date(0))
   router.push('/login');
 };
+
+// const userInfo = useUserInfo();
+// console.log("打印用户信息")
+// console.log(userInfo)
 
 </script>
 
