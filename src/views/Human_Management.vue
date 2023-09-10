@@ -172,6 +172,7 @@ import {ElMessage, ElMessageBox} from 'element-plus';
 import {Delete, Edit, Search, Plus, More} from '@element-plus/icons-vue';
 import axios from 'axios';
 import {useUserInfo} from "@/store/userInfo";
+import { SelectProps } from 'element-plus/es/components/select-v2/src/defaults';
 
 
 const fetchData = async () => {
@@ -699,7 +700,7 @@ const testWorkType = () => {return true;}
 const testJob = () => testFieldNotEmpty(form.job, "工作内容");
 
 
-const saveEdit = () => {
+const saveEdit = async () => {
 
   let Nametested = testStaffName();
   if (Nametested != true) {
@@ -750,15 +751,16 @@ const saveEdit = () => {
 
   const oldWorkTypeArray = OldWorkType?OldWorkType.split(","):[];
   const newWorkTypeArray = NewWorkType?NewWorkType.split(","):[];
-  for (const workType of oldWorkTypeArray) {
-    console.log(workType)
-    deleteByAspNetUserPk(workType, pageData.value[idx].aspNetUserPk);
+  for (let i =0;i<oldWorkTypeArray.length;i++) {
+    console.log(oldWorkTypeArray[i])
+    await deleteByAspNetUserPk(oldWorkTypeArray[i], pageData.value[idx].aspNetUserPk);
+
   }
 
   // Grant roles that exist in NewWorkType but not in OldWorkType
   for (const workType of newWorkTypeArray) {
     console.log(workType)
-    grantByAspNetUserPk(workType, pageData.value[idx].aspNetUserPk);
+    await grantByAspNetUserPk(workType, pageData.value[idx].aspNetUserPk);
   }
      // Delete roles that exist in OldWorkType but not in NewWorkType
 
