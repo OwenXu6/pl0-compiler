@@ -444,12 +444,9 @@ const deleteByAspNetUserPk = async (WorkType,userId) => {
     const username = {
       "userId": userId,
     }
-    console.log(token);
-    const workTypesArray = WorkType.split(",");
-    console.log(workTypesArray,userId)
-    for(const item of workTypesArray){
-      const response = await axios.post('/api/Authenticate/CancelByAspNetUserPk/' + item, username, config);
-    }
+    
+    const response = await axios.post('/api/Authenticate/CancelByAspNetUserPk/' + WorkType, username, config);
+    
   }catch(error){
     console.error("Error in grant:", error);
   }
@@ -469,11 +466,9 @@ const grantByAspNetUserPk = async (WorkType, userId) => {
     }
     console.log(token);
     console.log(WorkType, userId);
-    const workTypesArray = WorkType.split(",");
-    console.log(workTypesArray,userId)
-    for(const item of workTypesArray){
-      const response = await axios.post('/api/Authenticate/GrantByAspNetUserPk/' + item, username, config);
-    }
+    
+    const response = await axios.post('/api/Authenticate/GrantByAspNetUserPk/' + WorkType, username, config);
+    
   }catch (error) {
     console.error("Error in grant:", error);
   }
@@ -748,8 +743,27 @@ const saveEdit = () => {
   pageData.value[idx].workType = String(form.workTypeSelect);
   pageData.value[idx].job = form.job; //应该要至后端修改之
   editData();
-  deleteByAspNetUserPk(OldWorkType,pageData.value[idx].aspNetUserPk);
-  grantByAspNetUserPk(pageData.value[idx].workType, pageData.value[idx].aspNetUserPk);    
+
+  const NewWorkType = pageData.value[idx].workType;
+
+  const oldWorkTypeArray = OldWorkType.split(",");
+  const newWorkTypeArray = NewWorkType.split(",");
+
+  const toBeDeleted = oldWorkTypeArray.filter(x => !newWorkTypeArray.includes(x));
+  const toBeGranted = newWorkTypeArray.filter(x => !oldWorkTypeArray.includes(x));
+  console.log(toBeDeleted,toBeGranted);
+
+
+  // Grant roles that exist in NewWorkType but not in OldWorkType
+  for (const workType of toBeGranted) {
+    console.log(workType)
+    grantByAspNetUserPk(workType, pageData.value[idx].aspNetUserPk);
+  } 
+     // Delete roles that exist in OldWorkType but not in NewWorkType
+  for (const workType of toBeDeleted) {
+    console.log(workType)
+    deleteByAspNetUserPk(workType, pageData.value[idx].aspNetUserPk);
+  }
 };
 
 
