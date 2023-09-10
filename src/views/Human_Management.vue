@@ -750,22 +750,18 @@ const saveEdit = () => {
 
   const oldWorkTypeArray = OldWorkType?OldWorkType.split(","):[];
   const newWorkTypeArray = NewWorkType?NewWorkType.split(","):[];
-
-  const toBeDeleted = oldWorkTypeArray.filter(x => !newWorkTypeArray.includes(x));
-  const toBeGranted = newWorkTypeArray.filter(x => !oldWorkTypeArray.includes(x));
-  console.log(toBeDeleted,toBeGranted);
-
+  for (const workType of oldWorkTypeArray) {
+    console.log(workType)
+    deleteByAspNetUserPk(workType, pageData.value[idx].aspNetUserPk);
+  }
 
   // Grant roles that exist in NewWorkType but not in OldWorkType
-  for (const workType of toBeGranted) {
+  for (const workType of newWorkTypeArray) {
     console.log(workType)
     grantByAspNetUserPk(workType, pageData.value[idx].aspNetUserPk);
   }
      // Delete roles that exist in OldWorkType but not in NewWorkType
-  for (const workType of toBeDeleted) {
-    console.log(workType)
-    deleteByAspNetUserPk(workType, pageData.value[idx].aspNetUserPk);
-  }
+
 };
 
 
