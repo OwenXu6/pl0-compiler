@@ -448,6 +448,7 @@ const handlenew = () => {
       form.staffSalary = '',
       form.workType = '',
       form.job = '',
+      form.userId = '',
       newVisible.value = true;
 };
 
