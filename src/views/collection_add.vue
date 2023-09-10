@@ -27,7 +27,7 @@
 								现登记号
 							</div>
 						</template>
-						{{ form.collectionId }}
+						1
 					</el-descriptions-item>
 
 					<!-- 藏品图片 改一个提交方式：从本地上传-->
@@ -631,7 +631,7 @@ const submitForm = async (newCollection: TableItem) => {
 
 		const response = await axios.post('http://42.192.39.198:5000/api/Collections', newCollection, { headers });*/
 		
-		const response= await axiosInstance.post('/Collections', newCollection);
+		// const response= await axiosInstance.post('/Collections', newCollection);
 		
 		ElMessage.success('数据上传成功');
 	} catch (error) {
@@ -739,35 +739,38 @@ const query = reactive({
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 
-//获取后端数据库的数据
-const fetchData = async () => {
-	try {
-		/*const headers = {
-			'Authorization': `Bearer ${token}`
-		};
+// //获取后端数据库的数据
+// const fetchData = async () => {
+// 	// try {
+// 		/*const headers = {
+// 			'Authorization': `Bearer ${token}`
+// 		};
 
-		const response = await axios.get(' http://42.192.39.198:5000/api/Collections', {headers});*/
+// 		const response = await axios.get(' http://42.192.39.198:5000/api/Collections', {headers});*/
 		
-		const response= await axiosInstance.get('/Collections');
+// 		// const response= await axiosInstance.get('/Collections');
 
-		console.log(response.data);
-		console.log("数据库连接成功！");
-		return response.data;
-	} catch (error) {
-		console.error(error);
-	}
-};
+// 		// console.log(response.data);
+// 		// console.log("数据库连接成功！");
+// 		// return response.data;
+// 	// } catch (error) {
+// 		// console.error(error);
+// 	// }
+// };
 
-const getData = () => {
-	fetchData().then(res => {
-		//自动生成collectionId
-		form.collectionId = Object.keys(res).length + 1;
-		form.collectInfo.collectionId = form.collectionId;
-		form.storageInfo.collectionId = form.collectionId;
-		form.dimensionInfo.collectionId = form.collectionId;
-	});
-};
-getData();
+// const getData = () => {
+// 	fetchData().then(res => {
+// 		//自动生成collectionId
+// 		// form.collectionId = Object.keys(res).length + 1;
+// 		//自动生成collectionId逻辑，取已有的最大的collectionId+1
+// 		// form.collectionId=Max+1;
+// 		console.log(form.collectionId);
+// 		form.collectInfo.collectionId = form.collectionId;
+// 		form.storageInfo.collectionId = form.collectionId;
+// 		form.dimensionInfo.collectionId = form.collectionId;
+// 	});
+// };
+// getData();
 
 
 // 文物种类下拉菜单的属性
