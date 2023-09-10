@@ -257,6 +257,10 @@ const WorkTypeOptions = [
     value: 'CollectionResearcher',
   },
   {
+    label: '藏品修缮员',
+    value: 'CollectionRepairer',
+  },
+  {
     label: '展厅管理员',
     value: 'ExhibitionHallAdmin',
   },
