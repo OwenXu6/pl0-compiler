@@ -447,7 +447,7 @@ function getToken() {
 
 // 创建一个具有默认头的Axios实例
 const axiosInstance = axios.create({
-	baseURL: 'http://42.192.39.198:5000/api',
+	baseURL: 'api',
 });
 
 // 拦截器：将token添加到每个请求中
@@ -561,7 +561,7 @@ let newCollection: TableItem = {
 };
 
 const form = reactive({
-	collectionId: 1,
+	collectionId: null,
 	originalName: "",
 	name: "",
 	collectionType: "",
@@ -572,14 +572,14 @@ const form = reactive({
 	completenessType: "",
 	collectionPhoto: "",
 	collectInfo: {
-		collectionId: 1,
+		collectionId: null,
 		source: "",
 		collectMuseum: "博数博物馆",
 		collectTime: "",//这里要么就是 yyyy-mm-ddT+时间(**:**:**)，要么就是只有日期yyyy-mm-dd
 		collectionLevel: ""
 	},
 	dimensionInfo: {
-		collectionId: 1,
+		collectionId: null,
 		dimension: "",
 		dimensionUnit: "毫米",
 		weight: null,
@@ -590,7 +590,7 @@ const form = reactive({
 		traditionalQuantityUnit: "件"
 	},
 	storageInfo: {
-		collectionId: 1,
+		collectionId: null,
 		currentStatus: "待鉴定",
 		protectionLevel: ""
 	},
