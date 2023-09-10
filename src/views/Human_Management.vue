@@ -1182,6 +1182,7 @@ const PageSizeChange = () => {
 // };
 const handleDelete = (index: number) => {
   // 二次确认删除
+  idx = index;
   const result = window.confirm('确定要删除吗？');
   if (result) {
     // 用户点击了确定按钮
