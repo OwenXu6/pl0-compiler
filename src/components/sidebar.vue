@@ -126,26 +126,21 @@ const items = [
     icon: 'Calendar',
     index: '/statistics',
     title: '门票信息',
-    permiss: ["SystemAdmin"],
+    permiss: ["RoutineAdmin", "SystemAdmin"],
   },
   {
-    icon: "shop",
-    index: "3",
-    title: "运营与合作",
-    permiss: ['ProductAdmin','FeedbackAdmin',"SystemAdmin"],
-    subs: [
-      {
-        index: '/feedbacks',
-        title: '反馈信息管理',
-        permiss: ['FeedbackAdmin',"SystemAdmin"],
-      },
-      {
-        index: '/products',
-        title: '文创产品信息管理',
-        permiss: ['ProductAdmin',"SystemAdmin"],
-      },
-    ]
+    icon:'Calendar',
+    index:'/feedbacks',
+    title:'反馈信息管理',
+    permiss: ["FeedbackAdmin", "SystemAdmin"],
   },
+  {
+    icon:'Calendar',
+    index:'/products',
+    title:'文创产品信息管理',
+    permiss:['ProductAdmin',"SystemAdmin"],
+  },
+  
   {
     icon: "rank",
     index: "/ccard",
