@@ -10,10 +10,9 @@
           <el-button type="primary" :icon="Plus" @click="handlenew" v-permiss="16">新增</el-button>
         </div>
       </div>
-      
       <el-table :data="pageData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-        <el-table-column prop="staffId" label="职工ID" width="170" align="center"></el-table-column>
-        <el-table-column prop="staffName" label="姓名" width="110" align="center">
+        <el-table-column prop="staffId" label="职工ID" width="170" align="center"  sortable></el-table-column>
+        <el-table-column prop="staffName" label="姓名" width="110" align="center"  sortable>
           <template v-slot:default="scope">
             <el-tooltip :content="scope.row.staffName" placement="top">
               <span>{{
@@ -22,12 +21,12 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="staffAge" label="年龄" align="center"></el-table-column>
-        <el-table-column prop="staffGender" label="性别" width="120" align="center"></el-table-column>
-        <el-table-column prop="staffPostRank" label="职级" align="center"></el-table-column>
-        <el-table-column prop="staffSalary" label="薪资" align="center"></el-table-column>
-        <el-table-column prop="workType" label="工作方向" width="120" align="center"></el-table-column>
-        <el-table-column prop="job" label="工作内容" width="120" align="center">
+        <el-table-column prop="staffAge" label="年龄" align="center"  sortable></el-table-column>
+        <el-table-column prop="staffGender" label="性别" width="120" align="center"  sortable></el-table-column>
+        <el-table-column prop="staffPostRank" label="职级" align="center"  sortable></el-table-column>
+        <el-table-column prop="staffSalary" label="薪资" align="center"  sortable></el-table-column>
+        <el-table-column prop="workType" label="工作方向" width="120" align="center"  sortable></el-table-column>
+        <el-table-column prop="job" label="工作内容" width="120" align="center"  sortable>
           <template v-slot:default="scope">
             <el-tooltip :content="scope.row.job" placement="top">
               <span>{{ scope.row.job.length > 4 ? scope.row.job.substring(0, 4) + '...' : scope.row.job }}</span>
@@ -94,17 +93,13 @@
           <el-input v-model="form.staffSalary"></el-input>
         </el-form-item>
         <el-form-item label="工作方向">
-          <el-select v-model="form.workType" placeholder="请选择工作方向" class="full-width-select">
-            <el-option label="考古学家" value="Archaeologist"></el-option>
-            <el-option label="藏品管理员" value="CollectionManager"></el-option>
-            <el-option label="藏品研究员" value="CollectionResearcher"></el-option>
-            <el-option label="展厅管理员" value="ExhibitionHallAdmin"></el-option>
-            <el-option label="文创产品管理员" value="ProductAdmin"></el-option>
-            <el-option label="反馈信息管理员" value="FeedbackAdmin"></el-option>
-            <el-option label="人事管理员" value="StaffAdmin"></el-option>
-            <el-option label="仓库管理员" value="WarehouseAdmin"></el-option>
-            <el-option label="日常管理员" value="RoutineAdmin"></el-option>
-            <el-option label="待定" value="User"></el-option>
+          <el-select v-model="form.workTypeSelect" placeholder="请选择工作方向" class="full-width-select" multiple>
+            <el-option
+            v-for="item in WorkTypeOptions"
+            :key="item.value"
+            :label="item.value"
+            :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="工作内容">
@@ -145,17 +140,13 @@
           <el-input v-model="form.staffSalary"></el-input>
         </el-form-item>
         <el-form-item label="工作方向">
-          <el-select v-model="form.workType" placeholder="请选择工作方向" class="full-width-select">
-            <el-option label="考古学家" value="Archaeologist"></el-option>
-            <el-option label="藏品管理员" value="CollectionManager"></el-option>
-            <el-option label="藏品研究员" value="CollectionResearcher"></el-option>
-            <el-option label="展厅管理员" value="ExhibitionHallAdmin"></el-option>
-            <el-option label="文创产品管理员" value="ProductAdmin"></el-option>
-            <el-option label="反馈信息管理员" value="FeedbackAdmin"></el-option>
-            <el-option label="人事管理员" value="StaffAdmin"></el-option>
-            <el-option label="仓库管理员" value="WarehouseAdmin"></el-option>
-            <el-option label="日常管理员" value="RoutineAdmin"></el-option>
-            <el-option label="待定" value="User"></el-option>
+          <el-select v-model="form.workTypeSelect" placeholder="请选择工作方向" class="full-width-select" multiple>
+            <el-option
+            v-for="item in WorkTypeOptions"
+            :key="item.value"
+            :label="item.value"
+            :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="工作内容">
@@ -252,10 +243,56 @@ const compare = (a: TableItem, b: TableItem) => {
   return a.staffId < b.staffId ? -1 : 1;
 }
 
+const WorkTypeOptions = [
+  {
+    label: '考古学家',
+    value: 'Archaeologist',
+  },
+  {
+    label: '藏品管理员',
+    value: 'CollectionManager',
+  },
+  {
+    label: '藏品研究员',
+    value: 'CollectionResearcher',
+  },
+  {
+    label: '展厅管理员',
+    value: 'ExhibitionHallAdmin',
+  },
+  {
+    label: '文创产品管理员',
+    value: 'ProductAdmin',
+  },
+  {
+    label: '反馈信息管理员',
+    value: 'FeedbackAdmin',
+  },
+  {
+    label: '人事管理员',
+    value: 'StaffAdmin',
+  },
+  {
+    label: '仓库管理员',
+    value: 'WarehouseAdmin',
+  },
+  {
+    label: '日常管理员',
+    value: 'RoutineAdmin',
+  },
+  {
+    label: '待定',
+    value: 'User',
+  },
+];
+
+
 // 获取表格数据及筛选
 const getData = async () => {
   const res = await fetchData();
+
   HumantableData.value = res;  //記錄全部數據
+
   filteredData.value = res.concat(addedData.value);
 
   //if (query.designIdea !== '') {
@@ -280,7 +317,7 @@ const getData = async () => {
 
   // 截取当前页的数据
   const pagedData = filteredData.value.slice(startIndex, endIndex);
-
+  
   // 将截取的数据赋值给 pagedData
   pageData.value = pagedData;
   console.log(pageData.value);
@@ -298,8 +335,31 @@ const editData = async () => {
         'Content-Type': 'application/json',
       },
     };
-    console.log(idx, pageData.value[idx].staffId, pageData.value[idx]);
-    const response = await axios.put('/api/Staffs/' + pageData.value[idx].staffId, pageData.value[idx], config);
+
+    const EditValue = reactive({
+      staffId: '',
+      staffName: '',
+      staffAge: '',
+      staffGender: '',
+      staffPostRank: '',
+      staffSalary: 0,
+      workType: '',
+      job: '',
+      aspNetUserPk: '',
+    });
+
+    EditValue.staffId = pageData.value[idx].staffId ;
+    EditValue.staffName = pageData.value[idx].staffName ;
+    EditValue.staffAge = pageData.value[idx].staffAge;
+    EditValue.staffGender = pageData.value[idx].staffGender ;
+    EditValue.staffPostRank = pageData.value[idx].staffPostRank ;
+    EditValue.staffSalary = pageData.value[idx].staffSalary;
+    EditValue.workType = String(pageData.value[idx].workType) ;
+    EditValue.job = pageData.value[idx].job;
+    EditValue.aspNetUserPk = pageData.value[idx].aspNetUserPk;
+
+    console.log(idx, EditValue.staffId, EditValue);
+    const response = await axios.put('/api/Staffs/' + EditValue.staffId, EditValue, config);
     ElMessage.success('数据修改成功');
     PageSizeChange();
   } catch (error) {
@@ -358,9 +418,35 @@ const grant = async (WorkType, userId) => {
       "userId": userId,
     }
     console.log(token);
-    console.log(WorkType, userId);
-    const response = await axios.post('/api/Authenticate/Grant/' + WorkType, username, config);
+    const workTypesArray = WorkType.split(",");
+    console.log(workTypesArray,userId)
+    for(const item of workTypesArray){
+      const response = await axios.post('/api/Authenticate/Grant/' + item, username, config);
+    }
   } catch (error) {
+    console.error("Error in grant:", error);
+  }
+}
+const deleteByAspNetUserPk = async (WorkType,userId) => {
+  try {
+      // 设置请求头，包括 Bearer Token
+    let token = useUserInfo().userToken
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    const username = {
+      "userId": userId,
+    }
+    console.log(token);
+    const workTypesArray = WorkType.split(",");
+    console.log(workTypesArray,userId)
+    for(const item of workTypesArray){
+      const response = await axios.post('/api/Authenticate/CancelByAspNetUserPk/' + item, username, config);
+    }
+  }catch(error){
     console.error("Error in grant:", error);
   }
 }
@@ -379,8 +465,12 @@ const grantByAspNetUserPk = async (WorkType, userId) => {
     }
     console.log(token);
     console.log(WorkType, userId);
-    const response = await axios.post('/api/Authenticate/GrantByAspNetUserPk/' + WorkType, username, config);
-  } catch (error) {
+    const workTypesArray = WorkType.split(",");
+    console.log(workTypesArray,userId)
+    for(const item of workTypesArray){
+      const response = await axios.post('/api/Authenticate/GrantByAspNetUserPk/' + item, username, config);
+    }
+  }catch (error) {
     console.error("Error in grant:", error);
   }
 }
@@ -465,6 +555,7 @@ let form = reactive({
   staffPostRank: '',
   staffSalary: '',
   workType: '',
+  workTypeSelect: [],
   job: '',
   userId: '',
 });
@@ -478,7 +569,8 @@ const handleEdit = (index: number, row: any) => {
       form.staffGender = row.staffGender,
       form.staffPostRank = row.staffPostRank,
       form.staffSalary = String(row.staffSalary),
-      form.workType = row.workType,
+      console.log(typeof row.workType);
+      form.workTypeSelect = row.workType.split(","),
       form.job = row.job,
       editVisible.value = true;
 };
@@ -601,7 +693,8 @@ const testFieldNotEmpty = (field, fieldName) => {
 };
 
 const testStaffPostRank = () => testFieldNotEmpty(form.staffPostRank, "职级");
-const testWorkType = () => testFieldNotEmpty(form.workType, "工作方向");
+//const testWorkType = () => testFieldNotEmpty(form.workType, "工作方向");
+const testWorkType = () => {return true;}
 const testJob = () => testFieldNotEmpty(form.job, "工作内容");
 
 
@@ -634,23 +727,25 @@ const saveEdit = () => {
   }
   let WorkTypetested = testWorkType();
   if (WorkTypetested != true) {
-    ElMessage.error(WorkTypetested);
+    //ElMessage.error(WorkTypetested);
     return;
   }
 
   editVisible.value = false;
   ElMessage.success(`修改第 ${idx + 1} 行成功`);
   console.log(idx, pageData);
+  let OldWorkType = pageData.value[idx].workType;
   pageData.value[idx].staffId = form.staffId;
   pageData.value[idx].staffName = form.staffName;
   pageData.value[idx].staffAge = form.staffAge;
   pageData.value[idx].staffGender = form.staffGender;
   pageData.value[idx].staffPostRank = form.staffPostRank;
   pageData.value[idx].staffSalary = Number(form.staffSalary);
-  pageData.value[idx].workType = form.workType;
+  pageData.value[idx].workType = String(form.workTypeSelect);
   pageData.value[idx].job = form.job; //应该要至后端修改之
   editData();
-  grantByAspNetUserPk(form.workType, pageData.value[idx].aspNetUserPk);    
+  deleteByAspNetUserPk(OldWorkType,pageData.value[idx].aspNetUserPk);
+  grantByAspNetUserPk(pageData.value[idx].workType, pageData.value[idx].aspNetUserPk);    
 };
 
 
@@ -701,7 +796,7 @@ const savenew = () => {         //保存新增人员
   }
   let WorkTypetested = testWorkType();
   if (WorkTypetested != true) {
-    ElMessage.error(WorkTypetested);
+  //  ElMessage.error(WorkTypetested);
     return;
   }
 
@@ -714,12 +809,11 @@ const savenew = () => {         //保存新增人员
   newEmployee.staffGender = form.staffGender;
   newEmployee.staffPostRank = form.staffPostRank;
   newEmployee.staffSalary = Number(form.staffSalary);
-  newEmployee.workType = form.workType;
+  newEmployee.workType = String(form.workTypeSelect);
   newEmployee.job = form.job;
   newEmployee.userId = form.userId;
   newEmployee.userPassword = "Bestjiaoao0!";
   uploadData(newEmployee);             //上传
-
 };
 </script>
 
