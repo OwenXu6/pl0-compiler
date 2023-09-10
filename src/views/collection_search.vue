@@ -57,6 +57,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
+			<!--分页器-->>
 			<div class="pagination"  style="display: flex; align-items: center;">
 				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
 				 size="small" style="width: 100px;" clearable>
