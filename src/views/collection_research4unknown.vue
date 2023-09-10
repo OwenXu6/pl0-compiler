@@ -621,7 +621,8 @@ const getData = () => {
 		 	item.collectionType.includes(query.value) ||
 		 	item.era.includes(query.value) ||
 		 	item.storageInfo.currentStatus.includes(query.value) ||
-		 	item.collectInfo.collectTime.includes(query.value)
+		 	item.collectInfo.collectTime.includes(query.value) ||
+			item.name.includes(query.value)
 		 );
 
 
