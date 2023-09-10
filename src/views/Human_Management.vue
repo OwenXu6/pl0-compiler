@@ -171,10 +171,7 @@ import {ref, reactive} from 'vue';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import {Delete, Edit, Search, Plus, More} from '@element-plus/icons-vue';
 import axios from 'axios';
-import {ta} from 'element-plus/es/locale';
-import {ITEM_RENDER_EVT} from 'element-plus/es/components/virtual-list/src/defaults';
 import {useUserInfo} from "@/store/userInfo";
-import {useAxiosConfig} from "@/store/axiosConfig";
 
 
 const fetchData = async () => {
@@ -422,7 +419,7 @@ const grant = async (WorkType, userId) => {
       "userId": userId,
     }
     console.log(token);
-    const workTypesArray = WorkType.split(",");
+    const workTypesArray = WorkType?WorkType.split(","):[];
     console.log(workTypesArray,userId)
     for(const item of workTypesArray){
       const response = await axios.post('/api/Authenticate/Grant/' + item, username, config);
@@ -444,9 +441,12 @@ const deleteByAspNetUserPk = async (WorkType,userId) => {
     const username = {
       "userId": userId,
     }
-    
-    const response = await axios.post('/api/Authenticate/CancelByAspNetUserPk/' + WorkType, username, config);
-    
+    console.log(token);
+    const workTypesArray = WorkType?WorkType.split(","):[];
+    console.log(workTypesArray,userId)
+    for(const item of workTypesArray){
+      const response = await axios.post('/api/Authenticate/CancelByAspNetUserPk/' + item, username, config);
+    }
   }catch(error){
     console.error("Error in grant:", error);
   }
@@ -466,9 +466,11 @@ const grantByAspNetUserPk = async (WorkType, userId) => {
     }
     console.log(token);
     console.log(WorkType, userId);
-    
-    const response = await axios.post('/api/Authenticate/GrantByAspNetUserPk/' + WorkType, username, config);
-    
+    const workTypesArray = WorkType?WorkType.split(","):[];
+    console.log(workTypesArray,userId)
+    for(const item of workTypesArray){
+      const response = await axios.post('/api/Authenticate/GrantByAspNetUserPk/' + item, username, config);
+    }
   }catch (error) {
     console.error("Error in grant:", error);
   }
@@ -569,7 +571,7 @@ const handleEdit = (index: number, row: any) => {
       form.staffPostRank = row.staffPostRank,
       form.staffSalary = String(row.staffSalary),
       console.log(typeof row.workType);
-      form.workTypeSelect = row.workType.split(","),
+      form.workTypeSelect = row.workType?row.workType.split(","):[],
       form.job = row.job,
       editVisible.value = true;
 };
@@ -746,8 +748,8 @@ const saveEdit = () => {
 
   const NewWorkType = pageData.value[idx].workType;
 
-  const oldWorkTypeArray = OldWorkType.split(",");
-  const newWorkTypeArray = NewWorkType.split(",");
+  const oldWorkTypeArray = OldWorkType?OldWorkType.split(","):[];
+  const newWorkTypeArray = NewWorkType?NewWorkType.split(","):[];
 
   const toBeDeleted = oldWorkTypeArray.filter(x => !newWorkTypeArray.includes(x));
   const toBeGranted = newWorkTypeArray.filter(x => !oldWorkTypeArray.includes(x));
@@ -758,7 +760,7 @@ const saveEdit = () => {
   for (const workType of toBeGranted) {
     console.log(workType)
     grantByAspNetUserPk(workType, pageData.value[idx].aspNetUserPk);
-  } 
+  }
      // Delete roles that exist in OldWorkType but not in NewWorkType
   for (const workType of toBeDeleted) {
     console.log(workType)
