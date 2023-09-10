@@ -16,6 +16,7 @@
 				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10" clearable>
 					<el-option key="1" label="在库" value="在库"></el-option>
 					<el-option key="2" label="在展" value="在展"></el-option>
+					<el-option key="3" label="修缮中" value="修缮中"></el-option>
 				</el-select>
 				<el-input v-model="query.excavation_site" placeholder="出土地" class="handle-input mr11"></el-input>
 				<el-input v-model="query.excavation_date" placeholder="入藏时间" class="handle-input mr11"></el-input>
