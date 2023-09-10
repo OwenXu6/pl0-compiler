@@ -517,7 +517,7 @@ interface TableItem {
 }
 
 let newCollection: TableItem = {
-	collectionId: null,
+	//collectionId: null,
 	originalName: "",
 	name: "未定",
 	collectionType: "",
@@ -528,14 +528,14 @@ let newCollection: TableItem = {
 	completenessType: "",
 	collectionPhoto: "",
 	collectInfo: {
-		collectionId: null,
+		//collectionId: null,
 		source: "",
 		collectMuseum: "博数博物馆",
 		collectTime: "",//这里要么就是 yyyy-mm-ddT+时间(**:**:**)，要么就是只有日期yyyy-mm-dd
 		collectionLevel: "待鉴定"
 	},
 	dimensionInfo: {
-		collectionId: null,
+		//collectionId: null,
 		dimension: "待鉴定",
 		dimensionUnit: "毫米",
 		weight: 0,
@@ -546,7 +546,7 @@ let newCollection: TableItem = {
 		traditionalQuantityUnit: "件"
 	},
 	storageInfo: {
-		collectionId: null,
+		//collectionId: null,
 		currentStatus: "待鉴定",
 		protectionLevel: "待鉴定"
 	},
@@ -674,7 +674,7 @@ const submitnew = () => {
 	}
 	else {
 
-		newCollection.collectionId = form.collectionId;
+		//newCollection.collectionId = form.collectionId;
 		newCollection.originalName = form.originalName;
 		if (form.name != "")
 			newCollection.name = form.name;
@@ -688,14 +688,14 @@ const submitnew = () => {
 			newCollection.completeness = form.completeness;
 		newCollection.completenessType = form.completenessType;
 		newCollection.collectionPhoto = form.collectionPhoto;
-		newCollection.collectInfo.collectionId = form.collectInfo.collectionId;
+		//newCollection.collectInfo.collectionId = form.collectInfo.collectionId;
 		newCollection.collectInfo.source = form.collectInfo.source;
 		newCollection.collectInfo.collectMuseum = form.collectInfo.collectMuseum;
 		newCollection.collectInfo.collectTime = form.collectInfo.collectTime;
 		if (form.collectInfo.collectionLevel != "")
 			newCollection.collectInfo.collectionLevel = form.collectInfo.collectionLevel;
 
-		newCollection.dimensionInfo.collectionId = form.dimensionInfo.collectionId;
+		//newCollection.dimensionInfo.collectionId = form.dimensionInfo.collectionId;
 
 		if (form.dimensionInfo.dimension != "")
 			newCollection.dimensionInfo.dimension = form.dimensionInfo.dimension;
@@ -710,7 +710,7 @@ const submitnew = () => {
 		newCollection.dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
 		newCollection.dimensionInfo.traditionalQuantityUnit = form.dimensionInfo.traditionalQuantityUnit;
 
-		newCollection.storageInfo.collectionId = form.storageInfo.collectionId;
+		//newCollection.storageInfo.collectionId = form.storageInfo.collectionId;
 		newCollection.storageInfo.currentStatus = form.storageInfo.currentStatus;
 		if (form.storageInfo.protectionLevel != "")
 			newCollection.storageInfo.protectionLevel = form.storageInfo.protectionLevel;
