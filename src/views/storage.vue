@@ -694,6 +694,9 @@ const getData = async () => {
   if (query.name !== '') {
     filteredData = filteredData.filter((item: TableItem) => item.warehouseName.includes(query.name));
   }
+  if (query.address !== '') {
+    filteredData = filteredData.filter((item: TableItem) => item.warehouseLocation.includes(query.address));
+  }
   tableData.value = filteredData.sort(compare);
   console.log(tableData.value);
 };

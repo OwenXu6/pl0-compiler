@@ -137,13 +137,13 @@ const items = [
     ]
   },
   {
-    icon:'Calendar',
+    icon:'EditPen',
     index:'/feedbacks',
     title:'反馈信息管理',
     permiss: ["FeedbackAdmin", "SystemAdmin"],
   },
   {
-    icon:'Calendar',
+    icon:'Present',
     index:'/products',
     title:'文创产品信息管理',
     permiss:['ProductAdmin',"SystemAdmin"],

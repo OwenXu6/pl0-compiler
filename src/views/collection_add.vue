@@ -561,7 +561,7 @@ let newCollection: TableItem = {
 };
 
 const form = reactive({
-	collectionId: null,
+	collectionId: 1,
 	originalName: "",
 	name: "",
 	collectionType: "",
@@ -572,14 +572,14 @@ const form = reactive({
 	completenessType: "",
 	collectionPhoto: "",
 	collectInfo: {
-		collectionId: null,
+		collectionId: 1,
 		source: "",
 		collectMuseum: "博数博物馆",
 		collectTime: "",//这里要么就是 yyyy-mm-ddT+时间(**:**:**)，要么就是只有日期yyyy-mm-dd
 		collectionLevel: ""
 	},
 	dimensionInfo: {
-		collectionId: null,
+		collectionId: 1,
 		dimension: "",
 		dimensionUnit: "毫米",
 		weight: null,
@@ -590,7 +590,7 @@ const form = reactive({
 		traditionalQuantityUnit: "件"
 	},
 	storageInfo: {
-		collectionId: null,
+		collectionId: 1,
 		currentStatus: "待鉴定",
 		protectionLevel: ""
 	},
@@ -625,13 +625,13 @@ const submitForm = async (newCollection: TableItem) => {
 	try {
 		console.log(newCollection);
 
-		/*const headers = {
-			'Authorization': `Bearer ${token}`
+		const headers = {
+			'Authorization': `Bearer ${getToken()}`
 		};
 
-		const response = await axios.post('http://42.192.39.198:5000/api/Collections', newCollection, { headers });*/
+		//const response = await axios.post('http://42.192.39.198:5000/api/Collections', newCollection, { headers });
 		
-		// const response= await axiosInstance.post('/Collections', newCollection);
+		const response= await axiosInstance.post('/Collections', newCollection);
 		
 		ElMessage.success('数据上传成功');
 	} catch (error) {
