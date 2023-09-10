@@ -6,7 +6,7 @@
 
 				<el-descriptions class="margin-top" :column="2" :size="size" border>
 					<!-- 收藏单位 -->
-					<el-descriptions-item>
+					<el-descriptions-item :span="2">
 						<template #label>
 							<div class="cell-item" :style="{ minWidth: form.collectInfo.collectMuseum.length * 12 + 'px' }">
 								<el-icon :style="iconStyle">
@@ -18,7 +18,7 @@
 						{{ form.collectInfo.collectMuseum }}
 					</el-descriptions-item>
 					<!-- 现登记号 -->
-					<el-descriptions-item>
+					<!--el-descriptions-item>
 						<template #label>
 							<div class="cell-item">
 								<el-icon :style="iconStyle">
@@ -28,7 +28,7 @@
 							</div>
 						</template>
 						1
-					</el-descriptions-item>
+					</el-descriptions-item-->
 
 					<!-- 藏品图片 改一个提交方式：从本地上传-->
 					<el-descriptions-item :span="2">

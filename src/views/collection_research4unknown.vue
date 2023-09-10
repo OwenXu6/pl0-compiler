@@ -460,6 +460,21 @@ function getToken() {
 
 	}
 
+	function getName() {
+	// 替换为获取token的逻辑
+	const UserInfo = useUserInfo();
+	console.log("打印员工信息");
+	console.log(UserInfo);
+	console.log(UserInfo.staffInfo);
+	console.log(UserInfo.staffInfo[0].staffName);
+	return UserInfo.staffInfo[0].staffName;
+
+}
+//getName();
+
+const staffName=getName();
+
+
 // 创建一个具有默认头的Axios实例
 const axiosInstance = axios.create({
 	baseURL: 'http://42.192.39.198:5000/api',
@@ -532,7 +547,9 @@ interface TableItem {
 		realQuantity: string;
 		traditionalQuantity: string;
 	},
-	identificationComments: string;
+	identificationStaffName: string, //鉴别人员名称
+	identificationComments: string,  //鉴别结果
+	identificationDate: string,      //鉴别日期
 	exhibitionHallId: string;
 	warehouseId: string;
 	containerId: string;
@@ -725,13 +742,22 @@ let view = reactive({
 let idx: number = -1;
 //获取当前系统时间 
 let time: string = "";
+function getCurrentTime() {
+	const now = new Date();
+	const year = now.getFullYear();
+	const month = (now.getMonth() + 1).toString().padStart(2, '0');
+	const day = now.getDate().toString().padStart(2, '0');
+	const hours = now.getHours().toString().padStart(2, '0');
+	const minutes = now.getMinutes().toString().padStart(2, '0');
+	const seconds = now.getSeconds().toString().padStart(2, '0');
+	return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+}
+
 //打开编辑框
 const handleEdit = (index: number, row: any) => {
 	// 获取当前时间
-	const currentTime = new Date();
+	time=getCurrentTime();
 
-	// 将时间格式化为你想要的格式（例如 "yyyy-MM-dd HH:mm:ss"）
-	time = currentTime.toLocaleString();
 
 	//将目前表格中的内容先同步到编辑框内
 	form.area = row.area;
@@ -760,7 +786,7 @@ const handleEdit = (index: number, row: any) => {
 	form.era = row.era;
 	form.identificationComments = row.identificationComments;
 	form.identificationDate = time;
-	form.identificationStaffName = row.identificationStaffName;
+	form.identificationStaffName = getName();
 	form.name = row.name;
 	form.remark = row.remark;
 	form.storageInfo = {
@@ -868,8 +894,11 @@ const saveEdit = async () => {
 	tableData.value[idx].dimensionInfo.weight = form.dimensionInfo.weight;
 	tableData.value[idx].dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
 	tableData.value[idx].dimensionInfo.realQuantity = form.dimensionInfo.realQuantity;
-	tableData.value[idx].identificationComments = form.identificationComments
-	tableData.value[idx].remark = form.remark
+	tableData.value[idx].identificationComments = form.identificationComments;
+	tableData.value[idx].identificationStaffName = form.identificationStaffName;
+	tableData.value[idx].identificationDate = form.identificationDate;
+
+	tableData.value[idx].remark = form.remark;
 	console.log(tableData.value);
 
 	// Update frontend table data
