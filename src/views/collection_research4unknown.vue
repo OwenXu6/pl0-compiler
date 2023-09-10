@@ -487,7 +487,7 @@ function getName() {
 }
 //getName();
 
-const staffName = getName();
+//const staffName = getName();
 
 
 // 创建一个具有默认头的Axios实例
@@ -586,7 +586,8 @@ const query = reactive({
 	storageInfo: {
 		currentStatus: '',
 		protectionLevel: ''
-	}
+	},
+	value:'',
 });
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
@@ -601,31 +602,31 @@ const getData = () => {
 
 		filteredData.value = res.filter(item => item.storageInfo.currentStatus == '待鉴定');
 
-		// for (var i = 0; i < filteredData.value.length; i++) {
-		// 	//对每一个文物截取有效时间显示
-		// 	var T = filteredData.value[i].collectInfo.collectTime;
-		// 	var dest = '';
-		// 	console.log(T)
-		// 	for (var j = 0; j < T.length; j++) {
-		// 		if (T[j] == 'T')
-		// 			break;
-		// 		dest += T[j];
-		// 	}
-		// 	filteredData.value[i].collectInfo.collectTime = dest;
-		// 	//检查文物的名字是否已知，如果是已知的则直接显示，如果是未知的就显示
-		// }
+		 for (var i = 0; i < filteredData.value.length; i++) {
+		 	//对每一个文物截取有效时间显示
+		 	var T = filteredData.value[i].collectInfo.collectTime;
+			var dest = '';
+		 	console.log(T)
+			for (var j = 0; j < T.length; j++) {
+		 		if (T[j] == 'T')
+		 			break;
+		 		dest += T[j];
+		 	}
+		 	filteredData.value[i].collectInfo.collectTime = dest;
+		 	//检查文物的名字是否已知，如果是已知的则直接显示，如果是未知的就显示
+		 }
 
-		// filteredData.value = filteredData.value.filter(item =>
-		// 	String(item.collectionId).includes(query.value) ||
-		// 	item.collectionType.includes(query.value) ||
-		// 	item.era.includes(query.value) ||
-		// 	item.storageInfo.currentStatus.includes(query.value) ||
-		// 	item.collectInfo.collectTime.includes(query.value)
-		// );
+		 filteredData.value = filteredData.value.filter(item =>
+		 	String(item.collectionId).includes(query.value) ||
+		 	item.collectionType.includes(query.value) ||
+		 	item.era.includes(query.value) ||
+		 	item.storageInfo.currentStatus.includes(query.value) ||
+		 	item.collectInfo.collectTime.includes(query.value) ||
+			item.name.includes(query.value)
+		 );
 
 
-		// tableData.value = filteredData.value;
-		// console.log(tableData.value);
+
 		tableData.value = filteredData.value;
 		console.log(tableData.value);
 		const startIndex = (query.pageIndex - 1) * query.pageSize;

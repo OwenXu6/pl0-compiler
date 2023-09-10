@@ -88,7 +88,7 @@ const items = [
     ],
   },
   {
-    icon:'lock',
+    icon:'User',
     index: '/Human_Management',
     title: '人事管理',
     permiss: ['StaffAdmin'],
@@ -113,7 +113,7 @@ const items = [
     ],
   },
   {
-    icon: 'User',
+    icon: 'lock',
     index:'storage',
     title:'仓库管理',
     permiss:['WarehouseAdmin',"SystemAdmin"],

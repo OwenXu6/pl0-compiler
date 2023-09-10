@@ -16,6 +16,7 @@
 				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10" clearable>
 					<el-option key="1" label="在库" value="在库"></el-option>
 					<el-option key="2" label="在展" value="在展"></el-option>
+					<el-option key="3" label="修缮中" value="修缮中"></el-option>
 				</el-select>
 				<el-input v-model="query.excavation_site" placeholder="出土地" class="handle-input mr11"></el-input>
 				<el-input v-model="query.excavation_date" placeholder="入藏时间" class="handle-input mr11"></el-input>
@@ -513,7 +514,7 @@ const getData = () => {
 		console.log(res);
 		//过滤掉“待鉴定”的文物
 
-		filteredData.value = res.filter(item => item.storageInfo.currentStatus !== '待鉴定' && item.storageInfo.currentStatus !== '修缮中');
+		filteredData.value = res.filter(item => item.storageInfo.currentStatus !== '待鉴定');
 		console.log(query);
 		filteredData.value = filteredData.value.filter(item => item.name.includes(query.name));
 		filteredData.value = filteredData.value.filter(item => String(item.collectionId).includes(query.id));
