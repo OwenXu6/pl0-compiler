@@ -1177,7 +1177,7 @@ const getData = () => {
 
 
     // 过滤数据
-    filteredData.value = collections.filter(item => item.storageInfo.currentStatus !== '未鉴定');
+    filteredData.value = collections.filter(item => item.storageInfo.currentStatus !== '待鉴定');
     filteredData.value = filteredData.value.filter(item => item.name.includes(query.name));
     filteredData.value = filteredData.value.filter(item => String(item.collectionId).includes(query.id));
     filteredData.value = filteredData.value.filter(item => item.textureType.includes(query.collectionType));

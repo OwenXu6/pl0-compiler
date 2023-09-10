@@ -207,7 +207,7 @@
 						<el-radio-group v-model="radio">
 							<el-radio :label="1">在展</el-radio>
 							<el-radio :label="2">在库</el-radio>
-							<el-radio :label="3">未鉴定</el-radio>
+							<el-radio :label="3">待鉴定</el-radio>
 							<el-radio :label="4">修缮中</el-radio>
 						</el-radio-group>
 						<div v-if="radio == 1">
@@ -856,9 +856,9 @@ let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
 const getData = () => {
 	fetchData().then(res => {
 		console.log(res);
-		//过滤掉“未鉴定”的文物
+		//过滤掉“待鉴定”的文物
 
-		filteredData.value = res.filter(item => item.storageInfo.currentStatus == '未鉴定');
+		filteredData.value = res.filter(item => item.storageInfo.currentStatus == '待鉴定');
 
 		for (var i = 0; i < filteredData.value.length; i++) {
 			//对每一个文物截取有效时间显示
@@ -1160,7 +1160,7 @@ const saveEdit = async () => {
 		tableData.value[idx].containerId = form.containerId;
 	}
 	else if (radio.value == 3)
-		tableData.value[idx].storageInfo.currentStatus = "未鉴定";
+		tableData.value[idx].storageInfo.currentStatus = "待鉴定";
 	else if (radio.value == 4)
 		tableData.value[idx].storageInfo.currentStatus = "修缮中";
 

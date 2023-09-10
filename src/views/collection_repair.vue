@@ -65,7 +65,7 @@
 						<el-option key="1" label="在展" value="在展"></el-option>
 						<el-option key="2" label="在库" value="在库"></el-option>
 						<el-option key="3" label="修缮中" value="修缮中"></el-option>
-						<el-option key="4" label="未鉴定" value="未鉴定"></el-option>
+						<el-option key="4" label="待鉴定" value="待鉴定"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
@@ -1157,7 +1157,7 @@ let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
 const getData = () => {
 	fetchData().then(res => {
 		console.log(res);
-		//过滤掉“未鉴定”的文物
+		//过滤掉“待鉴定”的文物
 
 		filteredData.value = res.filter(item => item.storageInfo.currentStatus == '修缮中');
 
@@ -1537,7 +1537,7 @@ const saveEdit = async () => {
 		tableData.value[idx].containerId = form.containerId;
 	}
 	else if (radio.value == 3)
-		tableData.value[idx].storageInfo.currentStatus = "未鉴定";
+		tableData.value[idx].storageInfo.currentStatus = "待鉴定";
 	else if (radio.value == 4)
 		tableData.value[idx].storageInfo.currentStatus = "修缮中";
 	
