@@ -4,7 +4,8 @@
 			<!-- 查询的部分 -->
 			<div class="handle-box">
 				<el-input v-model="query.value" placeholder="搜索内容" class="handle-input mr10"></el-input>
-				<div style="display: inline-block;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
+				<div style="display: inline-block;"><el-button type="primary" :icon="Search"
+						@click="handleSearch">搜索</el-button></div>
 			</div>
 			<!-- 显示文物详细信息的表格界面 -->
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
@@ -41,10 +42,22 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="pagination">
+			<!-- 分页器 -->
+			<!--分页器-->
+			<div class="pagination" style="display: flex; align-items: center;">
+				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数" size="small"
+					style="width: 100px;" clearable>
+					<el-option label="5" value="5"></el-option>
+					<el-option label="10" value="10"></el-option>
+					<el-option label="20" value="20"></el-option>
+					<el-option label="50" value="50"></el-option>
+				</el-select>
 				<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
-					:page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
+					:page-size="query.pageSize" :total="filteredData.length" @current-change="handlePageChange"
+					@update:page-size="handleSearch">
+				</el-pagination>
 			</div>
+
 		</div>
 
 		<!-- 编辑的弹出框 -->
@@ -425,8 +438,10 @@
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
-					<div style="display: inline-block;margin:10px;"><el-button type="danger" @click="editVisible = false">取 消</el-button></div>
-					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确 定</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="danger" @click="editVisible = false">取
+							消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确
+							定</el-button></div>
 				</span>
 			</template>
 		</el-dialog>
@@ -458,9 +473,9 @@ function getToken() {
 	const UserInfo = useUserInfo();
 	return UserInfo.userToken;
 
-	}
+}
 
-	function getName() {
+function getName() {
 	// 替换为获取token的逻辑
 	const UserInfo = useUserInfo();
 	console.log("打印员工信息");
@@ -472,7 +487,7 @@ function getToken() {
 }
 //getName();
 
-const staffName=getName();
+const staffName = getName();
 
 
 // 创建一个具有默认头的Axios实例
@@ -506,8 +521,8 @@ axiosInstance.interceptors.request.use((config) => {
 //获取后端数据库的数据
 const fetchData = async () => {
 	try {
-		
-		const response= await axiosInstance.get('/Collections');
+
+		const response = await axiosInstance.get('/Collections');
 		//const response = await axios.get(' http://42.192.39.198:5000/api/Collections');
 		console.log(response.data);
 		console.log("数据库连接成功！");
@@ -559,23 +574,23 @@ interface TableItem {
 const query = reactive({
 	name: '',         //文物姓名
 	id: '',           //文物id
-	collectionType: ' ',        //文物类别
-	era: ' ',         //文物的朝代
-	status: ' ',      //藏品状态
-	excavation_site: ' ',    //出土地
-	excavation_date: ' ',   //出土日期
+	collectionType: '',        //文物类别
+	era: '',         //文物的朝代
+	status: '',      //藏品状态
+	excavation_site: '',    //出土地
+	excavation_date: '',   //出土日期
 	collectTime: '',	//收藏的时间
 	pageIndex: 1,      //所在页面
-	pageSize: 10,       //总页面
+	pageSize: 10,       //一页最多拥有的条目个数
+	tempPageSize : '', //中间变量，存储用户选择的PageSize
 	storageInfo: {
 		currentStatus: '',
 		protectionLevel: ''
-	},
-	value: '',
+	}
 });
 //文物展示表格的数据
 const tableData = ref<TableItem[]>([]);
-const pageTotal = ref(0);
+const pageData = ref<TableItem[]>([]);   //
 let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
 
 // 获取表格数据
@@ -586,33 +601,55 @@ const getData = () => {
 
 		filteredData.value = res.filter(item => item.storageInfo.currentStatus == '待鉴定');
 
-		for (var i = 0; i < filteredData.value.length; i++) {
-			//对每一个文物截取有效时间显示
-			var T = filteredData.value[i].collectInfo.collectTime;
+		// for (var i = 0; i < filteredData.value.length; i++) {
+		// 	//对每一个文物截取有效时间显示
+		// 	var T = filteredData.value[i].collectInfo.collectTime;
+		// 	var dest = '';
+		// 	console.log(T)
+		// 	for (var j = 0; j < T.length; j++) {
+		// 		if (T[j] == 'T')
+		// 			break;
+		// 		dest += T[j];
+		// 	}
+		// 	filteredData.value[i].collectInfo.collectTime = dest;
+		// 	//检查文物的名字是否已知，如果是已知的则直接显示，如果是未知的就显示
+		// }
+
+		// filteredData.value = filteredData.value.filter(item =>
+		// 	String(item.collectionId).includes(query.value) ||
+		// 	item.collectionType.includes(query.value) ||
+		// 	item.era.includes(query.value) ||
+		// 	item.storageInfo.currentStatus.includes(query.value) ||
+		// 	item.collectInfo.collectTime.includes(query.value)
+		// );
+
+
+		// tableData.value = filteredData.value;
+		// console.log(tableData.value);
+		tableData.value = filteredData.value;
+		console.log(tableData.value);
+		const startIndex = (query.pageIndex - 1) * query.pageSize;
+		const endIndex = query.pageIndex * query.pageSize;
+		console.log("页面范围")
+		console.log(startIndex)
+		console.log(endIndex)
+		// 截取当前页的数据
+		const pagedData = filteredData.value.slice(startIndex, endIndex);
+
+		// 将截取的数据赋值给 pagedData
+		tableData.value = pagedData;
+		//截取有效时间显示
+		for (var i = 0; i < tableData.value.length; i++) {
+			var T = tableData.value[i].collectInfo.collectTime;
 			var dest = '';
-			console.log(T)
 			for (var j = 0; j < T.length; j++) {
 				if (T[j] == 'T')
 					break;
 				dest += T[j];
 			}
-			filteredData.value[i].collectInfo.collectTime = dest;
-			//检查文物的名字是否已知，如果是已知的则直接显示，如果是未知的就显示
+			tableData.value[i].collectInfo.collectTime = dest;
 		}
-
-		filteredData.value = filteredData.value.filter(item =>
-			String(item.collectionId).includes(query.value) ||
-			item.collectionType.includes(query.value) ||
-			item.era.includes(query.value) ||
-			item.storageInfo.currentStatus.includes(query.value) ||
-			item.collectInfo.collectTime.includes(query.value)
-		);
-
-
-		tableData.value = filteredData.value;
-		console.log(tableData.value);
-
-
+		
 		// console.log(res[0].collectionId);
 		// pageTotal.value = res.data.pageTotal || 50;
 	});
@@ -643,7 +680,7 @@ const saveDelete = async (index: number) => {
 const handleDelete = (index: number) => {
 	// 二次确认删除
 	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning',customClass: 'my-message-box'
+		type: 'warning', customClass: 'my-message-box'
 	})
 		.then(() => {
 			ElMessage.success('删除成功');
@@ -756,7 +793,7 @@ function getCurrentTime() {
 //打开编辑框
 const handleEdit = (index: number, row: any) => {
 	// 获取当前时间
-	time=getCurrentTime();
+	time = getCurrentTime();
 
 
 	//将目前表格中的内容先同步到编辑框内
@@ -845,8 +882,8 @@ const handleDetails = (index: number, row: any) => {
 const uploadData = async () => {
 	console.log(tableData.value[idx])
 	try {
-		
-		const response= await axiosInstance.put('/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
+
+		const response = await axiosInstance.put('/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
 		//const response = await axios.put('http://42.192.39.198:5000/api/Collections/' + tableData.value[idx].collectionId, tableData.value[idx]);
 		ElMessage.success('数据上传成功');
 		getData();
@@ -882,7 +919,7 @@ const saveEdit = async () => {
 		tableData.value[idx].storageInfo.currentStatus = "待鉴定";
 	else if (radio.value == 4)
 		tableData.value[idx].storageInfo.currentStatus = "修缮中";
-	
+
 	radio.value = 3;
 
 	tableData.value[idx].storageInfo.protectionLevel = form.storageInfo.protectionLevel;
@@ -911,6 +948,7 @@ const saveEdit = async () => {
 const closeView = () => {
 	viewVisible.value = false;                    //editVisible.value被用来控制编辑界面或对话框的显示与隐藏
 };
+
 
 // 文物种类下拉菜单的属性
 interface TypeSelectItem {
@@ -1085,25 +1123,25 @@ const eraCreateFilter = (queryString: string) => {
 
 //可选择的选项
 const EraloadAll = () => {
-  return [
-    { value: '史前文明', index: 1 },
-    { value: '夏代', index: 2 },
-    { value: '商代', index: 3 },
-    { value: '周代', index: 4 },
-    { value: '春秋战国', index: 5 },
-    { value: '秦代', index: 6 },
-    { value: '汉代', index: 7 },
-    { value: '三国', index: 8 },
-    { value: '魏晋南北朝', index: 9 },
-    { value: '隋代', index: 10 },
-    { value: '唐代', index: 11 },
-    { value: '五代十国', index: 12 },
-    { value: '宋代', index: 13 },
-    { value: '元代', index: 14 },
-    { value: '明代', index: 15 },
-    { value: '清代', index: 16 },
-    { value: '民国', index: 17 },
-  ];
+	return [
+		{ value: '史前文明', index: 1 },
+		{ value: '夏代', index: 2 },
+		{ value: '商代', index: 3 },
+		{ value: '周代', index: 4 },
+		{ value: '春秋战国', index: 5 },
+		{ value: '秦代', index: 6 },
+		{ value: '汉代', index: 7 },
+		{ value: '三国', index: 8 },
+		{ value: '魏晋南北朝', index: 9 },
+		{ value: '隋代', index: 10 },
+		{ value: '唐代', index: 11 },
+		{ value: '五代十国', index: 12 },
+		{ value: '宋代', index: 13 },
+		{ value: '元代', index: 14 },
+		{ value: '明代', index: 15 },
+		{ value: '清代', index: 16 },
+		{ value: '民国', index: 17 },
+	];
 };
 
 //处理选择的项，比如说给一个东西赋值
@@ -1423,7 +1461,19 @@ const iconStyle = computed(() => {
 		marginRight: marginMap.default,
 	}
 })
-
+//改变页面大小
+const applyPageSize = () =>{
+	if(query.tempPageSize !=''){
+		query.pageSize = Number(query.tempPageSize);
+	}
+	else{
+		query.pageSize = 10;
+	}
+	console.log("页面大小");
+	console.log(query.pageSize);
+	query.pageIndex = 1;
+	getData();
+}
 </script>
 
 <style scoped>
@@ -1484,11 +1534,11 @@ const iconStyle = computed(() => {
 	margin: 10px;
 
 }
+
 .my-message-box {
-  /* 自定义样式 */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-</style>
+	/* 自定义样式 */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}</style>
