@@ -109,11 +109,7 @@ const items = [
         title: '展品详情',
         permiss: ['ExhibitionHallAdmin',"SystemAdmin"],
       },
-      {
-        index: '/activity',
-        title: '活动',
-        permiss: ['ExhibitionHallAdmin',"SystemAdmin"],
-      },
+
     ],
   },
   {
@@ -124,9 +120,21 @@ const items = [
   },
   {
     icon: 'Calendar',
-    index: '/statistics',
-    title: '门票信息',
+    index: '3',
+    title: '日常信息',
     permiss: ["RoutineAdmin", "SystemAdmin"],
+    subs:[
+      {
+        index: '/activity',
+        title: '活动',
+        permiss: ['RoutineAdmin',"SystemAdmin"],
+      },
+      {
+        index: '/statistics',
+        title: '门票信息',
+        permiss: ["RoutineAdmin", "SystemAdmin"],
+      }
+    ]
   },
   {
     icon:'Calendar',
