@@ -42,9 +42,8 @@
 					</template>
 				</el-table-column>
 			</el-table>
-<<<<<<< Updated upstream
 			<!-- 分页器 -->
-			<!--分页器-->>
+			<!--分页器-->
 			<div class="pagination" style="display: flex; align-items: center;">
 				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数" size="small"
 					style="width: 100px;" clearable>
@@ -56,20 +55,6 @@
 				<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
 					:page-size="query.pageSize" :total="filteredData.length" @current-change="handlePageChange"
 					@update:page-size="handleSearch">
-=======
-			<div class="pagination"  style="display: flex; align-items: center;">
-				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
-				 size="small" style="width: 100px;" clearable>
-				 <el-option label="5" value="5"></el-option>
-				 <el-option label="10" value="10"></el-option>
-				 <el-option label="20" value="20"></el-option>
-				 <el-option label="50" value="50"></el-option>
-				</el-select>
-				<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
-					:page-size="query.pageSize" :total="filteredData.length"
-					 @current-change="handlePageChange"
-					 @update:page-size = "handleSearch">
->>>>>>> Stashed changes
 				</el-pagination>
 			</div>
 
@@ -602,12 +587,8 @@ const query = reactive({
 		currentStatus: '',
 		protectionLevel: ''
 	}
-<<<<<<< Updated upstream
 });
 //文物展示表格的数据
-=======
-});//文物展示表格的数据
->>>>>>> Stashed changes
 const tableData = ref<TableItem[]>([]);
 const pageData = ref<TableItem[]>([]);   //
 let filteredData = ref<TableItem[]>([]); // 保存筛选的数据
@@ -967,18 +948,7 @@ const saveEdit = async () => {
 const closeView = () => {
 	viewVisible.value = false;                    //editVisible.value被用来控制编辑界面或对话框的显示与隐藏
 };
-//改变页面大小
-const applyPageSize = () =>{
-	if(query.tempPageSize !=''){
-		query.pageSize = Number(query.tempPageSize);
-	}
-	else{
-		query.pageSize = 10;
-	}
-	console.log(query.pageSize);
-	query.pageIndex = 1;
-	getData();
-}
+
 
 // 文物种类下拉菜单的属性
 interface TypeSelectItem {
