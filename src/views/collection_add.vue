@@ -547,7 +547,7 @@ let newCollection: TableItem = {
 	},
 	storageInfo: {
 		collectionId: null,
-		currentStatus: "未鉴定",
+		currentStatus: "待鉴定",
 		protectionLevel: "待鉴定"
 	},
 	exhibitionHallId: null,
@@ -591,7 +591,7 @@ const form = reactive({
 	},
 	storageInfo: {
 		collectionId: null,
-		currentStatus: "未鉴定",
+		currentStatus: "待鉴定",
 		protectionLevel: ""
 	},
 	exhibitionHallId: null,

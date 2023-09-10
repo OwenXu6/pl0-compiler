@@ -510,9 +510,9 @@ const getData = () => {
 	fetchData().then(res => {
 
 		console.log(res);
-		//过滤掉“未鉴定”的文物
+		//过滤掉“待鉴定”的文物
 
-		filteredData.value = res.filter(item => item.storageInfo.currentStatus !== '未鉴定');
+		filteredData.value = res.filter(item => item.storageInfo.currentStatus !== '待鉴定');
 		console.log(query);
 		filteredData.value = filteredData.value.filter(item => item.name.includes(query.name));
 		filteredData.value = filteredData.value.filter(item => String(item.collectionId).includes(query.id));
