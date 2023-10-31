@@ -6,7 +6,7 @@
 
 				<el-descriptions class="margin-top" :column="2" :size="size" border>
 					<!-- 收藏单位 -->
-					<el-descriptions-item>
+					<el-descriptions-item :span="2">
 						<template #label>
 							<div class="cell-item" :style="{ minWidth: form.collectInfo.collectMuseum.length * 12 + 'px' }">
 								<el-icon :style="iconStyle">
@@ -18,7 +18,7 @@
 						{{ form.collectInfo.collectMuseum }}
 					</el-descriptions-item>
 					<!-- 现登记号 -->
-					<el-descriptions-item>
+					<!--el-descriptions-item>
 						<template #label>
 							<div class="cell-item">
 								<el-icon :style="iconStyle">
@@ -27,8 +27,8 @@
 								现登记号
 							</div>
 						</template>
-						{{ form.collectionId }}
-					</el-descriptions-item>
+						1
+					</el-descriptions-item-->
 
 					<!-- 藏品图片 改一个提交方式：从本地上传-->
 					<el-descriptions-item :span="2">
@@ -40,21 +40,6 @@
 								藏品图片*
 							</div>
 						</template>
-
-						<!--el-upload class="upload-demo" Access-Control-Allow-action="/api/v2/upload"
-							:Access-Control-Allow-headers="{ 'Authorization': 'kydXBqSSWZNb12Q25q6OmXGGSKwajXXk' }" 
-							:on-success="handleSuccess"
-							:on-error="handleError" :before-upload="beforeUpload">
-							<el-button size="small" type="primary">点击上传</el-button>
-						</el-upload-->
-						<!-- 显示已上传的图片 -->
-						<!--el-image v-if="form.collectionPhoto" class="CollectionImg" :src="form.collectionPhoto"
-							:z-index="10">
-						</el-image-->
-						<!--template #default="scope">
-							<el-image class="CollectionImg" :src="form.collectionPhoto" :z-index="10">
-							</el-image>
-						</template :on-preview="handlePreview"-->
 
 						<el-upload v-model:file-list="fileList" class="upload-demo" multiple="false"
 							action="/foreignImage/upload" name="smfile"
@@ -462,7 +447,7 @@ function getToken() {
 
 // 创建一个具有默认头的Axios实例
 const axiosInstance = axios.create({
-	baseURL: 'http://42.192.39.198:5000/api',
+	baseURL: 'api',
 });
 
 // 拦截器：将token添加到每个请求中
@@ -532,7 +517,7 @@ interface TableItem {
 }
 
 let newCollection: TableItem = {
-	collectionId: null,
+	//collectionId: null,
 	originalName: "",
 	name: "未定",
 	collectionType: "",
@@ -543,14 +528,14 @@ let newCollection: TableItem = {
 	completenessType: "",
 	collectionPhoto: "",
 	collectInfo: {
-		collectionId: null,
+		//collectionId: null,
 		source: "",
 		collectMuseum: "博数博物馆",
 		collectTime: "",//这里要么就是 yyyy-mm-ddT+时间(**:**:**)，要么就是只有日期yyyy-mm-dd
 		collectionLevel: "待鉴定"
 	},
 	dimensionInfo: {
-		collectionId: null,
+		//collectionId: null,
 		dimension: "待鉴定",
 		dimensionUnit: "毫米",
 		weight: 0,
@@ -561,8 +546,8 @@ let newCollection: TableItem = {
 		traditionalQuantityUnit: "件"
 	},
 	storageInfo: {
-		collectionId: null,
-		currentStatus: "未鉴定",
+		//collectionId: null,
+		currentStatus: "待鉴定",
 		protectionLevel: "待鉴定"
 	},
 	exhibitionHallId: null,
@@ -606,7 +591,7 @@ const form = reactive({
 	},
 	storageInfo: {
 		collectionId: null,
-		currentStatus: "未鉴定",
+		currentStatus: "待鉴定",
 		protectionLevel: ""
 	},
 	exhibitionHallId: null,
@@ -640,11 +625,11 @@ const submitForm = async (newCollection: TableItem) => {
 	try {
 		console.log(newCollection);
 
-		/*const headers = {
-			'Authorization': `Bearer ${token}`
+		const headers = {
+			'Authorization': `Bearer ${getToken()}`
 		};
 
-		const response = await axios.post('http://42.192.39.198:5000/api/Collections', newCollection, { headers });*/
+		//const response = await axios.post('http://42.192.39.198:5000/api/Collections', newCollection, { headers });
 		
 		const response= await axiosInstance.post('/Collections', newCollection);
 		
@@ -689,7 +674,7 @@ const submitnew = () => {
 	}
 	else {
 
-		newCollection.collectionId = form.collectionId;
+		//newCollection.collectionId = form.collectionId;
 		newCollection.originalName = form.originalName;
 		if (form.name != "")
 			newCollection.name = form.name;
@@ -703,14 +688,14 @@ const submitnew = () => {
 			newCollection.completeness = form.completeness;
 		newCollection.completenessType = form.completenessType;
 		newCollection.collectionPhoto = form.collectionPhoto;
-		newCollection.collectInfo.collectionId = form.collectInfo.collectionId;
+		//newCollection.collectInfo.collectionId = form.collectInfo.collectionId;
 		newCollection.collectInfo.source = form.collectInfo.source;
 		newCollection.collectInfo.collectMuseum = form.collectInfo.collectMuseum;
 		newCollection.collectInfo.collectTime = form.collectInfo.collectTime;
 		if (form.collectInfo.collectionLevel != "")
 			newCollection.collectInfo.collectionLevel = form.collectInfo.collectionLevel;
 
-		newCollection.dimensionInfo.collectionId = form.dimensionInfo.collectionId;
+		//newCollection.dimensionInfo.collectionId = form.dimensionInfo.collectionId;
 
 		if (form.dimensionInfo.dimension != "")
 			newCollection.dimensionInfo.dimension = form.dimensionInfo.dimension;
@@ -725,7 +710,7 @@ const submitnew = () => {
 		newCollection.dimensionInfo.traditionalQuantity = form.dimensionInfo.traditionalQuantity;
 		newCollection.dimensionInfo.traditionalQuantityUnit = form.dimensionInfo.traditionalQuantityUnit;
 
-		newCollection.storageInfo.collectionId = form.storageInfo.collectionId;
+		//newCollection.storageInfo.collectionId = form.storageInfo.collectionId;
 		newCollection.storageInfo.currentStatus = form.storageInfo.currentStatus;
 		if (form.storageInfo.protectionLevel != "")
 			newCollection.storageInfo.protectionLevel = form.storageInfo.protectionLevel;
@@ -754,35 +739,38 @@ const query = reactive({
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 
-//获取后端数据库的数据
-const fetchData = async () => {
-	try {
-		/*const headers = {
-			'Authorization': `Bearer ${token}`
-		};
+// //获取后端数据库的数据
+// const fetchData = async () => {
+// 	// try {
+// 		/*const headers = {
+// 			'Authorization': `Bearer ${token}`
+// 		};
 
-		const response = await axios.get(' http://42.192.39.198:5000/api/Collections', {headers});*/
+// 		const response = await axios.get(' http://42.192.39.198:5000/api/Collections', {headers});*/
 		
-		const response= await axiosInstance.get('/Collections');
+// 		// const response= await axiosInstance.get('/Collections');
 
-		console.log(response.data);
-		console.log("数据库连接成功！");
-		return response.data;
-	} catch (error) {
-		console.error(error);
-	}
-};
+// 		// console.log(response.data);
+// 		// console.log("数据库连接成功！");
+// 		// return response.data;
+// 	// } catch (error) {
+// 		// console.error(error);
+// 	// }
+// };
 
-const getData = () => {
-	fetchData().then(res => {
-		//自动生成collectionId
-		form.collectionId = Object.keys(res).length + 1;
-		form.collectInfo.collectionId = form.collectionId;
-		form.storageInfo.collectionId = form.collectionId;
-		form.dimensionInfo.collectionId = form.collectionId;
-	});
-};
-getData();
+// const getData = () => {
+// 	fetchData().then(res => {
+// 		//自动生成collectionId
+// 		// form.collectionId = Object.keys(res).length + 1;
+// 		//自动生成collectionId逻辑，取已有的最大的collectionId+1
+// 		// form.collectionId=Max+1;
+// 		console.log(form.collectionId);
+// 		form.collectInfo.collectionId = form.collectionId;
+// 		form.storageInfo.collectionId = form.collectionId;
+// 		form.dimensionInfo.collectionId = form.collectionId;
+// 	});
+// };
+// getData();
 
 
 // 文物种类下拉菜单的属性

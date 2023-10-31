@@ -50,6 +50,15 @@ const routes = [
                 component: () => import('../views/collection_research4unknown.vue'),
             },
             {
+                path: '/collection_repair',
+                name: 'collection_repair',
+                meta: {
+                    title: '修缮藏品',
+                    permiss: [],
+                },
+                component: () => import('../views/collection_repair.vue'),
+            },
+            {
                 path: '/Human_Management',
                 name: 'Human_Management',
                 meta: {

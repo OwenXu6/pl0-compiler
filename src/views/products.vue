@@ -1,152 +1,163 @@
 <template>
-	  <div>
-	    <div class="container">
-	      <div class="handle-box">
-	        <el-select v-model="query.isRelated" placeholder="产品关系" class="handle-select mr10">
-	          <el-option label="全部产品" value="all"></el-option>
-	          <el-option label="文创产品" value="true"></el-option>
-	          <el-option label="非文创产品" value="false"></el-option>
-	        </el-select>
-	
-	        <el-input v-model="query.productName" placeholder="商品名称" class="handle-input mr10"></el-input>
-	
-			<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search" @click="handleSearch" >搜索</el-button></div>
-	        <div style="display: inline-block;margin:10px;"><el-button type="primary" @click="handleAddNormal">新增普通商品</el-button></div>
-	        <div style="display: inline-block;margin:10px;"><el-button type="primary" @click="handleAddCreative">新增文创产品</el-button></div>
-	
-	      </div>
-	      <el-table :data="tableData" border class="table" ref="multipleTable"
-	        header-cell-class-productName="table-header">
-	        <el-table-column prop="productId" label="ID   " width="55" align="center"></el-table-column>
-	        <el-table-column prop="productName" label="商品名称"></el-table-column>
-	        <el-table-column label="商品价格">
-	          <template #default="scope">￥{{ scope.row.price }}</template>
-	        </el-table-column>
-	
-	        <el-table-column prop="monthlySale" label="月销量"></el-table-column>
-	        <el-table-column label="操作" width="300" align="center">
-	          <template #default="scope">
-	            <div class="custom-button-container">
-	              <el-button text :icon="Edit" @click="handleEditNormal(scope.$index, scope.row)"
-	                v-if="!scope.row.isRelated">
-	                编辑
-	              </el-button>
-	              <el-button text :icon="Edit" @click="handleEditCreative(scope.$index, scope.row)"
-	                v-if="scope.row.isRelated">
-	                编辑
-	              </el-button>
-	
-	              <el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" >
-	                删除
-	              </el-button>
-	              <el-button @click="viewCreativeProduct(scope.$index)"
-	                v-if="scope.row.isRelated === true">查看</el-button>
-	            </div>
-	          </template>
-	        </el-table-column>
-	
-	      </el-table>
-	      <div class="pagination">
-	        <el-pagination background layout="total, prev, pager, next" v-model="query.pageIndex" :page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
-	
-	      </div>
-	    </div>
-	
-	    <!-- 编辑弹出框 -->
-	    <!-- 编辑普通商品弹出框 -->
-	    <el-dialog title="编辑普通商品" v-model="editNormalVisible" width="40%" v-if="editNormalVisible">
-	      <el-form label-width="90px">
-	        <el-form-item label="商品名称">
-	          <el-input v-model="form.productName"></el-input>
-	        </el-form-item>
-	        <el-form-item label="商品价格">
-	          <el-input v-model="form.price"></el-input>
-	        </el-form-item>
-	        <el-form-item label="月销量">
-	          <el-input v-model="form.monthlySale"></el-input>
-	        </el-form-item>
-	      </el-form>
-	      <template #footer>
-	        <span class="dialog-footer">
-	          <el-button @click="editCreativeVisible = false">取 消</el-button>
-	          <el-button type="primary" @click="saveEdit">确 定</el-button>
-	        </span>
-	      </template>
-	    </el-dialog>
-	
-	    <!-- 编辑文创产品弹出框 -->
-	    <el-dialog title="编辑文创产品" v-model="editCreativeVisible" width="40%" v-if="editCreativeVisible">
-	      <el-form label-width="90px">
-	        <el-form-item label="商品名称">
-	          <el-input v-model="form.productName"></el-input>
-	        </el-form-item>
-	        <el-form-item label="商品价格">
-	          <el-input v-model="form.price"></el-input>
-	        </el-form-item>
-	        <el-form-item label="月销量">
-	          <el-input v-model="form.monthlySale"></el-input>
-	        </el-form-item>
-	        <el-form-item label="相关文物Id">
-	          <el-input v-model="form.relatedCollectionId"></el-input>
-	        </el-form-item>
-	        <el-form-item label="设计理念">
-	          <el-input v-model="form.designIdea"></el-input>
-	        </el-form-item>
-	      </el-form>
-	      <template #footer>
-	        <span class="dialog-footer">
-	          <el-button @click="editCreativeVisible = false">取 消</el-button>
-	          <el-button type="primary" @click="saveEdit">确 定</el-button>
-	        </span>
-	      </template>
-	    </el-dialog>
-	
-	    <!-- 查看文创产品弹出框 -->
-	    <el-dialog title="查看文创产品" v-model="viewVisible" width="40%">
-	      <el-form label-width="90px">
-	        <el-form-item label="相关文物Id">
-	          <el-input v-model="viewForm.relatedCollectionId" disabled></el-input>
-	        </el-form-item>
-	        <el-form-item label="设计理念">
-	          <el-input v-model="viewForm.designIdea" disabled></el-input>
-	        </el-form-item>
-	      </el-form>
-	      <template #footer>
-	        <span class="dialog-footer">
-	          <el-button @click="viewVisible = false">关闭</el-button>
-	        </span>
-	      </template>
-	    </el-dialog>
-	
-	    <!-- 新增弹出框 -->
-	    <el-dialog title="新增" v-model="addVisible" width="40%">
-	      <el-form label-width="90px">
-	        <el-form-item label="商品名称">
-	          <el-input v-model="addForm.productName"></el-input>
-	        </el-form-item>
-	        <el-form-item label="商品价格">
-	          <el-input v-model="addForm.price"></el-input>
-	        </el-form-item>
-	        <el-form-item label="月销量">
-	          <el-input v-model="addForm.monthlySale"></el-input>
-	        </el-form-item>
-	        <el-form-item label="相关文物Id" v-if="addForm.isRelated">
-	          <el-input v-model="addForm.relatedCollectionId"></el-input>
-	        </el-form-item>
-	        <el-form-item label="设计理念" v-if="addForm.isRelated">
-	          <el-input v-model="addForm.designIdea"></el-input>
-	        </el-form-item>
-	      </el-form>
-	      <template #footer>
-	        <span class="dialog-footer">
-	          <el-button @click="addVisible = false">取 消</el-button>
-	          <el-button type="primary" @click="saveAdd">确 定</el-button>
-	        </span>
-	      </template>
-	    </el-dialog>
-	
-	  </div>
-	</template>
+	<div>
+		<div class="container">
+			<div class="handle-box">
+				<el-select v-model="query.isRelated" placeholder="产品关系" class="handle-select mr10">
+					<el-option label="全部产品" value="all"></el-option>
+					<el-option label="文创产品" value="true"></el-option>
+					<el-option label="非文创产品" value="false"></el-option>
+				</el-select>
+
+				<el-input v-model="query.productName" placeholder="商品名称" class="handle-input mr10"></el-input>
+
+				<div style="display: inline-block;margin:10px;"><el-button type="primary" :icon="Search"
+						@click="handleSearch">搜索</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary"
+						@click="handleAddNormal">新增普通商品</el-button></div>
+				<div style="display: inline-block;margin:10px;"><el-button type="primary"
+						@click="handleAddCreative">新增文创产品</el-button></div>
+
+			</div>
+			<el-table :data="tableData" border class="table" ref="multipleTable"
+				header-cell-class-productName="table-header">
+				<el-table-column prop="productId" label="ID   " width="55" align="center"></el-table-column>
+				<el-table-column prop="productName" label="商品名称"></el-table-column>
+				<el-table-column label="商品价格">
+					<template #default="scope">￥{{ scope.row.price }}</template>
+				</el-table-column>
+
+				<el-table-column prop="monthlySale" label="月销量"></el-table-column>
+				<el-table-column label="操作" width="300" align="center">
+					<template #default="scope">
+						<div class="custom-button-container">
+							<el-button text :icon="Edit" @click="handleEditNormal(scope.$index, scope.row)"
+								v-if="!scope.row.isRelated">
+								编辑
+							</el-button>
+							<el-button text :icon="Edit" @click="handleEditCreative(scope.$index, scope.row)"
+								v-if="scope.row.isRelated">
+								编辑
+							</el-button>
+
+							<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)">
+								删除
+							</el-button>
+							<el-button @click="viewCreativeProduct(scope.$index)"
+								v-if="scope.row.isRelated === true">查看</el-button>
+						</div>
+					</template>
+				</el-table-column>
+
+			</el-table>
+			<div class="pagination">
+				<el-pagination background layout="total, prev, pager, next" v-model="query.pageIndex"
+					:page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
+
+			</div>
+		</div>
+
+		<!-- 编辑弹出框 -->
+		<!-- 编辑普通商品弹出框 -->
+		<el-dialog title="编辑普通商品" v-model="editNormalVisible" width="40%" v-if="editNormalVisible">
+			<el-form label-width="90px">
+				<el-form-item label="商品名称">
+					<el-input v-model="form.productName"></el-input>
+				</el-form-item>
+				<el-form-item label="商品价格">
+					<el-input v-model="form.price"></el-input>
+				</el-form-item>
+				<el-form-item label="月销量">
+					<el-input v-model="form.monthlySale"></el-input>
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<div style="display: inline-block;margin:10px;"> <el-button @click="editCreativeVisible = false">取
+							消</el-button></div>
+					<div style="display: inline-block;margin:10px;"> <el-button type="primary" @click="saveEdit">确
+							定</el-button></div>
+				</span>
+			</template>
+		</el-dialog>
+
+		<!-- 编辑文创产品弹出框 -->
+		<el-dialog title="编辑文创产品" v-model="editCreativeVisible" width="40%" v-if="editCreativeVisible">
+			<el-form label-width="90px">
+				<el-form-item label="商品名称">
+					<el-input v-model="form.productName"></el-input>
+				</el-form-item>
+				<el-form-item label="商品价格">
+					<el-input v-model="form.price"></el-input>
+				</el-form-item>
+				<el-form-item label="月销量">
+					<el-input v-model="form.monthlySale"></el-input>
+				</el-form-item>
+				<el-form-item label="相关文物Id">
+					<el-input v-model="form.relatedCollectionId"></el-input>
+				</el-form-item>
+				<el-form-item label="设计理念">
+					<el-input v-model="form.designIdea"></el-input>
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<div style="display: inline-block;margin:10px;"><el-button @click="editCreativeVisible = false">取
+							消</el-button></div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveEdit">确
+							定</el-button></div>
+				</span>
+			</template>
+		</el-dialog>
+
+		<!-- 查看文创产品弹出框 -->
+		<el-dialog title="查看文创产品" v-model="viewVisible" width="40%">
+			<el-form label-width="90px">
+				<el-form-item label="相关文物Id">
+					<el-input v-model="viewForm.relatedCollectionId" disabled></el-input>
+				</el-form-item>
+				<el-form-item label="设计理念">
+					<el-input v-model="viewForm.designIdea" disabled></el-input>
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<div style="display: inline-block;margin:10px;"><el-button @click="viewVisible = false">关闭</el-button>
+					</div>
+				</span>
+			</template>
+		</el-dialog>
+
+		<!-- 新增弹出框 -->
+		<el-dialog title="新增" v-model="addVisible" width="40%">
+			<el-form label-width="90px">
+				<el-form-item label="商品名称">
+					<el-input v-model="addForm.productName"></el-input>
+				</el-form-item>
+				<el-form-item label="商品价格">
+					<el-input v-model="addForm.price"></el-input>
+				</el-form-item>
+				<el-form-item label="月销量">
+					<el-input v-model="addForm.monthlySale"></el-input>
+				</el-form-item>
+				<el-form-item label="相关文物Id" v-if="addForm.isRelated">
+					<el-input v-model="addForm.relatedCollectionId"></el-input>
+				</el-form-item>
+				<el-form-item label="设计理念" v-if="addForm.isRelated">
+					<el-input v-model="addForm.designIdea"></el-input>
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<div style="display: inline-block;margin:10px;"><el-button @click="addVisible = false">取 消</el-button>
+					</div>
+					<div style="display: inline-block;margin:10px;"><el-button type="primary" @click="saveAdd">确
+							定</el-button></div>
+				</span>
+			</template>
+		</el-dialog>
+
+	</div>
+</template>
 	  
 <script setup lang="ts" productName="basetable">
 import { ref, reactive } from 'vue';
@@ -161,7 +172,7 @@ function getToken() {
 	const UserInfo = useUserInfo();
 	return UserInfo.userToken;
 
-	}
+}
 
 // 创建一个具有默认头的Axios实例
 const axiosInstance = axios.create({
@@ -314,16 +325,16 @@ const viewCreativeProduct = async (index: number) => {
 // 删除操作
 const handleDelete = (index: number) => {
 	// 二次确认删除
-	ElMessageBox.confirm('确定要删除吗？', '提示', {
-		type: 'warning'
-	})
-		.then(() => {
-			ElMessage.success('删除成功');
+	const result = window.confirm('确定要删除吗？');
+	if (result) {
+		ElMessage.success('删除成功');
 			// 在这里调用 saveDelete 并传递要删除的数据索引
 			saveDelete(index);
 			tableData.value.splice(index, 1);
-		})
-		.catch(() => { });
+	} else {
+		// 用户点击了取消按钮
+		// 可以在这里添加逻辑处理
+	}
 };
 
 const saveDelete = async (index: number) => {
@@ -511,5 +522,17 @@ const saveAdd = async () => {
 	width: 40px;
 	height: 40px;
 }
-</style>
+
+.my-message-box {
+	/* 自定义样式 */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.my-message-box .el-message-box__btns {
+	display: inline-block !important;
+	margin: 10px !important;
+}</style>
 	

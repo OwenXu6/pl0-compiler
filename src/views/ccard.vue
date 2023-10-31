@@ -43,11 +43,11 @@
 
 <script setup lang="ts">
 
-import { computed, ref, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router';
 import { useUserInfo } from '../store/userInfo';
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive,  } from 'vue';
 
 import imgurl from '../assets/img/img.jpg';
 

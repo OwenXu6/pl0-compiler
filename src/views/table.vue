@@ -36,9 +36,6 @@
 		<!-- 编辑弹出框 -->
 		<el-dialog title="编辑" v-model="editVisible" width="30%">
 			<el-form label-width="70px">
-				<el-form-item label="展厅名称">
-					<el-input v-model="editForm.name"></el-input>
-				</el-form-item>
 				<el-form-item label="展厅主题">
 					<el-input v-model="editForm.theme"></el-input>
 				</el-form-item>
@@ -47,18 +44,6 @@
 						<el-option key="1" label="营业中" value="营业中"></el-option>
 						<el-option key="2" label="修缮中" value="修缮中"></el-option>
 					</el-select>
-				</el-form-item>
-				<el-form-item label="访客人数">
-					<el-input v-model="editForm.visitor"></el-input>
-				</el-form-item>
-				<el-form-item label="温度">
-					<el-input v-model="editForm.temperature"></el-input>
-				</el-form-item>
-				<el-form-item label="CO2浓度">
-					<el-input v-model="editForm.Co2"></el-input>
-				</el-form-item>
-				<el-form-item label="湿度">
-					<el-input v-model="editForm.humidity"></el-input>
 				</el-form-item>
 			</el-form>
 			<template #footer>
@@ -186,26 +171,16 @@ let editForm = reactive({
 let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
 	idx = index;
-	editForm.name = row.exhibitionHallName;
 	editForm.theme = row.exhibitionHallTheme;
 	editForm.state = row.exhibitionHallState;
-	editForm.visitor = row.exhibitionHallVisitor;
-	editForm.temperature = row.exhibitionHallTemperature ;
-	editForm.humidity = row.exhibitionHallHumidity;
-	editForm.Co2 = row.exhibitionHallCo2;
 	editVisible.value = true;
 };
 
 const saveEdit = async () => {
 	editVisible.value = false;
 	ElMessage.success(`修改第 ${idx + 1} 行成功`);
-	tableData.value[idx].exhibitionHallName = editForm.name;
 	tableData.value[idx].exhibitionHallTheme = editForm.theme;
 	tableData.value[idx].exhibitionHallState = editForm.state;
-	tableData.value[idx].exhibitionHallVisitor = editForm.visitor;
-	tableData.value[idx].exhibitionHallTemperature = editForm.temperature;
-	tableData.value[idx].exhibitionHallHumidity = editForm.humidity;
-	tableData.value[idx].exhibitionHallCo2 = editForm.Co2;
 	await uploadData(tableData.value[idx].exhibitionHallId, tableData.value[idx]);
 };
 
@@ -237,19 +212,7 @@ onMounted(() => {
                     }
                 }
             },
-            visualMap: {
-                left: 'center',
-                bottom: '10%',
-                min: 5,
-                max: 100,
-                orient: 'horizontal',
-                text: ['', '人流量'],
-                realtime: true,
-                calculable: true,
-                inRange: {
-                    color: ['#dbac00', '#db6e00', '#cf0000']
-                }
-            },
+            
             series: [
                 {
                     name: 'Hall',
@@ -258,8 +221,6 @@ onMounted(() => {
                     zoom:1,
                     roam: true,
                     data: [
-                        {name: '常驻展厅A', value: 50},
-                        { name: '常驻展厅C', value: 35 },
                         
                     ],
                 }

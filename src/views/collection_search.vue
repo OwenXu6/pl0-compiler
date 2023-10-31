@@ -16,6 +16,7 @@
 				<el-select v-model="query.status" placeholder="藏品状态" class="handle-select mr10" clearable>
 					<el-option key="1" label="在库" value="在库"></el-option>
 					<el-option key="2" label="在展" value="在展"></el-option>
+					<el-option key="3" label="修缮中" value="修缮中"></el-option>
 				</el-select>
 				<el-input v-model="query.excavation_site" placeholder="出土地" class="handle-input mr11"></el-input>
 				<el-input v-model="query.excavation_date" placeholder="入藏时间" class="handle-input mr11"></el-input>
@@ -57,6 +58,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
+			<!--分页器-->
 			<div class="pagination"  style="display: flex; align-items: center;">
 				<el-select v-model="query.tempPageSize" @change="applyPageSize" placeholder="每页个数"
 				 size="small" style="width: 100px;" clearable>
@@ -80,7 +82,8 @@
 					<el-select v-model="form.storageInfo.currentStatus" placeholder="藏品状态" class="handle-select mr10">
 						<el-option key="1" label="在展" value="在展"></el-option>
 						<el-option key="2" label="在库" value="在库"></el-option>
-						<el-option key="4" label="未鉴定" value="未鉴定"></el-option>
+						<el-option key="3" label="修缮中" value="修缮中"></el-option>
+						<el-option key="4" label="待鉴定" value="待鉴定"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item v-if="form.storageInfo.currentStatus === '在展'" label="展厅名称">
@@ -509,16 +512,16 @@ const getData = () => {
 	fetchData().then(res => {
 
 		console.log(res);
-		//过滤掉“未鉴定”的文物
+		//过滤掉“待鉴定”的文物
 
-		filteredData.value = res.filter(item => item.storageInfo.currentStatus !== '未鉴定');
+		filteredData.value = res.filter(item => item.storageInfo.currentStatus !== '待鉴定');
 		console.log(query);
 		filteredData.value = filteredData.value.filter(item => item.name.includes(query.name));
 		filteredData.value = filteredData.value.filter(item => String(item.collectionId).includes(query.id));
-		filteredData.value = filteredData.value.filter(item => item.textureType.includes(query.collectionType)); //命名不统一
+		filteredData.value = filteredData.value.filter(item => item.collectionType.includes(query.collectionType)); 
 		filteredData.value = filteredData.value.filter(item => item.era.includes(query.era));
 		filteredData.value = filteredData.value.filter(item => item.storageInfo.currentStatus.includes(query.status));
-		filteredData.value = filteredData.value.filter(item => item.area.includes(query.excavation_site)); //命名不统一
+		filteredData.value = filteredData.value.filter(item => item.area.includes(query.excavation_site)); 
 		filteredData.value = filteredData.value.filter(item => item.collectInfo.collectTime.includes(query.excavation_date));
 
 		tableData.value=filteredData.value;
@@ -910,22 +913,24 @@ const eraCreateFilter = (queryString: string) => {
 //可选择的选项
 const EraloadAll = () => {
 	return [
-		{ value: '夏朝', index: 1 },
-		{ value: '商朝', index: 2 },
-		{ value: '春秋战国', index: 3 },
-		{ value: '秦朝', index: 4 },
-		{ value: '汉朝', index: 5 },
-		{ value: '三国', index: 6 },
-		{ value: '魏晋南北朝', index: 7 },
-		{ value: '隋朝', index: 8 },
-		{ value: '唐朝', index: 9 },
-		{ value: '五代十国', index: 10 },
-		{ value: '宋朝', index: 11 },
-		{ value: '元朝', index: 12 },
-		{ value: '明朝', index: 13 },
-		{ value: '清朝', index: 14 },
-		{ value: '民国', index: 15 },
-	]
+    { value: '史前文明', index: 1 },
+    { value: '夏代', index: 2 },
+    { value: '商代', index: 3 },
+    { value: '周代', index: 4 },
+    { value: '春秋战国', index: 5 },
+    { value: '秦代', index: 6 },
+    { value: '汉代', index: 7 },
+    { value: '三国', index: 8 },
+    { value: '魏晋南北朝', index: 9 },
+    { value: '隋代', index: 10 },
+    { value: '唐代', index: 11 },
+    { value: '五代十国', index: 12 },
+    { value: '宋代', index: 13 },
+    { value: '元代', index: 14 },
+    { value: '明代', index: 15 },
+    { value: '清代', index: 16 },
+    { value: '民国', index: 17 },
+  ];
 }
 //处理选择的项，比如说给一个东西赋值
 const eraSelect = (item: EraSelectItem) => {

@@ -62,30 +62,36 @@ const items = [
     icon: 'goods',
     index: '1',
     title: '藏品管理',
-    permiss: ['CollectionManager','Archaeologist','CollectionResearcher',"SystemAdmin"],
+    permiss: ['CollectionManager','Archaeologist','CollectionResearcher'],
     subs: [
       {
         index: '/collection_add',
         title: '新增藏品',
-        permiss: ['Archaeologist','SystemAdmin'],
+        permiss: ['Archaeologist'],
       },
       {
         index: '/collection_search',
         title: '查询藏品',
-        permiss: ['CollectionManager','SystemAdmin'],
+        permiss: ['CollectionManager'],
+      },
+      {
+        index: '/collection_repair',
+        title: '修缮藏品',
+        permiss: ['CollectionRepair'],
       },
       {
         index: '/collection_research4unknown',
         title: '未知文物研究鉴定',
-        permiss: ['CollectionResearcher','SystemAdmin'],
+        permiss: ['CollectionResearcher'],
       },
+      
     ],
   },
   {
-    icon:'lock',
+    icon:'User',
     index: '/Human_Management',
     title: '人事管理',
-    permiss: ['StaffAdmin','SystemAdmin'],
+    permiss: ['StaffAdmin'],
   },
   {
     icon: 'more',
@@ -103,43 +109,46 @@ const items = [
         title: '展品详情',
         permiss: ['ExhibitionHallAdmin',"SystemAdmin"],
       },
-      {
-        index: '/activity',
-        title: '活动',
-        permiss: ['ExhibitionHallAdmin',"SystemAdmin"],
-      },
+
     ],
   },
   {
-    icon: 'User',
+    icon: 'lock',
     index:'storage',
     title:'仓库管理',
     permiss:['WarehouseAdmin',"SystemAdmin"],
   },
   {
     icon: 'Calendar',
-    index: '/statistics',
-    title: '门票信息',
-    permiss: ["SystemAdmin"],
-  },
-  {
-    icon: "shop",
-    index: "3",
-    title: "运营与合作",
-    permiss: ['ProductAdmin','FeedbackAdmin',"SystemAdmin"],
-    subs: [
+    index: '3',
+    title: '日常信息',
+    permiss: ["RoutineAdmin", "SystemAdmin"],
+    subs:[
       {
-        index: '/feedbacks',
-        title: '反馈信息管理',
-        permiss: ['FeedbackAdmin',"SystemAdmin"],
+        index: '/activity',
+        title: '活动',
+        permiss: ['RoutineAdmin',"SystemAdmin"],
       },
       {
-        index: '/products',
-        title: '文创产品信息管理',
-        permiss: ['ProductAdmin',"SystemAdmin"],
-      },
+        index: '/statistics',
+        title: '门票信息',
+        permiss: ["RoutineAdmin", "SystemAdmin"],
+      }
     ]
   },
+  {
+    icon:'EditPen',
+    index:'/feedbacks',
+    title:'反馈信息管理',
+    permiss: ["FeedbackAdmin", "SystemAdmin"],
+  },
+  {
+    icon:'Present',
+    index:'/products',
+    title:'文创产品信息管理',
+    permiss:['ProductAdmin',"SystemAdmin"],
+  },
+  
   {
     icon: "rank",
     index: "/ccard",

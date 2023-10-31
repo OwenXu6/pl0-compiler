@@ -50,7 +50,7 @@ const login = () => {
     <div class="login-container">
       <h2 class="title">欢迎登录博数管理系统</h2>
       <el-input v-model="user_name" placeholder="请输入用户名" />
-      <el-input v-model="user_password" placeholder="请输入密码" />
+      <el-input v-model="user_password" placeholder="请输入密码" type="password"/>
       <el-button @click="login">登录</el-button>
     </div>
   </div>
